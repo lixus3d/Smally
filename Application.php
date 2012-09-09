@@ -11,7 +11,9 @@ class Application {
 	protected $_rooter 				= null;
 	protected $_context 			= null;
 	protected $_meta				= null;
+
 	protected $_urlRewriting		= null;
+	protected $_bootstrap			= null;
 
 	protected $_view				= null;
 	protected $_layout				= 'global';

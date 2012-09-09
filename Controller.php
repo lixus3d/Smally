@@ -2,47 +2,73 @@
 
 namespace Smally;
 
-class Controller {
+abstract class Controller {
 
 	protected $_application = null;
 	protected $_action 		= null;
 	protected $_view 		= null;
 
 	/**
-	 * Construct the global $context object
-	 * @author Lixus3d <developpement@adreamaline.com>
-	 * @param array $vars
+	 * Construct the controller object
+	 * @param \Smally\Application $application reverse reference to the application
 	 */
 	public function __construct(\Smally\Application $application){
 		$this->setApplication($application);
 	}
 
+	/**
+	 * Set the application reverse reference
+	 * @param \Smally\Application $application Current application linked to this object
+	 * @return \Smally\Controller
+	 */
 	public function setApplication(\Smally\Application $application){
 		$this->_application = $application;
 		return $this;
 	}
 
+	/**
+	 * Return the application reverse referenced
+	 * @return \Smally\Application
+	 */
 	public function getApplication(){
 		return $this->_application;
 	}
 
+	/**
+	 * Wrapper of the Application instance so you can access every application function easily
+	 * @param  string $name method called
+	 * @param  array $args arguments
+	 * @return mixed Application method return
+	 */
 	public function __call($name,$args){
 		if(method_exists($this->getApplication(), $name)){
 			return call_user_func_array(array($this->getApplication(),$name), $args);
-			//return $this->getApplication()->$name($args);
 		}else throw new Exception('Call to undefined method : '.$name);
 		return null;
 	}
 
+	/**
+	 * Define the called action of the controller
+	 * @param string $action The name of the action to call
+	 * @return \Smally\Controller
+	 */
 	public function setAction($action){
 		$this->_action = $action;
 		return $this;
 	}
 
+	/**
+	 * Return the called action of the controller
+	 * @return string
+	 */
 	public function getAction(){
 		return $this->_action;
 	}
 
+	/**
+	 * Return the view object or create it the first time
+	 * @return \Smally\View
+	 */
 	public function getView(){
 		if(is_null($this->_view)){
 			$this->_view = new View($this->getApplication());
@@ -51,6 +77,10 @@ class Controller {
 		return $this->_view;
 	}
 
+	/**
+	 * Execute the controller called action and the attached view
+	 * @return \Smally\Controller
+	 */
 	public function x(){
 		$method = $this->getAction().'Action';
 		$this->$method();
