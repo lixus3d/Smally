@@ -128,7 +128,6 @@ class Rooter {
 	public function x(){
 
 		$urlSep = '/';
-
 		$controllerPath = array();
 		$action = '';
 
@@ -142,6 +141,7 @@ class Rooter {
 			// remove trailing sep
 			$queryPath = trim($queryPath,$urlSep);
 
+			// Apply UrlRewriting Rules
 			if($urlRewriting = $this->_application->getUrlRewriting()){
 				if($destination = $urlRewriting->getRewrite($queryPath)){
 					if(is_array($destination)){
