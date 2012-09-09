@@ -21,23 +21,38 @@ class Meta{
 	protected $_otherMetas = array();
 
 	/**
-	 * Construct the global $context object
-	 * @author Lixus3d <developpement@adreamaline.com>
-	 * @param array $vars
+	 * Construct the meta object
+	 * @param \Smally\Application $application reverse reference to the application
 	 */
 	public function __construct(\Smally\Application $application){
 		$this->setApplication($application);
 	}
 
+	/**
+	 * Set the application reverse reference
+	 * @param \Smally\Application $application Current application linked to this object
+	 * @return \Smally\Meta
+	 */
 	public function setApplication(\Smally\Application $application){
 		$this->_application = $application;
 		return $this;
 	}
 
+	/**
+	 * Return the application reverse referenced
+	 * @return \Smally\Application
+	 */
 	public function getApplication(){
 		return $this->_application;
 	}
 
+	/**
+	 * Add a meta
+	 * @param string  $type    title, keywords or description
+	 * @param string  $content Any content for the meta
+	 * @param boolean $default It this a default meta ?
+	 * @return \Smally\Meta
+	 */
 	public function addMeta($type,$content='',$default=false){
 		$dest = $default? '_default' : '_metas';
 		$this->{$dest}[$type][] = $content;
@@ -46,7 +61,8 @@ class Meta{
 
 	/**
 	 * Add specific meta tag, likes robots tag
-	 * @param array $tag
+	 * @param array $tag Attributes of the tag in key => value format
+	 * @return \Smally\Meta
 	 */
 	public function addMetaTag($tag){
 		if(is_array($tag)){
@@ -72,6 +88,7 @@ class Meta{
 
 	/**
 	 * Return the array of other metas (robots, etc...)
+	 * @return array
 	 */
 	public function getOtherMetas(){
 		return $this->_otherMetas;
