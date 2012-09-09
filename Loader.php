@@ -4,7 +4,6 @@ namespace Smally;
 
 /**
  * My autoloader compatible with namespace and psr-0 logic
- * @author Lixus3d <developpement@adreamaline.com>
  */
 class Loader {
 
@@ -45,6 +44,7 @@ class Loader {
 
 	/**
 	 * Get the base path where we have to search for class
+	 * @return string;
 	 */
 	static public function getBasePath(){
 		if(is_null(self::$basePath)){
