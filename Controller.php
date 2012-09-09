@@ -28,7 +28,8 @@ class Controller {
 
 	public function __call($name,$args){
 		if(method_exists($this->getApplication(), $name)){
-			return $this->getApplication()->$name($args);
+			return call_user_func_array(array($this->getApplication(),$name), $args);
+			//return $this->getApplication()->$name($args);
 		}else throw new Exception('Call to undefined method : '.$name);
 		return null;
 	}

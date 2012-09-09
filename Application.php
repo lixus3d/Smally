@@ -6,6 +6,7 @@ class Application {
 
 	static protected $_singleton 	= null;
 
+	protected $_config 				= null;
 	protected $_response 			= null;
 	protected $_rooter 				= null;
 	protected $_context 			= null;
@@ -25,6 +26,11 @@ class Application {
 
 	public function setInstance(){
 		return self::$_singleton = $this;
+	}
+
+	public function setConfig( \Smally\Config $config){
+		$this->_config = $config;
+		return $this;
 	}
 
 	/**
@@ -56,6 +62,11 @@ class Application {
 			new self();
 		}
 		return self::$_singleton;
+	}
+
+	public function getConfig(){
+		if(is_null($this->_config)) $this->_config = new Config();
+		return $this->_config;
 	}
 
 	public function getResponse(){
