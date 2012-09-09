@@ -14,6 +14,7 @@ class Application {
 	protected $_urlRewriting		= null;
 
 	protected $_view				= null;
+	protected $_layout				= 'global';
 
 	protected $_css					= array();
 	protected $_js					= array();
@@ -30,6 +31,11 @@ class Application {
 
 	public function setConfig( \Smally\Config $config){
 		$this->_config = $config;
+		return $this;
+	}
+
+	public function setLayout($layout){
+		$this->_layout = $layout;
 		return $this;
 	}
 
@@ -94,7 +100,7 @@ class Application {
 	public function getView(){
 		if(is_null($this->_view)){
 			$this->_view = new View($this);
-			$this->_view->setTemplatePath('global');
+			$this->_view->setTemplatePath($this->_layout);
 		}
 		return $this->_view;
 	}
@@ -113,6 +119,10 @@ class Application {
 
 	public function getBaseUrl($path=''){
 		return $this->getRooter()->getBaseUrl().$path;
+	}
+
+	public function getLayout(){
+		return $this->_layout;
 	}
 
 	/**
@@ -139,7 +149,7 @@ class Application {
 		$this->getRooter()->getController()->x(); // Execute the controller and view of the content
 
 		$this->getView()->content = $this->getRooter()->getController()->getView()->getContent(); // Place view content in the view->content property of the layout
-		$this->getView()->x(); // Execute the view (layout)
+		$this->getView()->x(); // Execute the application view (layout)
 
 		$this->getResponse()->setContent($this->getView()->getContent())->x(); // Launch response
 	}
