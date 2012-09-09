@@ -103,7 +103,7 @@ class View {
 		$meta = $this->getApplication()->getMeta();
 		if($metas = $meta->getOtherMetas()){
 			foreach($metas as $element){
-				$output[] = '<meta'.\EG\HtmlUtil::toAttributes($element).'/>';
+				$output[] = '<meta'.\Smally\HtmlUtil::toAttributes($element).'/>';
 			}
 		}
 		return implode(NN.TT,$output);

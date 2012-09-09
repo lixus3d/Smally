@@ -6,12 +6,22 @@ abstract class AbstractUrlRewriting {
 
 	protected $_urlRewriting = array();
 
+	/**
+	 * Add a rewrite rule
+	 * @param string $rule Can be a equal string or a regex if leaded by a '#' char
+	 * @param mixed $options Can be a string or an array for regex with the matches key
+	 */
 	public function addRule($rule,$options){
 		if($rule && $options){
 			$this->_urlRewriting[] = array('rule'=>$rule,'options'=>$options);
 		}
 	}
 
+	/**
+	 * Evaluate a string with the rewrite rules and return the result (null if it can't find a matching rule)
+	 * @param  string $url String to evaluate
+	 * @return mixed
+	 */
 	public function getRewrite($url=''){
 		$return = null;
 

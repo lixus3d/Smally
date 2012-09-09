@@ -163,6 +163,27 @@ class Rooter {
 	}
 
 	/**
+	 * Redirect to any destination
+	 * @param string $destination
+	 * @param int $code
+	 */
+	public function redirect($destination='',$code=302){
+		if(strpos('http',$destination) !== 0) $destination = $this->getBaseUrl() . $destination;
+		header('Location: '.$destination,true,$code);
+		die();
+	}
+
+	/**
+	 * Convert an url action to a valid controller action inflected
+	 * @param string $actionName
+	 * @return string Inflected action
+	 */
+	public function parseAction($actionName){
+		$actionName = preg_replace('#(-)([a-z])#e',"strtoupper('\\2')",$actionName);
+		return $actionName;
+	}
+
+	/**
 	 * Parse the request uri, find the base path, the controller and the action to do
 	 * @throws Exception
 	 * @return \Smally\Rooter
@@ -217,14 +238,5 @@ class Rooter {
 		return $this;
 	}
 
-	/**
-	 * Convert an url action to a valid controller action inflected
-	 * @param string $actionName
-	 * @return string Inflected action
-	 */
-	public function parseAction($actionName){
-		$actionName = preg_replace('#(-)([a-z])#e',"strtoupper('\\2')",$actionName);
-		return $actionName;
-	}
 
 }
