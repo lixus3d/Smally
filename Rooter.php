@@ -13,20 +13,38 @@ class Rooter {
 	protected $_controllerPath = null;
 	protected $_action = null;
 
-
+	/**
+	 * Construct the Rooter object
+	 * @param \Smally\Application $application reverse reference to the application
+	 */
 	public function __construct(\Smally\Application $application){
 		$this->setApplication($application);
 	}
 
+	/**
+	 * Set the application reverse reference
+	 * @param \Smally\Application $application Current application linked to this object
+	 * @return \Smally\Rooter
+	 */
 	public function setApplication(\Smally\Application $application){
 		$this->_application = $application;
 		return $this;
 	}
 
+	/**
+	 * Define the base url for the rooter
+	 * @param string $url
+	 * @return \Smally\Rooter
+	 */
 	public function setBaseUrl($url){
 		$this->_baseUrl = $url;
+		return $this;
 	}
 
+	/**
+	 * Return the application reverse referenced
+	 * @return \Smally\Application
+	 */
 	public function getApplication(){
 		return $this->_application;
 	}
@@ -42,6 +60,10 @@ class Rooter {
 		return $this->_baseUrl;
 	}
 
+	/**
+	 * Retturn the actual url called
+	 * @return string
+	 */
 	public function getActualUrl(){
 		return $this->_actualUrl;
 	}
@@ -54,10 +76,18 @@ class Rooter {
 		return $this->_uri;
 	}
 
+	/**
+	 * Return the parsed controller path from the uri
+	 * @return string A controller path to create the controller
+	 */
 	public function getControllerPath(){
 		return $this->_controllerPath;
 	}
 
+	/**
+	 * Return the controller object of the called page
+	 * @return \Smally\Controller
+	 */
 	public function getController(){
 		if(!isset($this->_controller)&&$this->_controllerPath){
 			$this->_controller = $this->getControllerObject($this->_controllerPath)->setAction($this->getAction());
@@ -65,18 +95,30 @@ class Rooter {
 		return $this->_controller;
 	}
 
+	/**
+	 * Get a controller Object from a controller Path , common entry point for controller creation
+	 * @param  string $controllerPath The controller path
+	 * @return \Smally\Controller
+	 */
 	public function getControllerObject($controllerPath){
 		$controllerName = '\Controller\\'.$controllerPath;
-		$controller = new $controllerName($this->getApplication());
+		if(class_exists($controllerName)){
+			$controller = new $controllerName($this->getApplication());
+		}else throw new Exception('Invalid controller path given');
 		return $controller;
 	}
 
+	/**
+	 * Get the controller action called
+	 * @return string
+	 */
 	public function getAction(){
 		return $this->_action;
 	}
 
 	/**
 	 * Cut the REQUEST_URI in two parts : "controller" part and "base" part
+	 * @return \Smally\Rooter
 	 */
 	public function parseUri(){
 		if(!$this->_baseUrl){
@@ -176,8 +218,9 @@ class Rooter {
 	}
 
 	/**
-	 * Convert an url action to a valid controller action
-	 * @param unknown_type $actionName
+	 * Convert an url action to a valid controller action inflected
+	 * @param string $actionName
+	 * @return string Inflected action
 	 */
 	public function parseAction($actionName){
 		$actionName = preg_replace('#(-)([a-z])#e',"strtoupper('\\2')",$actionName);
