@@ -199,7 +199,7 @@ class Rooter {
 		if($queryPath = $this->getRequestUri()){
 
 			// detect '..' and throw exception
-			if(strpos($queryPath,'..') !== false) throw new Exception('Somebody is trying to traverse by url !');
+			if(strpos($queryPath,'..') !== false) throw new Exception('We don\'t like ".." in the url ...');
 
 			// remove trailing sep
 			$queryPath = trim($queryPath,$urlSep);
