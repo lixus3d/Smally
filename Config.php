@@ -4,6 +4,8 @@ namespace Smally;
 
 class Config {
 
+	protected $_empty = true; // by default object is empty
+
 	/**
 	 * Config construct, you can give a $path to a config file (php array format)
 	 * @param mixed $path Path to a config file in php array format
@@ -27,7 +29,29 @@ class Config {
 			}else{
 				$this->{$key} = $value;
 			}
+			$this->_empty = false; // the object isn't empty anymore
 		}
+	}
+
+	/**
+	 * Is the config object empty , use for compatibilty with the fluid object syntax
+	 * @return boolean
+	 */
+	public function isEmpty(){
+		return $this->_empty;
+	}
+
+	/**
+	 * Convert the config object to an array of key => value
+	 * @return array
+	 */
+	public function toArray(){
+		$vars = array();
+		foreach($this as $key => $value){
+			if($key == '_empty') continue;
+			$vars[$key] = $value;
+		}
+		return $vars;
 	}
 
 	/**
@@ -46,4 +70,5 @@ class Config {
 	public function __toString(){
 		return '';
 	}
+
 }

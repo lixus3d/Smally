@@ -4,7 +4,13 @@ namespace Smally;
 
 class Application {
 
+	const ENV_DEVELOPMENT 			= 'development';
+	const ENV_PRODUDCTION			= 'production';
+	const ENV_STAGING				= 'staging';
+
 	static protected $_singleton 	= null;
+
+	protected $_environnement 		= self::ENV_DEVELOPMENT;
 
 	protected $_config 				= null;
 	protected $_response 			= null;
@@ -33,6 +39,16 @@ class Application {
 	 */
 	public function setInstance(){
 		return self::$_singleton = $this;
+	}
+
+	/**
+	 * Define the used environnement for the current execution
+	 * @param [type] $environnement [description]
+	 * @return \Smally\Application
+	 */
+	public function setEnvironnement($environnement){
+		$this->_environnement = $environnement;
+		return $this;
 	}
 
 	/**
@@ -76,6 +92,14 @@ class Application {
 	}
 
 	/**
+	 * Are we in a developpement context ?
+	 * @return boolean
+	 */
+	public function isDev(){
+		return $this->_environnement == self::ENV_DEVELOPMENT;
+	}
+
+	/**
 	 * Return the singleton
 	 * @return \Smally\Application
 	 */
@@ -84,6 +108,14 @@ class Application {
 			new self();
 		}
 		return self::$_singleton;
+	}
+
+	/**
+	 * Return the defined environnement , to test if you are in developpement context use isDev() method
+	 * @return string
+	 */
+	public function getEnvironnement(){
+		return $this->_environnement;
 	}
 
 	/**
@@ -168,10 +200,39 @@ class Application {
 	/**
 	 * Return the base Url of the project
 	 * @param  string $path Suffix the base url with this $path
+	 * @param  string  $type             Default type to www
+	 * @param  boolean $htmlspecialchars Does we convert the string to be href compliant*
 	 * @return string
 	 */
-	public function getBaseUrl($path=''){
-		return $this->getRooter()->getBaseUrl().$path;
+	public function getBaseUrl($path='',$type='www',$htmlspecialchars=true){
+		switch($type){
+			case 'www': break;
+			case $this->isDev(): // If we are in developpement context, then we always use the standard base url but we prefix with type directory
+				$path = $type.'/'.$path;
+			break;
+			case 'assets':
+				if( !$this->getConfig()->smally->paths->assets->isEmpty() && $assetsPaths = $this->getConfig()->smally->paths->assets->toArray()){
+					// generate a unique key (ip + $path first char)
+					$ip = substr(strrchr($this->getContext()->getIp(), '.'),1); // serv always same domain to a particular ip
+					$ip += ord(basename($path)) + strlen($path);
+					$url = $assetsPaths[$ip % count($assetsPaths)];
+				}
+			break;
+		}
+		if(!isset($url)) $url = $this->getRooter()->getBaseUrl();
+		$url .= $path;
+		return $htmlspecialchars?htmlspecialchars($url):$url;
+	}
+
+	/**
+	 * Shortcut to make assets url
+	 * @param  string  $path             Suffix to the base url of assets file
+	 * @param  string  $type             Default type to assets
+	 * @param  boolean $htmlspecialchars Does we convert the string to be href compliant
+	 * @return string
+	 */
+	public function urlAssets($path='',$type='assets',$htmlspecialchars=true){
+		return $this->getBaseUrl($path,$type,$htmlspecialchars);
 	}
 
 	/**

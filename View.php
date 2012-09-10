@@ -71,7 +71,7 @@ class View {
 	 * @return string
 	 */
 	public function getTemplatePath(){
-		return 'template'.DIRECTORY_SEPARATOR.$this->_templatePath.'.php';
+		return $this->_templatePath;
 	}
 
 	/**
@@ -118,10 +118,10 @@ class View {
 		$output = array();
 		$cssFiles = $this->getApplication()->getCss();
 		foreach($cssFiles as $file){
-			if(strpos($file,'.less') > 0) {
+			if(strpos($file,'.less') > 0 && !$this->getApplication()->isDev()) {
 				$file .= '.css';
 			}
-			$url = strpos($file,'http')===0?$file:$this->getBaseUrl('assets/'.$file);
+			$url = strpos($file,'http')===0?$file:$this->urlAssets($file);
 			$output[] = '<link rel="stylesheet"  type="text/css"  media="all" href="'.$url.'"/>';
 		}
 		return implode(NN.TT,$output);
@@ -135,7 +135,8 @@ class View {
 		$output = array();
 		$jsFiles = $this->getApplication()->getJs();
 		foreach($jsFiles as $file){
-			$output[] = '<script type="text/javascript" src="'.$this->getBaseUrl('assets/'.$file).'"></script>';
+			$url = strpos($file,'http')===0?$file:$this->urlAssets($file);
+			$output[] = '<script type="text/javascript" src="'.$url.'"></script>';
 		}
 		return implode(NN.TT,$output);
 	}
@@ -162,14 +163,24 @@ class View {
 	 * @return \Smally\View
 	 */
 	public function x(){
-		$template = $this->getTemplatePath();
-
-		if(file_exists(ROOT_PATH.$template)){
-			ob_start();
-			require(ROOT_PATH.$template);
-			$this->_content = ob_get_clean();
-		}else throw new Exception('Template not found : '.$template);
-
+		$this->_content = $this->render($this->getTemplatePath());
 		return $this;
 	}
+
+	/**
+	 * Render a particular template
+	 * @param  string $template the template relative path in template folder
+	 * @param  array  $params $params will be accessible in the template directly
+	 * @return string
+	 */
+	public function render($template,$params=array()){
+		$templatePath = 'template'.DIRECTORY_SEPARATOR.$template.'.php';
+		if(file_exists(ROOT_PATH.$templatePath)){
+			ob_start();
+			require(ROOT_PATH.$templatePath);
+			return ob_get_clean();
+		}else throw new Exception('Template not found : '.$template);
+		return '';
+	}
+
 }
