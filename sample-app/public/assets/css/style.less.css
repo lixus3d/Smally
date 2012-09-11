@@ -1,0 +1,354 @@
+.bold {
+  font-weight: bold;
+}
+.italic {
+  text-decoration: italic;
+}
+.left {
+  text-align: left;
+}
+.right {
+  text-align: right;
+}
+.center {
+  text-align: center;
+}
+.justify {
+  text-align: justify;
+}
+.floatLeft {
+  float: left;
+}
+.floatRight {
+  float: right;
+}
+.clear {
+  clear: both;
+}
+.block-overflow {
+  display: block;
+  overflow: hidden;
+}
+.img100 {
+  width: 100%;
+  height: auto;
+}
+.img90 {
+  width: 90%;
+  height: auto;
+}
+.img80 {
+  width: 80%;
+  height: auto;
+}
+.img70 {
+  width: 70%;
+  height: auto;
+}
+.img60 {
+  width: 60%;
+  height: auto;
+}
+.img50 {
+  width: 50%;
+  height: auto;
+}
+.img40 {
+  width: 40%;
+  height: auto;
+}
+.img30 {
+  width: 30%;
+  height: auto;
+}
+.img20 {
+  width: 20%;
+  height: auto;
+}
+.img10 {
+  width: 10%;
+  height: auto;
+}
+.fancy-font {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+}
+body {
+  font-family: "Arial", sans-serif;
+  font-size: 9.5pt;
+  text-align: justify;
+  color: #222;
+  background-color: #FFF;
+}
+a {
+  color: #ff7200;
+  text-decoration: none;
+}
+a:hover {
+  color: #70655c;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+}
+h1 {
+  font-size: 2.5em;
+}
+h2 {
+  font-size: 1.4em;
+  font-weight: normal;
+  margin-bottom: 0.4em;
+}
+h3 {
+  font-size: 1.2em;
+  font-weight: normal;
+}
+h4 {
+  font-size: 1.1em;
+}
+.header {
+  display: block;
+  overflow: hidden;
+  background: -moz-linear-gradient(top,#7b7b7b 0%,#555555 100%);
+  background: -webkit-gradient(linear,left top,left bottom,color-stop(0%,#7b7b7b),color-stop(100%,#555555));
+  background: -webkit-linear-gradient(top,#7b7b7b 0%,#555555 100%);
+  background: -o-linear-gradient(top,#7b7b7b 0%,#555555 100%);
+  background: -ms-linear-gradient(top,#7b7b7b 0%,#555555 100%);
+  background: linear-gradient(to bottom,#7b7b7b 0%,#555555 100%);
+  background-color: #888;
+  height: 40px;
+  line-height: 40px;
+  z-index: 1000;
+  position: relative;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+  color: #FFF;
+}
+.header .title {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 1.5em;
+  margin-top: -1px;
+}
+.header a {
+  color: #FFF;
+}
+.header a:hover {
+  color: #e6e6e6;
+}
+.breadcrumb {
+  text-align: left;
+}
+.breadcrumb ul li {
+  display: inline-block;
+  margin-right: 5px;
+}
+.breadcrumb ul li:after {
+  content: ">";
+  margin-left: 9px;
+}
+.breadcrumb ul li.omega:after {
+  content: "";
+  margin: 0;
+}
+.button {
+  display: inline-block;
+}
+.button a {
+  font-size: 0.9em;
+  line-height: 1em;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  color: #FFF;
+  display: block;
+  padding: 5px 10px 6px;
+  background: -moz-linear-gradient(top,#e66700 0%,#b35000 100%);
+  background: -webkit-gradient(linear,left top,left bottom,color-stop(0%,#e66700),color-stop(100%,#b35000));
+  background: -webkit-linear-gradient(top,#e66700 0%,#b35000 100%);
+  background: -o-linear-gradient(top,#e66700 0%,#b35000 100%);
+  background: -ms-linear-gradient(top,#e66700 0%,#b35000 100%);
+  background: linear-gradient(to bottom,#e66700 0%,#b35000 100%);
+  background-color: #FFF;
+  border: 1px solid #DDD;
+  border-color: rgba(0,0,0,0.15) rgba(0,0,0,0.15) rgba(0,0,0,0.25);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset, 0 1px 2px rgba(0,0,0,0.1);
+  text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
+}
+.button a:hover {
+  background: -moz-linear-gradient(top,#994400 0%,#cc5b00 100%);
+  background: -webkit-gradient(linear,left top,left bottom,color-stop(0%,#994400),color-stop(100%,#cc5b00));
+  background: -webkit-linear-gradient(top,#994400 0%,#cc5b00 100%);
+  background: -o-linear-gradient(top,#994400 0%,#cc5b00 100%);
+  background: -ms-linear-gradient(top,#994400 0%,#cc5b00 100%);
+  background: linear-gradient(to bottom,#994400 0%,#cc5b00 100%);
+}
+.icon {
+  display: inline-block;
+  overflow: hidden;
+  width: 18px;
+  height: 18px;
+  background-image: url('../img/icons.png');
+  background-repeat: no-repeat;
+}
+.icon-blob {
+  background-position: 0 -18px;
+}
+.icon-tree {
+  background-position: 0 0;
+}
+.titlehead {
+  border-bottom: 1px solid #DDD;
+  margin-bottom: 15px;
+  padding: 7px 0;
+}
+.titlehead .actions {
+  line-height: 40px;
+  height: 40px;
+  text-align: right;
+}
+.titlehead .git-branches ul {
+  display: inline-block;
+}
+.git-repo {
+  border-radius: 6px;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  background: -moz-linear-gradient(top,#ffffff 0%,#f7f7f7 100%);
+  background: -webkit-gradient(linear,left top,left bottom,color-stop(0%,#ffffff),color-stop(100%,#f7f7f7));
+  background: -webkit-linear-gradient(top,#ffffff 0%,#f7f7f7 100%);
+  background: -o-linear-gradient(top,#ffffff 0%,#f7f7f7 100%);
+  background: -ms-linear-gradient(top,#ffffff 0%,#f7f7f7 100%);
+  background: linear-gradient(to bottom,#ffffff 0%,#f7f7f7 100%);
+  border: 1px solid #DDD;
+  background-color: #DDD;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.git-repo a {
+  display: block;
+}
+.git-repo a:hover {
+  text-decoration: none;
+}
+.git-repo a:hover span {
+  display: block;
+  -moz-transition-duration: 0.3s;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -moz-transform: translate(15px,0);
+  -webkit-transform: translate(15px,0);
+  -o-transform: translate(15px,0);
+  -ms-transform: translate(15px,0);
+  transform: translate(15px,0);
+}
+.git-repo a:hover .name {
+  color: #404040;
+}
+.git-repo a .name {
+  color: #000;
+}
+.git-repo .name {
+  background: -moz-linear-gradient(top,#ffffff 0%,rgba(200,200,200,0.4) 100%);
+  background: -webkit-gradient(linear,left top,left bottom,color-stop(0%,#ffffff),color-stop(100%,rgba(200,200,200,0.4)));
+  background: -webkit-linear-gradient(top,#ffffff 0%,rgba(200,200,200,0.4) 100%);
+  background: -o-linear-gradient(top,#ffffff 0%,rgba(200,200,200,0.4) 100%);
+  background: -ms-linear-gradient(top,#ffffff 0%,rgba(200,200,200,0.4) 100%);
+  background: linear-gradient(to bottom,#ffffff 0%,rgba(200,200,200,0.4) 100%);
+  border-bottom: 1px solid #DDD;
+  margin-top: 5px;
+  padding: 0px 0 5px 15px;
+}
+.git-repo .infos {
+  margin: 4px 0 8px;
+}
+.git-repo .infos .path {
+  font-size: 0.9em;
+}
+.git-description {
+  color: #888;
+  margin-bottom: 15px;
+}
+.git-file-list {
+  border-radius: 6px;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border: 1px solid #DDD;
+  background-color: #FFF;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.git-file-list .git-breadcrumb {
+  display: block;
+  overflow: hidden;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  background: -moz-linear-gradient(top,#ffffff 0%,rgba(200,200,200,0.4) 100%);
+  background: -webkit-gradient(linear,left top,left bottom,color-stop(0%,#ffffff),color-stop(100%,rgba(200,200,200,0.4)));
+  background: -webkit-linear-gradient(top,#ffffff 0%,rgba(200,200,200,0.4) 100%);
+  background: -o-linear-gradient(top,#ffffff 0%,rgba(200,200,200,0.4) 100%);
+  background: -ms-linear-gradient(top,#ffffff 0%,rgba(200,200,200,0.4) 100%);
+  background: linear-gradient(to bottom,#ffffff 0%,rgba(200,200,200,0.4) 100%);
+  border-bottom: 1px solid #DDD;
+  margin-top: 5px;
+  padding: 0px 0 5px 15px;
+  font-size: 1.2em;
+}
+.git-file-list .git-breadcrumb .branch {
+  font-weight: 300;
+  color: #888;
+}
+.git-file-list .git-breadcrumb ul {
+  display: inline-block;
+  font-weight: 600;
+}
+.git-file-list .git-breadcrumb ul li {
+  display: inline;
+  margin-right: 8px;
+}
+.git-file-list .git-breadcrumb ul li:after {
+  content: "/";
+  color: #888;
+  margin-left: 8px;
+}
+.git-file-list .git-breadcrumb ul li.omega {
+  font-weight: 400;
+}
+.git-file-list .git-breadcrumb ul li.omega:after {
+  content: "";
+  margin: 0;
+}
+.git-file-list .files {
+  width: 100%;
+}
+.git-file-list .files thead {
+  background-color: #eee;
+  border-bottom: 1px solid #DDD;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 1px 2px rgba(0,0,0,0.1);
+}
+.git-file-list .files th,
+.git-file-list .files td {
+  padding: 4px 3px;
+}
+.git-file-list .files .ico {
+  text-align: center;
+  width: 32px;
+}
+.git-file-list .files .age {
+  width: 64px;
+}
+.git-file-list pre {
+  padding: 10px;
+}
+.footer {
+  overflow: hidden;
+  border-top: 1px solid #DDD;
+  margin: 4em 0;
+  padding: 1.5em 0 1em;
+  font-size: 0.8em;
+}
+.footer a:hover {
+  color: #888;
+}

@@ -1,0 +1,270 @@
+@iterations = 12;
+
+///////////////////
+// DEFAULT RULES //
+///////////////////
+
+@gridGutter = 14px;
+@gridUnit = 60px;
+
+
+.fixed {
+	clear:both;
+	width:720px;
+	margin-left:auto;
+	margin-right:auto;
+
+	.loopGrid (@index) when (@index>0){
+		(~".grid@{index}"){
+			width: (@gridUnit*@index)-@gridGutter;
+		}
+		(~".container@{index}"){
+			width: (@gridUnit*@index);
+		}
+		.loopGrid(@index - 1);
+	}
+	.loopGrid(0) {};
+	.loopGrid(12);
+
+	.grid,	.grid1,	.grid2,	.grid3,	.grid4,	.grid5,	.grid6,	.grid7,	.grid8,	.grid9,	.grid10, .grid11, .grid12{
+		display: inline;
+		float: left;
+		margin-left: @gridGutter/2;
+		margin-right: @gridGutter/2;
+	}
+	.container,.container1,.container2,.container3,.container4,.container5,.container6,.container7,.container8,.container9,.container10.container11,.container12{
+		display: inline;
+		float: left;
+		margin-left: 0;
+		margin-right: 0;
+	}
+}
+
+@fluidUnit = 8.3333333333%;
+@fluidGutter = 2%;
+.fluid {
+	clear:both;
+	.grid,	.grid1,	.grid2,	.grid3,	.grid4,	.grid5,	.grid6,	.grid7,	.grid8,	.grid9,	.grid10, .grid11, .grid12{
+		display: inline;
+		float: left;
+		margin-left: @fluidGutter/2;
+		margin-right: @fluidGutter/2;
+	}
+
+	.loopGrid (@index) when (@index>0){
+		(~".grid@{index}"){
+			width: (@fluidUnit*@index)-@fluidGutter;
+		}
+		.loopGrid(@index - 1);
+	}
+	.loopGrid(0) {};
+	.loopGrid(12);
+}
+
+
+////////////////////////
+// SMALL SCREEN RULES //
+////////////////////////
+
+@media (max-width: 734px) {
+	.fixed, .fluid {
+		width:auto;
+		margin:0 1.5%;
+	}
+	.fixed {
+		.grid,	.grid1,	.grid2,	.grid3,	.grid4,	.grid5,	.grid6,	.grid7,	.grid8,	.grid9,	.grid10, .grid11, .grid12{
+			display:block;
+			float:none;
+			margin:10px 0;
+			width:100%;
+		}
+		.container,.container1,.container2,.container3,.container4,.container5,.container6,.container7,.container8,.container9,.container10.container11,.container12{
+			width:100%;
+			display:block;
+			float:none;
+		}
+	}
+	.fluid {
+		.grid,	.grid1,	.grid2,	.grid3,	.grid4,	.grid5,	.grid6,	.grid7,	.grid8,	.grid9,	.grid10, .grid11, .grid12{
+			display:block;
+			float:none;
+			margin:10px 0;
+			width:100%;
+		}
+	}
+	.nophone,
+	.tablet,
+	.desktop{
+		display: none !important;
+	}
+	.phone,
+	.notablet,
+	.nodesktop {
+		display: inherit !important;
+	}
+}
+
+///////////////////////////////
+// TABLET SCREEN MOST LIKELY //
+///////////////////////////////
+
+@fluidUnit = 8.3333333333%;
+@fluidGutter = 2%;
+
+@gridUnit = 60px;
+@gridGutter = 20px;
+
+@media (min-width: 735px) {
+	.fluid {
+		clear:both;
+		.grid,	.grid1,	.grid2,	.grid3,	.grid4,	.grid5,	.grid6,	.grid7,	.grid8,	.grid9,	.grid10, .grid11, .grid12{
+			display: inline;
+			float: left;
+			margin-left: @fluidGutter/2;
+			margin-right: @fluidGutter/2;
+		}
+		.loopGrid (@index) when (@index>0){
+			(~".grid@{index}"){
+				width: (@fluidUnit*@index)-@fluidGutter;
+			}
+			.loopGrid(@index - 1);
+		}
+		.loopGrid(0) {};
+		.loopGrid(12);
+	}
+
+	.fixed {
+		clear:both;
+		width:720px;
+		margin-left:auto;
+		margin-right:auto;
+		.grid,	.grid1,	.grid2,	.grid3,	.grid4,	.grid5,	.grid6,	.grid7,	.grid8,	.grid9,	.grid10, .grid11, .grid12{
+			display: inline;
+			float: left;
+			margin-left: @gridGutter/2;
+			margin-right: @gridGutter/2;
+		}
+		.container,.container1,.container2,.container3,.container4,.container5,.container6,.container7,.container8,.container9,.container10.container11,.container12{
+			display: inline;
+			float: left;
+			margin-left: 0;
+			margin-right: 0;
+		}
+
+		.loopGrid (@index) when (@index>0){
+			(~".grid@{index}"){
+				width: (@gridUnit*@index)-@gridGutter;
+			}
+			(~".container@{index}"){
+				width: (@gridUnit*@index);
+			}
+			.loopGrid(@index - 1);
+		}
+		.loopGrid(0) {};
+		.loopGrid(12);
+
+	}
+	.notablet,
+	.phone,
+	.desktop{
+		display: none !important;
+	}
+
+	.tablet,
+	.nophone,
+	.nodesktop{
+		display: inherit !important;
+	}
+}
+
+//////////////////////////
+// STANDARD 1024 SCREEN //
+//////////////////////////
+
+@media (min-width: 975px) {
+	@gridGutter = 20px;
+	@gridUnit = 80px;
+
+	.fixed {
+		clear:both;
+		width:960px;
+		margin-left:auto;
+		margin-right:auto;
+		.grid,	.grid1,	.grid2,	.grid3,	.grid4,	.grid5,	.grid6,	.grid7,	.grid8,	.grid9,	.grid10, .grid11, .grid12{
+			display: inline;
+			float: left;
+			margin-left: @gridGutter/2;
+			margin-right: @gridGutter/2;
+		}
+		.container,.container1,.container2,.container3,.container4,.container5,.container6,.container7,.container8,.container9,.container10.container11,.container12{
+			display: inline;
+			float: left;
+			margin-left: 0;
+			margin-right: 0;
+		}
+
+		.loopGrid (@index) when (@index>0){
+			(~".grid@{index}"){
+				width: (@gridUnit*@index)-@gridGutter;
+			}
+			(~".container@{index}"){
+				width: (@gridUnit*@index);
+			}
+			.loopGrid(@index - 1);
+		}
+		.loopGrid(0) {};
+		.loopGrid(12);
+
+	}
+	.nodesktop,
+	.phone,
+	.tablet{
+		display: none !important;
+	}
+
+	.desktop,
+	.nophone,
+	.notablet{
+		display: inherit !important;
+	}
+}
+
+////////////////////////
+// NEW 1280 STRANDARD //
+////////////////////////
+
+@media (min-width: 1215px) {
+	@gridGutter = 26px;
+	@gridUnit = 100px;
+
+	.fixed {
+		clear:both;
+		width:1200px;
+		margin-left:auto;
+		margin-right:auto;
+		.grid,	.grid1,	.grid2,	.grid3,	.grid4,	.grid5,	.grid6,	.grid7,	.grid8,	.grid9,	.grid10, .grid11, .grid12{
+			display: inline;
+			float: left;
+			margin-left: @gridGutter/2;
+			margin-right: @gridGutter/2;
+		}
+		.container,.container1,.container2,.container3,.container4,.container5,.container6,.container7,.container8,.container9,.container10.container11,.container12{
+			display: inline;
+			float: left;
+			margin-left: 0;
+			margin-right: 0;
+		}
+
+		.loopGrid (@index) when (@index>0){
+			(~".grid@{index}"){
+				width: (@gridUnit*@index)-@gridGutter;
+			}
+			(~".container@{index}"){
+				width: (@gridUnit*@index);
+			}
+			.loopGrid(@index - 1);
+		}
+		.loopGrid(0) {};
+		.loopGrid(12);
+	}
+}
