@@ -6,7 +6,7 @@ Small(y) and basic Php MVC framework for quick prototyping
 Quick Install
 -------------
 
-Smally rely on PHP 5.3+ behind an Apache server with mod_rewrite.  
+Smally rely on PHP 5.3+ (with short_tag) behind an Apache server with mod_rewrite.  
 <i>Actually other httpd service must be compatible but not tested.</i> 
 
 1. Clone Smally from Github in your Apache folder
