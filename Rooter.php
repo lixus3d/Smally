@@ -101,7 +101,7 @@ class Rooter {
 	 * @return \Smally\Controller
 	 */
 	public function getControllerObject($controllerPath){
-		$controllerName = '\Controller\\'.$controllerPath;
+		$controllerName = '\controller\\'.$controllerPath;
 		if(class_exists($controllerName)){
 			$controller = new $controllerName($this->getApplication());
 		}else throw new Exception('Invalid controller path given');
@@ -232,7 +232,7 @@ class Rooter {
 			break;
 		}
 
-		$this->_action = $this->parseAction(array_pop($controllerPath))?:'index';
+		$this->_action = $this->parseAction(strtolower(array_pop($controllerPath)))?:'index';
 		$this->_controllerPath = implode('\\',$controllerPath);
 
 		return $this;
