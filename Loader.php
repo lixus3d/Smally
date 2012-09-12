@@ -19,6 +19,7 @@ class Loader {
 		if($parts = explode('_',$className)){
 
 			$classItself = array_pop($parts);
+			$classItself = str_replace('\\','/',$classItself); // Change path issue
 
 			// Paths where we search
 			$possibleBasePath = self::getBasePath();
