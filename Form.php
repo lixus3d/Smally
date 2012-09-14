@@ -169,6 +169,11 @@ class Form {
 		throw new Exception('Decorator type unavailable : '.$type);
 	}
 
+	/**
+	 * Fill each field with a value if present in $values
+	 * @param  array  $values Array of $fieldName => $value
+	 * @return \Smally\Form
+	 */
 	public function populateValue(array $values=array()){
 		if($values){
 			$this->populate($values,'setValue');
@@ -176,6 +181,11 @@ class Form {
 		return $this;
 	}
 
+	/**
+	 * Fill each field with a error if present in $errors
+	 * @param  array  $errors Array of $fieldName => $error
+	 * @return \Smally\Form
+	 */
 	public function populateError(array $errors=array()){
 		if($errors){
 			$this->populate($errors,'setError');
@@ -183,12 +193,19 @@ class Form {
 		return $this;
 	}
 
+	/**
+	 * Execute $method on each field present in $population keys with $population values as param
+	 * @param  array  $population Array of $fieldName => $methoParam
+	 * @param  string $method     Method to execute
+	 * @return \Smally\Form
+	 */
 	private function populate(array $population,$method){
 		foreach($population as $fieldName => $info){
 			if(isset($this->_fields[$fieldName]) && method_exists($this->_fields[$fieldName], $method)){
 				$this->_fields[$fieldName]->{$method}($info);
 			}
 		}
+		return $this;
 	}
 
 	/**
