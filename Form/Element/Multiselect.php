@@ -2,9 +2,9 @@
 
 namespace Smally\Form\Element;
 
-class Select extends Radio{
+class Multiselect extends Radio{
 
-	protected $_type = 'select';
+	protected $_type = 'multiselect';
 	protected $_decorator = 'select';
 
 }

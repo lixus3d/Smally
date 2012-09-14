@@ -149,24 +149,24 @@ class Form {
 	 * @return \Smally\Form\Decorator\Abt
 	 */
 	public function getDecorator($type,$obj=null){
-		switch($type){
-			case 'form':
-			case 'element':
-			case 'label':
-			case 'comment':
-			case 'help':
-			case 'error':
-			case 'input':
-			case 'select':
-			case 'textarea':
-				$name = $this->_decoratorNamespace.ucfirst($type);
-				if(!class_exists($name)){
-					$name = '\\Smally\\Form\\Decorator\\'.ucfirst($type);
-				}
-				return new $name($obj);
-			break;
+		$name = $this->_decoratorNamespace.ucfirst($type); // Try the form namespace
+		if(!class_exists($name)){
+			$name = '\\Smally\\Form\\Decorator\\'.ucfirst($type); // try the form default namespace
 		}
-		throw new Exception('Decorator type unavailable : '.$type);
+		if(!class_exists($name)){
+			throw new Exception('Decorator type unavailable : '.$type);
+		}
+		return new $name($obj);
+	}
+
+	/**
+	 * Automatically population field value from context
+	 * @return \Smally\Form
+	 */
+	public function autoPopulateValue(\Smally\Context $context){
+		foreach($this->_fields as $fieldName => $fieldObject){
+			$fieldObject->populateValue($context->{$fieldName});
+		}
 	}
 
 	/**
@@ -176,7 +176,7 @@ class Form {
 	 */
 	public function populateValue(array $values=array()){
 		if($values){
-			$this->populate($values,'setValue');
+			$this->populate($values,'populateValue');
 		}
 		return $this;
 	}

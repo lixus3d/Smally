@@ -184,6 +184,15 @@ abstract class AbstractElement implements InterfaceElement {
 	}
 
 	/**
+	 * Populate the value of the element, must be redefine for checkbox or radio for example to handle checked
+	 * @param string $value The value of the element or the value of the option checked/selected
+	 * @return \Smally\Form\Element\AbstractElement
+	 */
+	public function populateValue($value){
+		return $this->setValue($value);
+	}
+
+	/**
 	 * Return the rendered version of the field
 	 * @return string
 	 */
