@@ -168,7 +168,7 @@ class Rooter {
 	 * @param int $code
 	 */
 	public function redirect($destination='',$code=302){
-		if(strpos('http',$destination) !== 0) $destination = $this->getBaseUrl() . $destination;
+		if(strpos($destination,'http') !== 0) $destination = $this->getBaseUrl() . $destination;
 		header('Location: '.$destination,true,$code);
 		die();
 	}
