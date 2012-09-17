@@ -85,6 +85,14 @@ class Rooter {
 	}
 
 	/**
+	 * Return the full action path prefixed by the controller path
+	 * @return string
+	 */
+	public function getActionPath(){
+		return $this->_controllerPath .'\\'.$this->getAction();
+	}
+
+	/**
 	 * Return the controller object of the called page
 	 * @return \Smally\Controller
 	 */
