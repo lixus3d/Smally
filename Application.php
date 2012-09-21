@@ -260,6 +260,16 @@ class Application {
 	}
 
 	/**
+	 * Return the constructed url of a controller
+	 * @param  string $controllerPath The controller path
+	 * @param  array  $params         Url parameters to add
+	 * @return string
+	 */
+	public function makeControllerUrl($controllerPath,$params=array()){
+		return $this->getUrlRewriting()->getControllerRewriting($controllerPath,$params);
+	}
+
+	/**
 	 * Execute the application logic
 	 * @return \Smally\Application
 	 */

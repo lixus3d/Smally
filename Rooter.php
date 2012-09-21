@@ -213,7 +213,11 @@ class Rooter {
 			$queryPath = trim($queryPath,$urlSep);
 
 			// Apply UrlRewriting Rules
-			if($urlRewriting = $this->_application->getUrlRewriting()){
+			if($urlRewriting = $this->_application->getUrlRewriting()){ // Do we have a valid Url Rewriting element
+
+				// If we found a url rewriting for the controller path given in $queryPath, then we redirect to this specific url to avoid SEO duplicate content
+				if( !is_null($controllerRewriting = $urlRewriting->getControllerRewriting($queryPath)) )  $this->redirect($controllerRewriting,301);
+
 				if($destination = $urlRewriting->getRewrite($queryPath)){
 					if(is_array($destination)){
 						$queryPath = $destination['path'];
@@ -227,11 +231,12 @@ class Rooter {
 			}
 
 			// explode the query in parts
-			$parts = explode('/',$queryPath);
+			$parts = explode($urlSep,$queryPath);
 			foreach($parts as $part){
 				$controllerPath[] = ucfirst($part);
 			}
 		}
+
 		switch(count($controllerPath)){
 			case 0;
 				$controllerPath[] = 'index';
