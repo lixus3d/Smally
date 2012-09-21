@@ -112,7 +112,7 @@ class Rooter {
 		$controllerName = '\controller\\'.$controllerPath;
 		if(class_exists($controllerName)){
 			$controller = new $controllerName($this->getApplication());
-		}else throw new Exception('Invalid controller path given');
+		}else throw new Exception('Invalid controller path given : '.$controllerName);
 		return $controller;
 	}
 
@@ -234,9 +234,9 @@ class Rooter {
 		}
 		switch(count($controllerPath)){
 			case 0;
-				$controllerPath[] = 'Index';
-			case 1:
 				$controllerPath[] = 'index';
+			case 1:
+				array_unshift($controllerPath,'Index');
 			break;
 		}
 
