@@ -19,6 +19,7 @@ class Application {
 	protected $_meta				= null;
 
 	protected $_urlRewriting		= null;
+	protected $_navigation			= null;
 	protected $_bootstrap			= null;
 
 	protected $_view				= null;
@@ -58,6 +59,16 @@ class Application {
 	 */
 	public function setConfig( \Smally\Config $config){
 		$this->_config = $config;
+		return $this;
+	}
+
+	/**
+	 * Define the application navigation object
+	 * @param \Smally\Navigation $config A valid navigation object
+	 * @return \Smally\Application
+	 */
+	public function setNavigation( \Smally\Navigation $navigation){
+		$this->_navigation = $navigation;
 		return $this;
 	}
 
@@ -195,6 +206,15 @@ class Application {
 			$this->_bootstrap = new \Bootstrap($this);
 		}
 		return $this->_bootstrap;
+	}
+
+	/**
+	 * Get the context object or create it the first time with $_REQUEST
+	 * @return \Smally\Context
+	 */
+	public function getNavigation(){
+		if(is_null($this->_navigation)) $this->_navigation = new Navigation();
+		return $this->_navigation;
 	}
 
 	/**
