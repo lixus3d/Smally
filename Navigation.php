@@ -7,6 +7,8 @@ namespace Smally;
  */
 class Navigation {
 
+	protected $_application = null;
+
 	protected $_trees = array();
 	protected $_knownControllerPath = array();
 
@@ -19,6 +21,16 @@ class Navigation {
 			require($path);
 			if(isset($navigation) && is_array($navigation)) $this->initNavigation($navigation);
 		}
+	}
+
+	/**
+	 * Set the application reverse reference
+	 * @param \Smally\Application $application Current application linked to this object
+	 * @return \Smally\Navigation
+	 */
+	public function setApplication(\Smally\Application $application){
+		$this->_application = $application;
+		return $this;
 	}
 
 	/**
@@ -42,6 +54,14 @@ class Navigation {
 	public function addPath($controllerPath,\Smally\NavigationTree $tree){
 		$this->_knownControllerPath[$controllerPath] = $tree;
 		return $this;
+	}
+
+	/**
+	 * Return the application reverse referenced
+	 * @return \Smally\Application
+	 */
+	public function getApplication(){
+		return $this->_application;
 	}
 
 	/**

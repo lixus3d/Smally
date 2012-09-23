@@ -44,4 +44,30 @@ class NavigationTree extends Tree{
 		return $this->_navigation;
 	}
 
+	/**
+	 * Return the name of a tree element
+	 * @return string
+	 */
+	public function getName(){
+		return $this->name;
+	}
+
+	/**
+	 * Return the url of a tree element
+	 * @return string
+	 */
+	public function getUrl(){
+		if(!isset($this->url)){ // if url is not directly set or not yet compiled
+			// Test against url rewriting if existing
+			if($this->getNavigation()->getApplication() && $rewriting = $this->getNavigation()->getApplication()->getUrlRewriting()){
+				if(!is_null($rewriting->getControllerRewriting($this->controllerPath))){
+					$relativeUrl = $rewriting->getControllerRewriting($this->controllerPath);
+				}
+			}
+			if(!isset($relativeUrl)) $relativeUrl = $this->controllerPath;
+			$this->url = $this->getNavigation()->getApplication()? $this->getNavigation()->getApplication()->getBaseUrl($relativeUrl) : $relativeUrl;
+		}
+		return $this->url;
+	}
+
 }

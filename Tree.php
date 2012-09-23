@@ -11,6 +11,8 @@ class Tree {
 	protected $_parent = null;
 	protected $_children = array();
 
+	protected $_attributes = array();
+
 	/**
 	 * Construct the new tree object
 	 * @param array  $options Array of $key => $value set as tree properties, if a 'children' key is given, assume that's it's a sub array of Tree to construct
@@ -20,7 +22,7 @@ class Tree {
 		if(!is_null($parent)){
 			$this->setParent($parent);
 		}
-		if(is_array($options)){
+		if(is_array($options) && $options){
 			$this->init($options);
 		}
 	}
@@ -69,11 +71,42 @@ class Tree {
 	 */
 	public function setChildren($children){
 		foreach($children as $child){
-			$this->_children[] = new static($child,$this);
+			$this->addChild($child);
 		}
 		return $this;
 	}
 
+	/**
+	 * Add a child to the tree ( a sub Tree object )
+	 * @param  $child Child array
+	 */
+	public function addChild($child){
+		$this->_children[] = new static($child,$this);
+		return $this;
+	}
+
+	/**
+	 * Define an attribute of the tree element when rendered
+	 * @param string $attribute the attribute name to define
+	 * @param mixed $value the value
+	 * @return \Smally\Tree
+	 */
+	public function setAttribute($attribute,$value,$type='_attributes'){
+		switch($attribute){
+			case 'class':
+				if(!isset($this->{$type}[$attribute])) $this->{$type}[$attribute] = array();
+				$this->{$type}[$attribute][] = $value;
+			break;
+			default:
+				$this->{$type}[$attribute] = $value;
+			break;
+		}
+		return $this;
+	}
+
+	public function hasChildren(){
+		return !empty($this->_children);
+	}
 	/**
 	 * Get the parent object of the current Tree
 	 * @return \Smally\Tree Can be null if "root" element
@@ -101,6 +134,34 @@ class Tree {
 			} else $this->_level = 0;
 		}
 		return $this->_level;
+	}
+
+	/**
+	 * Return the tree tag attributes when rendered
+	 * @return array the attributes
+	 */
+	public function getAttributes(){
+		return $this->_attributes;
+	}
+
+	/**
+	 * Return a menu generator object
+	 * @return \Smally\Helper\Menu
+	 */
+	public function getMenu(){
+		$menu = new Helper\Menu();
+		$menu->setTree($this);
+		return $menu;
+	}
+
+	/**
+	 * Return a path generator object
+	 * @return \Smally\Helper\Breadcrumb
+	 */
+	public function getBreadcrumb(){
+		$breadcrumb = new Helper\Breadcrumb();
+		$breadcrumb->setTree($this);
+		return $breadcrumb;
 	}
 
 }

@@ -69,6 +69,7 @@ class Application {
 	 */
 	public function setNavigation( \Smally\Navigation $navigation){
 		$this->_navigation = $navigation;
+		$this->_navigation->setApplication($this);
 		return $this;
 	}
 
