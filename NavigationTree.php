@@ -64,7 +64,7 @@ class NavigationTree extends Tree{
 					$relativeUrl = $rewriting->getControllerRewriting($this->controllerPath);
 				}
 			}
-			if(!isset($relativeUrl)) $relativeUrl = $this->controllerPath;
+			if(!isset($relativeUrl)) $relativeUrl = str_replace('\\','/',$this->controllerPath);
 			$this->url = $this->getNavigation()->getApplication()? $this->getNavigation()->getApplication()->getBaseUrl($relativeUrl) : $relativeUrl;
 		}
 		return $this->url;

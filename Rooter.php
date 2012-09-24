@@ -230,6 +230,9 @@ class Rooter {
 				}
 			}
 
+			// TODO : Fine a better solution to explode on Controller namespace separator
+			$queryPath = str_replace('\\',$urlSep,$queryPath);
+
 			// explode the query in parts
 			$parts = explode($urlSep,$queryPath);
 			foreach($parts as $part){

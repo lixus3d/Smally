@@ -8,7 +8,7 @@ abstract class AbstractUrlRewriting {
 	protected $_controllerRewriting = array();
 
 	public function __construct(){
-		$this->addRule('','Index/index'); // The most default rewrite rule to avoid SEO duplicate content
+		$this->addRule('','Index\index'); // The most default rewrite rule to avoid SEO duplicate content
 		$this->init();
 	}
 
@@ -29,7 +29,7 @@ abstract class AbstractUrlRewriting {
 
 			if($destination){ // If the destination (options) is a string, the controller has a particular url for being accessed
 				$this->_controllerRewriting[strtolower($destination)] = &$array;
-				if(strpos($destination,'Index/')===0){ // if it's a default Index controller action, must create to rule
+				if(strpos($destination,'Index\\')===0){ // if it's a default Index controller action, must create two rule
 					$this->_controllerRewriting[substr($destination,6)] = &$array;
 				}
 			}
