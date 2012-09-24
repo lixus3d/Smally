@@ -2,6 +2,9 @@
 
 namespace Smally\Form\Decorator;
 
+/**
+ * Decorator for Radio and Checkbox element
+ */
 class Radio extends AbstractDecorator {
 
 	/**
