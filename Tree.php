@@ -145,6 +145,26 @@ class Tree {
 	}
 
 	/**
+	 * Return the path of the tree ( loop thru parents element)
+	 * @return array Array of \Smally\Tree
+	 */
+	public function getPath($withMe=true,$withRoot=false){
+
+		$path = array();
+
+		if($withMe) $path[] = $this;
+
+		$obj = $this;
+		while($parent = $obj->getParent()){
+			$path[] = $parent;
+			$obj = $parent;
+		}
+		if(!$withRoot) array_pop($path);
+
+		return array_reverse($path);
+	}
+
+	/**
 	 * Return a menu generator object
 	 * @return \Smally\Helper\Menu
 	 */
