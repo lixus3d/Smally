@@ -219,6 +219,14 @@ class Application {
 	}
 
 	/**
+	 * Return a new Acl object
+	 * @return \Smally\Acl
+	 */
+	public function getAcl(){
+		return new Acl();
+	}
+
+	/**
 	 * Return the base Url of the project
 	 * @param  string $path Suffix the base url with this $path
 	 * @param  string  $type             Default type to www
@@ -287,7 +295,10 @@ class Application {
 	 * @return string
 	 */
 	public function makeControllerUrl($controllerPath,$params=array()){
-		return $this->getUrlRewriting()->getControllerRewriting($controllerPath,$params);
+		if($urlRewriting=$this->getUrlRewriting()){
+			return $urlRewriting->getControllerRewriting($controllerPath,$params);
+		}
+		return str_replace('\\','/',$controllerPath);
 	}
 
 	/**

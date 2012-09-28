@@ -176,7 +176,7 @@ class Rooter {
 	 * @param int $code
 	 */
 	public function redirect($destination='',$code=302){
-		if(strpos($destination,'http') !== 0) $destination = $this->getBaseUrl() . $destination;
+		if(strpos($destination,'http') !== 0) $destination = $this->getBaseUrl() . $this->getApplication()->makeControllerUrl($destination);
 		header('Location: '.$destination,true,$code);
 		die();
 	}
@@ -216,7 +216,7 @@ class Rooter {
 			if($urlRewriting = $this->_application->getUrlRewriting()){ // Do we have a valid Url Rewriting element
 
 				// If we found a url rewriting for the controller path given in $queryPath, then we redirect to this specific url to avoid SEO duplicate content
-				if( !is_null($controllerRewriting = $urlRewriting->getControllerRewriting($queryPath)) )  $this->redirect($controllerRewriting,301);
+				if( $url = $urlRewriting->hasControllerRewriting($queryPath))  $this->redirect($url,301);
 
 				if($destination = $urlRewriting->getRewrite($queryPath)){
 					if(is_array($destination)){

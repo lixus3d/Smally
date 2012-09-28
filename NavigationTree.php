@@ -59,13 +59,8 @@ class NavigationTree extends Tree{
 	public function getUrl(){
 		if(!isset($this->url)){ // if url is not directly set or not yet compiled
 			// Test against url rewriting if existing
-			if($this->getNavigation()->getApplication() && $rewriting = $this->getNavigation()->getApplication()->getUrlRewriting()){
-				if(!is_null($rewriting->getControllerRewriting($this->controllerPath))){
-					$relativeUrl = $rewriting->getControllerRewriting($this->controllerPath);
-				}
-			}
-			if(!isset($relativeUrl)) $relativeUrl = str_replace('\\','/',$this->controllerPath);
-			$this->url = $this->getNavigation()->getApplication()? $this->getNavigation()->getApplication()->getBaseUrl($relativeUrl) : $relativeUrl;
+			$relativeUrl = $this->getNavigation()->getApplication()->makeControllerUrl($this->controllerPath);
+			$this->url = $this->getNavigation()->getApplication()->getBaseUrl($relativeUrl);
 		}
 		return $this->url;
 	}

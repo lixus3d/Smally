@@ -43,9 +43,9 @@ abstract class AbstractUrlRewriting {
 	 * @return string null in case of no matching rule
 	 */
 	public function getControllerRewriting($controllerPath,$params=array()){
-		$controllerPath = strtolower($controllerPath);
-		if(isset($this->_controllerRewriting[$controllerPath])){
-			$rule = $this->_controllerRewriting[$controllerPath];
+		$controllerPathLowered = strtolower($controllerPath);
+		if(isset($this->_controllerRewriting[$controllerPathLowered])){
+			$rule = $this->_controllerRewriting[$controllerPathLowered];
 			$test = $rule['rule'];
 			if(strpos($test,'#')===0){
 				if(isset($rule['options']['reverse'])){
@@ -57,7 +57,16 @@ abstract class AbstractUrlRewriting {
 				return $test;
 			}
 		}
-		return null;
+		return str_replace('\\','/',$controllerPath);
+	}
+
+	/**
+	 * Return the url rewriting if specific or false if no specific rule found
+	 * @param  string  $controllerPath The controllerpath to test
+	 * @return mixed
+	 */
+	public function hasControllerRewriting($controllerPath){
+		return  ($url = $this->getControllerRewriting($controllerPath))==str_replace('\\','/',$controllerPath) ? false : $url;
 	}
 
 	/**
