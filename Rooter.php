@@ -216,7 +216,7 @@ class Rooter {
 			if($urlRewriting = $this->_application->getUrlRewriting()){ // Do we have a valid Url Rewriting element
 
 				// If we found a url rewriting for the controller path given in $queryPath, then we redirect to this specific url to avoid SEO duplicate content
-				if( $url = $urlRewriting->hasControllerRewriting($queryPath))  $this->redirect($url,301);
+				if( $url = $urlRewriting->hasControllerRewriting( str_replace($urlSep,'\\',$queryPath) ))  $this->redirect($url,301);
 
 				if($destination = $urlRewriting->getRewrite($queryPath)){
 					if(is_array($destination)){
@@ -227,11 +227,9 @@ class Rooter {
 							}
 						}
 					}else $queryPath = $destination;
+					$queryPath = str_replace('\\',$urlSep,$queryPath);
 				}
 			}
-
-			// TODO : Fine a better solution to explode on Controller namespace separator
-			$queryPath = str_replace('\\',$urlSep,$queryPath);
 
 			// explode the query in parts
 			$parts = explode($urlSep,$queryPath);
