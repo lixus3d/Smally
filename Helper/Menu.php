@@ -109,13 +109,13 @@ class Menu {
 	 * @return \Smally\Helper\Decorator\AbstractDecorator
 	 */
 	public function getDecorator($type,$obj=null){
-		$name = $this->_decoratorNamespace.ucfirst($type); // Try the form namespace
+		$name = $this->_decoratorNamespace.ucfirst($type); // Try the current namespace
 		if(!class_exists($name)){
-			$name = '\\Smally\\Helper\\Decorator\\'.ucfirst($type); // try the form default namespace
+			$name = '\\Smally\\Helper\\Decorator\\'.ucfirst($type); // try the helper default namespace
 		}
-		if(!class_exists($name)){
+		/*if(!class_exists($name)){
 			throw new Exception('Decorator type unavailable : '.$type);
-		}
+		}*/
 		return new $name($obj);
 	}
 
