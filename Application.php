@@ -12,17 +12,18 @@ class Application {
 
 	protected $_environnement 		= self::ENV_DEVELOPMENT;
 
-	protected $_config 				= null;
-	protected $_response 			= null;
-	protected $_rooter 				= null;
-	protected $_context 			= null;
-	protected $_meta				= null;
-
-	protected $_urlRewriting		= null;
-	protected $_navigation			= null;
 	protected $_bootstrap			= null;
 
+	protected $_config 				= null;
+	protected $_context 			= null;
+	protected $_rooter 				= null;
 	protected $_view				= null;
+	protected $_response 			= null;
+
+	protected $_meta				= null;
+	protected $_urlRewriting		= null;
+	protected $_navigation			= null;
+
 	protected $_layout				= 'global';
 
 	protected $_css					= array();
