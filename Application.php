@@ -13,6 +13,7 @@ class Application {
 	protected $_environnement 		= self::ENV_DEVELOPMENT;
 
 	protected $_bootstrap			= null;
+	protected $_factory				= null;
 
 	protected $_config 				= null;
 	protected $_context 			= null;
@@ -138,6 +139,21 @@ class Application {
 	public function getConfig(){
 		if(is_null($this->_config)) $this->_config = new Config();
 		return $this->_config;
+	}
+
+	/**
+	 * Return the factory of the application, you can have your own factory or use the Smally one
+	 * @return \Smally\Factory
+	 */
+	public function getFactory(){
+		if(is_null($this->_factory)){
+			if(class_exists('\Factory')){
+				$this->_factory = new \Factory($this);
+			}else{
+				$this->_factory = new Factory($this);
+			}
+		}
+		return $this->_factory;
 	}
 
 	/**
