@@ -30,10 +30,13 @@ class Application {
 	protected $_css					= array();
 	protected $_js					= array();
 
+	private $__startTime 			= 0;
+
 	public function __construct(){
 		if(!self::$_singleton instanceof self){
 			$this->setInstance();
 		}
+		$this->__startTime = microtime(true);
 	}
 
 	/**
@@ -122,6 +125,14 @@ class Application {
 			new self();
 		}
 		return self::$_singleton;
+	}
+
+	/**
+	 * Return the execution time between now and start of application instanciation
+	 * @return float
+	 */
+	public function getExecutionTime(){
+		return microtime(true)-$this->__startTime;
 	}
 
 	/**
@@ -251,6 +262,11 @@ class Application {
 	 * @return string
 	 */
 	public function getBaseUrl($path='',$type='www',$htmlspecialchars=true){
+		static $baseUrl = null;
+		if(is_null($baseUrl)){
+			$baseUrl = $this->getRooter()->getBaseUrl();
+		}
+
 		switch($type){
 			case 'www': break;
 			case $this->isDev(): // If we are in developpement context, then we always use the standard base url but we prefix with type directory
@@ -265,7 +281,7 @@ class Application {
 				}
 			break;
 		}
-		if(!isset($url)) $url = $this->getRooter()->getBaseUrl();
+		if(!isset($url)) $url = $baseUrl;
 		$url .= $path;
 		return $htmlspecialchars?htmlspecialchars($url):$url;
 	}
