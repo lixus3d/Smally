@@ -167,6 +167,7 @@ class Form {
 		foreach($this->_fields as $fieldName => $fieldObject){
 			$fieldObject->populateValue($context->{$fieldName});
 		}
+		return $this;
 	}
 
 	/**
