@@ -141,6 +141,10 @@ class View {
 		return implode(NN.TT,$output);
 	}
 
+	public function getControllerUrl($controllerPath){
+		return $this->getApplication()->getBaseUrl($this->getApplication()->makeControllerUrl($controllerPath));
+	}
+
 	/**
 	 * Execute another controller and get the generated content
 	 * @param  string $controllerPath Path to the controller
@@ -175,11 +179,13 @@ class View {
 	 */
 	public function render($template,$params=array()){
 		$templatePath = 'template'.DIRECTORY_SEPARATOR.$template.'.php';
-		if(file_exists(ROOT_PATH.$templatePath)){
-			ob_start();
-			require(ROOT_PATH.$templatePath);
-			return ob_get_clean();
-		}else throw new Exception('Template not found : '.$template);
+
+		ob_start();
+		if(!@include(ROOT_PATH.$templatePath)){
+			throw new Exception('Template not found : '.$template);
+		}
+		return ob_get_clean();
+
 		return '';
 	}
 
