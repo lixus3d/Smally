@@ -40,7 +40,5 @@ Install for multiple projects
 
 Todo
 ----
-- Make better url creator for controller url and url rewriting 
-- Add ACL
 - Add form creator, decorator and simple validator
 - And many more ...
