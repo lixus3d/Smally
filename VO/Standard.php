@@ -30,7 +30,10 @@ class Standard extends \stdClass {
 	 */
 	public function initVars(array $vars){
 		foreach($vars as $name => $value){
-			if(property_exists($this, $name)){
+			$method = 'set'.ucfirst($name);
+			if(method_exists($this, $method)){
+				$this->{$method}($value);
+			}else if(property_exists($this, $name)){
 				$this->{$name} = $value;
 			}
 		}
@@ -102,9 +105,39 @@ class Standard extends \stdClass {
 		$array = array();
 		foreach($this as $key => $value){
 			if(strpos($key,'_')===0) continue;
-			$array[$key] = $value;
+			$method = 'get'.ucfirst($key);
+			if(method_exists($this, $method)){
+				$array[$key] = $this->{$method}();
+ 			}else{
+				$array[$key] = $value;
+			}
 		}
 		return $array;
+	}
+
+	/**
+	 * GENERIC GETTER AND SETTER FOR USUAL PROPERTY FORMAT
+	 */
+
+	/**
+	 * Generic setter for uts field
+	 * @param  string $field the field name
+	 * @param  string $date  the given date in dd/mm/YYYY format
+	 * @return \Smally\VO\Standard
+	 */
+	protected function _genericSetUts($field,$date){
+		list($day,$month,$year) = explode('/',$date);
+		$this->{$field} = mktime(0,0,0,$month,$day,$year);
+		return $this;
+	}
+
+	/**
+	 * Generic getter for uts field
+	 * @param  string $field the field name
+	 * @return string Date in dd/mm/YYYY format
+	 */
+	protected function _genericGetUts($field){
+		return date('d/m/Y',$this->{$field});
 	}
 
 }
