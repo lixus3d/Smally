@@ -2,6 +2,7 @@ Smally
 ======
 
 Small(y) and basic Php MVC framework for quick prototyping  
+<i>sample-app might not be up to date, sorry for that ...</i>
 
 Quick Install
 -------------
@@ -40,5 +41,20 @@ Install for multiple projects
 
 Todo
 ----
-- Add form creator, decorator and simple validator
-- And many more ...
+- Form :
+	- Add others type of field :
+		- date 
+		- html wysiwyg 		
+		- color 
+		- other value object and objects  
+- Validator :
+	- Add others type of validator :
+		- email
+		- date
+		- numeric
+		- alpha 
+		- alpha and numeric 
+		- regex  
+- Dao :
+	- Add array values store and fetch possibility 
+	- Add gestion of join in Criteria
