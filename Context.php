@@ -92,6 +92,14 @@ class ContextStdClass extends \stdClass {
 	}
 
 	/**
+	 * Return an empty string when tested
+	 * @return string
+	 */
+	public function __toString(){
+		return '';
+	}
+
+	/**
 	 * Automatically create a new property with string value or a sub ContextStdClass object
 	 * @param string $name  name of the property
 	 * @param mixed $value value of the property
