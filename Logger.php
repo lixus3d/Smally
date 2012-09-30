@@ -133,7 +133,8 @@ class Logger {
 
 		$completeText = date('Y-m-d H:i:s'). $this->_separator .$typeLabel. $this->_separator .$text;
 
-		for($i=1;$i<=5;$i++){
+		$return = false;
+		for($i=0;$i<=5;$i++){
 			$bit = pow(2,$i) & $destination ;
 			switch(true){
 				case $bit&self::DEST_LOG:

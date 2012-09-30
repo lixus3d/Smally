@@ -13,12 +13,19 @@ class Rooter {
 	protected $_controllerPath = null;
 	protected $_action = null;
 
+	protected $_logLevel = null;
+	protected $_logger = null;
+
 	/**
 	 * Construct the Rooter object
 	 * @param \Smally\Application $application reverse reference to the application
 	 */
 	public function __construct(\Smally\Application $application){
 		$this->setApplication($application);
+		if($logger = $application->getLogger()){
+			$this->_logger = $logger;
+			$this->_logLevel = $logger->getLogLevel('rooter');
+		}
 	}
 
 	/**
@@ -122,6 +129,20 @@ class Rooter {
 	 */
 	public function getAction(){
 		return $this->_action;
+	}
+
+
+	/**
+	 * Wrapper to the Logger but test if we have to log before sending
+	 * @param  string $text     Usually the root to log
+	 * @param  int $level       The level of the log
+	 * @param  int $destination Destination of the log
+	 * @return null
+	 */
+	public function log($text,$level=\Smally\Logger::LVL_INFO,$destination=\Smally\Logger::DEST_LOG){
+		if(!is_null($this->_logger)&&$this->_logLevel<=$level){
+			$this->_logger->log($text,$level,$destination);
+		}
 	}
 
 	/**
@@ -251,6 +272,8 @@ class Rooter {
 
 		$this->_action = $this->parseAction(strtolower(array_pop($controllerPath)))?:'index';
 		$this->_controllerPath = implode('\\',$controllerPath);
+
+		$this->log($this->getActionPath());
 
 		return $this;
 	}
