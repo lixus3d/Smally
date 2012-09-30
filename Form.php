@@ -16,6 +16,8 @@ class Form {
 
 	protected $_separator 	= RN;
 
+	protected $_namePrefix  = null;
+
 	protected $_fields 		= array();
 
 	/**
@@ -99,6 +101,15 @@ class Form {
 	}
 
 	/**
+	 * Define a name prefix for all field , prefix act as an associative array
+	 * @param string $prefix The prefix you want
+	 */
+	public function setNamePrefix($prefix){
+		$this->_namePrefix = $prefix;
+		return $this;
+	}
+
+	/**
 	 * Return the method of the form, default return is in string format
 	 * @param  boolean $const True to return the constant equivalent ( integer )
 	 * @return mixed
@@ -159,13 +170,21 @@ class Form {
 		return new $name($obj);
 	}
 
+	public function getNamePrefix(){
+		return $this->_namePrefix;
+	}
+
 	/**
 	 * Automatically population field value from context
 	 * @return \Smally\Form
 	 */
 	public function autoPopulateValue(\Smally\Context $context){
 		foreach($this->_fields as $fieldName => $fieldObject){
-			$fieldObject->populateValue($context->{$fieldName});
+			if($prefix = $this->getNamePrefix()){
+				$fieldObject->populateValue($context->{$prefix}->{$fieldName});
+			}else{
+				$fieldObject->populateValue($context->{$fieldName});
+			}
 		}
 		return $this;
 	}

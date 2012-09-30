@@ -23,6 +23,7 @@ class Radio extends AbstractElement{
 	 * @return \Smally\Form\Element\AbstractElement
 	 */
 	public function populateValue($values){
+		if($values instanceof \Smally\ContextStdClass) $values = $values->toArray();
 		if(!is_array($values)) $values = array($values);
 		foreach($values as $value){
 			if(array_key_exists($value,$this->getValue())){
