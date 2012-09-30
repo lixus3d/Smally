@@ -4,7 +4,8 @@ namespace Smally\Dao;
 
 class Db implements InterfaceDao {
 
-	protected $_table = '';
+	protected $_table = null;
+	protected $_primaryKey = null;
 	protected $_valueObjectClass = null;
 	protected $_connector = null;
 
@@ -28,10 +29,45 @@ class Db implements InterfaceDao {
 	/**
 	 * Define the $table for every STATEMENT
 	 * @param string $table the table you want to request
+	 * @return \Smally\Dao\Db
 	 */
 	public function setTable($table){
 		$this->_table = $table;
 		return $this;
+	}
+
+	/**
+	 * Define the primaryKey for the request of the dao
+	 * @param string $primaryKey the name of the key
+	 * @return \Smally\Dao\Db
+	 */
+	public function setPrimaryKey($primaryKey){
+		$this->_primaryKey = $primaryKey;
+		return $this;
+	}
+
+	/**
+	 * Get the table for request of the dao
+	 * @return string
+	 */
+	public function getTable(){
+		return $this->_table;
+	}
+
+	/**
+	 * Get the primaryKey for the Dao
+	 * @return string
+	 */
+	public function getPrimaryKey(){
+		return $this->_primaryKey;
+	}
+
+	/**
+	 * Get the value object class name
+	 * @return string
+	 */
+	public function getValueObjectClass(){
+		return $this->_valueObjectClass;
 	}
 
 	/**
@@ -59,12 +95,12 @@ class Db implements InterfaceDao {
 	 * @param  string $primaryKey       Optionnal : The name of the primary key , if not given {$table.'Id'} or 'id' use instead
 	 * @return \stdClass
 	 */
-	public function getById($id,$valueObjectClass=null,$primaryKey=null){
-		if(is_null($primaryKey)) $primaryKey = $this->getPrimaryKey();
+	public function getById($id){
+		$primaryKey = $this->getPrimaryKey();
 		$criteria = $this->getCriteria()
 							->setFilter(array($primaryKey=>array('value'=>$id)))
 							;
-		return $this->fetch($criteria,$valueObjectClass);
+		return $this->fetch($criteria);
 	}
 
 	/**
@@ -73,13 +109,13 @@ class Db implements InterfaceDao {
 	 * @param  string           $valueObjectClass Optionnal ValueObjectClass that will be return, stdClass if not given
 	 * @return \stdClass
 	 */
-	public function fetch(\Smally\Criteria $criteria,$valueObjectClass=null){
+	public function fetch(\Smally\Criteria $criteria){
 
 		$sql = $this->criteriaToSelect($criteria);
 
 		if($result = $this->getConnector()->query($sql)){
 			if($result->num_rows==1){
-				$object = $this->fetchValueObject($result,$valueObjectClass?:$this->_valueObjectClass);
+				$object = $this->fetchValueObject($result,$this->getValueObjectClass());
 				$result->free();
 				return $object;
 			}elseif($result->num_rows>1) throw new \Smally\Exception('Fetch return more than one entry : '.$result->num_rows);
@@ -94,14 +130,14 @@ class Db implements InterfaceDao {
 	 * @param  string           $valueObjectClass Optionnal ValueObjectClass that will be return, stdClass if not given
 	 * @return array
 	 */
-	public function fetchAll(\Smally\Criteria $criteria,$valueObjectClass=null){
+	public function fetchAll(\Smally\Criteria $criteria){
 		$return = array();
 
 		$sql = $this->criteriaToSelect($criteria);
 
 		if($result = $this->getConnector()->query($sql)){
 			if($result->num_rows>=1){
-				while($object = $this->fetchValueObject($result,$valueObjectClass?:$this->_valueObjectClass)){
+				while($object = $this->fetchValueObject($result,$this->getValueObjectClass())){
 					$return[] = $object;
 				}
 				$result->free();
@@ -116,18 +152,18 @@ class Db implements InterfaceDao {
 	 * @param  \stdClass $vo The value object you want to store
 	 * @return boolean true if store succeded
 	 */
-	public function store($vo,$primaryKey=null){
+	public function store($vo){
 
 		// get the primary key
-		if(is_null($primaryKey)) $primaryKey = $this->getPrimaryKey();
+		$primaryKey = $this->getPrimaryKey();
 
 		// determine if we insert or update the data
-		if(!is_null($vo->{$primaryKey})&&$vo->{$primaryKey}!=''){
+		if(property_exists($vo,$primaryKey)&&$vo->{$primaryKey}!=''){
 			$statement = 'UPDATE';
-			if(isset($vo->utsCreate)) $vo->utsCreate = time();
+			if(property_exists($vo,'utsUpdate')) $vo->utsUpdate = time();
 		}else{
 			$statement = 'INSERT INTO';
-			if(isset($vo->utsUpdate)) $vo->utsUpdate = time();
+			if(property_exists($vo,'utsCreate')) $vo->utsCreate = time();
 		}
 
 		// define each field
@@ -137,7 +173,7 @@ class Db implements InterfaceDao {
 			$set[] = '`'.$property.'` = \''.$this->getConnector()->escape_string($value).'\'';
 		}
 
-		$sql = $statement.' '.$this->_table.' SET '.implode(',',$set);
+		$sql = $statement.' '.$this->getTable().' SET '.implode(',',$set);
 
 		if($statement == 'UPDATE') $sql.= ' WHERE `'.$primaryKey.'` = \''.$vo->{$primaryKey}.'\'';
 
@@ -150,12 +186,12 @@ class Db implements InterfaceDao {
 	 * @return boolean true if delete succeded
 	 */
 	public function delete($id,$utsDeleteMode=true){
-		if(is_null($primaryKey)) $primaryKey = $this->getPrimaryKey();
+		$primaryKey = $this->getPrimaryKey();
 
 		if($utsDeleteMode){
-			$sql = 'UPDATE '.$this->_table.' SET utsDelete=UNIX_TIMESTAMP() WHERE `'.$primaryKey.'` = \''.$id.'\'';
+			$sql = 'UPDATE '.$this->getTable().' SET utsDelete=UNIX_TIMESTAMP() WHERE `'.$primaryKey.'` = \''.$id.'\'';
 		}else{
-			$sql = 'DELETE FROM '.$this->_table.' WHERE `'.$primaryKey.'` = \''.$id.'\'';
+			$sql = 'DELETE FROM '.$this->getTable().' WHERE `'.$primaryKey.'` = \''.$id.'\'';
 		}
 		return $this->getConnector()->query($sql);
 	}
@@ -174,14 +210,6 @@ class Db implements InterfaceDao {
 	 */
 	public function affectedRows(){
 		return $this->getConnector()->affected_rows;
-	}
-
-	/**
-	 * Get the generic primaryKey for the Dao
-	 * @return string
-	 */
-	public function getPrimaryKey(){
-		return $this->_table ? $this->_table.'Id' : 'id';
 	}
 
 	/**
@@ -204,7 +232,8 @@ class Db implements InterfaceDao {
 	 * @return string
 	 */
 	public function criteriaToSelect(\Smally\Criteria $criteria){
-		return $this->makeSelect($this->criteriaToSql($criteria));
+		extract($this->criteriaToSql($criteria));
+		return $this->makeSelect($where,$order,$limit,$fields,$join,$groupby);
 	}
 
 	/**
@@ -218,11 +247,7 @@ class Db implements InterfaceDao {
 	 * @param  array $groupby 	groupby part
 	 * @return string
 	 */
-	public function makeSelect($table,$where=array(),$order=array(),$limit=null,$fields='*',$join=null,$groupby=null){
-		if(is_array($table)) list($table,$where,$order,$limit,$fields,$join,$groupby) = $table; // instead of enumerate each parameter you can give an associative array
-
-
-		if( is_null($table) && ($table=='') && !($table = $this->_table) ) throw new \Smally\Exception('Invalid parameter for makeSelect : table is missing');
+	public function makeSelect($where=array(),$order=array(),$limit=null,$fields='*',$join=null,$groupby=null){
 
 		if(!is_array($fields)||count($fields)==0) $fields = array($fields?:'*');
 		foreach($fields as &$field){
@@ -231,7 +256,7 @@ class Db implements InterfaceDao {
 		}
 
 		$sql  = 'SELECT '.implode(', ',$fields);
-		$sql .= ' FROM '.$table;
+		$sql .= ' FROM '.$this->getTable();
 		if($join)
 			$sql .= ' '.implode(' ',$join);
 		if($where)
@@ -253,7 +278,6 @@ class Db implements InterfaceDao {
 	 */
 	public function criteriaToSql(\Smally\Criteria $criteria){
 
-		$table = $criteria->getTable();
 		$fields = array();
 		$join = array();
 		$where = array();
@@ -295,6 +319,6 @@ class Db implements InterfaceDao {
 			$limit = $criteria->getLimit();
 		}
 
-		return array($table,$where,$order,$limit,$fields,$join,$groupby);
+		return array('where'=>$where,'order'=>$order,'limit'=>$limit,'fields'=>$fields,'join'=>$join,'groupby'=>$groupby);
 	}
 }

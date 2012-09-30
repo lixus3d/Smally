@@ -57,7 +57,17 @@ class Factory {
 	 * @return string
 	 */
 	public function getObjectPath($moduleName,$objectType){
-		$fullName = $moduleName.'\\'.ucfirst($objectType);
+		switch($objectType){
+			case 'Logic':
+				$fullName = $moduleName.'\\'.ucfirst($objectType);
+				break;
+			case 'Form':
+			case 'Dao':
+			case 'Criteria':
+				$fullName = str_replace('\\VO\\','\\'.$objectType.'\\',$moduleName);
+				break;
+		}
+
 		if(class_exists($fullName)){
 			return $fullName;
 		}
@@ -81,32 +91,41 @@ class Factory {
 	}
 
 	/**
-	 * Return a dao object for a given module $name
-	 * @param  string $name The module name of the dao object you want
+	 * Return a dao object for a given module $voName
+	 * @param  string $voName The vo name of the dao object you want
 	 * @return \Smally\Dao\InterfaceDao
 	 */
-	public function getDao($name){
-		if(!isset($this->_dao[$name])){
-			if($path = $this->getObjectPath($name,'Dao')){
-				$this->_dao[$name] = new $path();
+	public function getDao($voName){
+		if(is_null($voName)) return $this->getDefaultDao();
+		if(!isset($this->_dao[$voName])){
+			$path = $this->getObjectPath($voName,'Dao');
+			if(class_exists($path)){
+				$this->_dao[$voName] = new $path();
 			}else{
-				$this->_dao[$name] = $this->getDefaultDao();
+				$this->_dao[$voName] = $this->getDefaultDao();
+				$vo = new $voName(); // TODO : Find a better solution for getting table and primary key
+				$this->_dao[$voName]
+						->setValueObjectClass($voName)
+						->setTable($vo->getTable())
+						->setPrimaryKey($vo->getPrimaryKey())
+						;
 			}
 		}
-		return $this->_dao[$name];
+		return $this->_dao[$voName];
 	}
 
 	/**
-	 * Return a criteria object for a given module $name
-	 * @param  string $name The module name of the criteria object you want
+	 * Return a criteria object for a the given vo $voName
+	 * @param  string $voName The vo name of the criteria object you want
 	 * @return \Smally\Criteria
 	 */
-	public function getCriteria($name){
-		if($path = $this->getObjectPath($name,'Criteria')){
-			return new $path();
-		}else{
-			return $this->getDefaultCriteria();
+	public function getCriteria($voName){
+		if( !is_null($voName) && $path = $this->getObjectPath($voName,'Criteria')){
+			if(class_exists($path)){
+				return new $path();
+			}
 		}
+		return $this->getDefaultCriteria();
 	}
 
 	/**
@@ -118,15 +137,13 @@ class Factory {
 	}
 
 	/**
-	 * Return the default Dao object
+	 * Return a default Dao object
 	 * @return \Smally\Dao\Db
 	 */
 	public function getDefaultDao(){
-		if(!isset($this->_dao['default'])){
-			$this->_dao['default'] = new \Smally\Dao\Db();
-			$this->_dao['default']->setConnector($this->getDefaultDbConnector());
-		}
-		return $this->_dao['default'];
+		$dao = new \Smally\Dao\Db();
+		$dao->setConnector($this->getDefaultDbConnector());
+		return $dao;
 	}
 
 	/**

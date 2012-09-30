@@ -4,7 +4,6 @@ namespace Smally;
 
 class Criteria {
 
-	protected $_table = '';
 	protected $_where = array();
 	protected $_order = array();
 	protected $_limit = null;
@@ -33,7 +32,6 @@ class Criteria {
 	 */
 	public function __toString(){
 		$data = '';
-		$data .= 'table:'.$table;
 		$data .= serialize($this->_where);
 		$data .= serialize($this->_order);
 		$data .= serialize($this->_limit);
@@ -45,19 +43,9 @@ class Criteria {
 	 * @param \Smally\Criteria $criteria
 	 */
 	public function import(\Smally\Criteria $criteria){
-		$this->setTable($criteria->getTable());
 		$this->setFilter($criteria->getFilter());
 		$this->setOrder($criteria->getOrder());
 		$this->setLimit($criteria->getLimit());
-	}
-
-	/**
-	 * Return the table the criteria is destinate to
-	 * TODO : Not sure it's the good place for the table information
-	 * @return string
-	 */
-	public function getTable(){
-		return $this->_table;
 	}
 
 	/**
@@ -82,16 +70,6 @@ class Criteria {
 	 */
 	public function getLimit(){
 		return $this->_limit;
-	}
-
-	/**
-	 * Set the table of the criteria
-	 * @param string $table The table
-	 * @return \Smally\Criteria
-	 */
-	public function setTable($table){
-		$this->_table = $table;
-		return $this;
 	}
 
 	/**
