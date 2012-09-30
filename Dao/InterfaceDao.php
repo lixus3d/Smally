@@ -11,6 +11,7 @@ interface InterfaceDao {
 	public function store($vo);
 	public function delete($id);
 
-	public function lastInsertId();
+	public function getLastInsertId();
+	public function getAffectedRows();
 
 }

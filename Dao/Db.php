@@ -79,12 +79,27 @@ class Db implements InterfaceDao {
 	}
 
 	/**
+	 * Get the last inserted Id
+	 * @return int
+	 */
+	public function getLastInsertId(){
+		return $this->getConnector()->insert_id;
+	}
+
+	/**
+	 * Get the number of affected rows of the last update query
+	 * @return int
+	 */
+	public function getAffectedRows(){
+		return $this->getConnector()->affected_rows;
+	}
+
+	/**
 	 * Return a standard \Smally\Criteria for the current dao
 	 * @return \Smally\Criteria
 	 */
 	public function getCriteria(){
 		$criteria = new \Smally\Criteria();
-		$criteria->setTable($this->_table);
 		return $criteria;
 	}
 
@@ -177,7 +192,11 @@ class Db implements InterfaceDao {
 
 		if($statement == 'UPDATE') $sql.= ' WHERE `'.$primaryKey.'` = \''.$vo->{$primaryKey}.'\'';
 
-		return $this->getConnector()->query($sql);
+		if($return = $this->getConnector()->query($sql)){
+			$vo->{$primaryKey} = $this->getLastInsertId();
+		}
+
+		return $return;
 	}
 
 	/**
@@ -196,21 +215,6 @@ class Db implements InterfaceDao {
 		return $this->getConnector()->query($sql);
 	}
 
-	/**
-	 * Get the last inserted Id
-	 * @return int
-	 */
-	public function lastInsertId(){
-		return $this->getConnector()->insert_id;
-	}
-
-	/**
-	 * Get the number of affected rows of the last update query
-	 * @return int
-	 */
-	public function affectedRows(){
-		return $this->getConnector()->affected_rows;
-	}
 
 	/**
 	 * Fetch a $result to the given $valuObjectClass
