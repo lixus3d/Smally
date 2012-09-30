@@ -20,9 +20,19 @@ class Factory {
 			'default' => null,
 		);
 
+	/**
+	 * Store every dbConnector object for reuse, not really a Singleton but close
+	 * @var array
+	 */
 	protected $_dbConnector = array(
 			'default' => null,
 		);
+
+	/**
+	 * Store every validator object for reuse, not really a Singleton but close
+	 * @var array
+	 */
+	protected $_validator = array();
 
 	/**
 	 * Construct the factory object
@@ -61,6 +71,7 @@ class Factory {
 			case 'Logic':
 				$fullName = $moduleName.'\\'.ucfirst($objectType);
 				break;
+			case 'Validator':
 			case 'Form':
 			case 'Dao':
 			case 'Criteria':
@@ -126,6 +137,36 @@ class Factory {
 			}
 		}
 		return $this->getDefaultCriteria();
+	}
+
+	/**
+	 * Return the default form of the given vo
+	 * @param  string $voName The vo name of the form object you want
+	 * @return \Smally\Form
+	 */
+	public function getForm($voName){
+		$path = $this->getObjectPath($voName,'Form');
+		if(class_exists($path)){
+			return new $path();
+		}else throw new Exception('Form doesn\'t exists : '.$path);
+	}
+
+	/**
+	 * Return the default validator of the given vo
+	 * @param  string $voName The vo name of the validator object you want
+	 * @return \Smally\Validator
+	 */
+	public function getValidator($voName){
+		if(is_null($voName)) return null;
+		if(!isset($this->_validator[$voName])){
+			$path = $this->getObjectPath($voName,'Validator');
+			if(class_exists($path)){
+				$this->_validator[$voName] = new $path();
+			}else{
+				$this->_validator[$voName] = new \Smally\Validator(); // Generic empty validator
+			}
+		}
+		return $this->_validator[$voName];
 	}
 
 	/**
