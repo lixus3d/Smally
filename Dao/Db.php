@@ -9,6 +9,19 @@ class Db implements InterfaceDao {
 	protected $_valueObjectClass = null;
 	protected $_connector = null;
 
+	protected $_logLevel = null;
+	protected $_logger = null;
+
+	/**
+	 * Define automatically the logger from the Application
+	 */
+	public function __construct(){
+		if($logger = \Smally\Application::getInstance()->getLogger()){
+			$this->_logger = $logger;
+			$this->_logLevel = $logger->getLogLevel('dao');
+		}
+	}
+
 	/**
 	 * Set the connector the \Smally\Dao\Db will use to perform request
 	 * @param mixed $connector A valid database connector
@@ -119,6 +132,19 @@ class Db implements InterfaceDao {
 	}
 
 	/**
+	 * Wrapper to the Logger but test if we have to log before sending
+	 * @param  string $text     Usually the request to log
+	 * @param  int $level       The level of the log
+	 * @param  int $destination Destination of the log
+	 * @return null
+	 */
+	public function log($text,$level=\Smally\Logger::LVL_INFO,$destination=\Smally\Logger::DEST_MYSQL){
+		if(!is_null($this->_logger)&&$this->_logLevel<=$level){
+			$this->_logger->log($text,$level,$destination);
+		}
+	}
+
+	/**
 	 * Return a specific element from the $criteria
 	 * @param  \Smally\Criteria $criteria         The criteria to filter the data
 	 * @param  string           $valueObjectClass Optionnal ValueObjectClass that will be return, stdClass if not given
@@ -127,6 +153,8 @@ class Db implements InterfaceDao {
 	public function fetch(\Smally\Criteria $criteria){
 
 		$sql = $this->criteriaToSelect($criteria);
+
+		$this->log($sql);
 
 		if($result = $this->getConnector()->query($sql)){
 			if($result->num_rows==1){
@@ -149,6 +177,8 @@ class Db implements InterfaceDao {
 		$return = array();
 
 		$sql = $this->criteriaToSelect($criteria);
+
+		$this->log($sql);
 
 		if($result = $this->getConnector()->query($sql)){
 			if($result->num_rows>=1){
@@ -192,6 +222,8 @@ class Db implements InterfaceDao {
 
 		if($statement == 'UPDATE') $sql.= ' WHERE `'.$primaryKey.'` = \''.$vo->{$primaryKey}.'\'';
 
+		$this->log($sql);
+
 		if($return = $this->getConnector()->query($sql)){
 			$vo->{$primaryKey} = $this->getLastInsertId();
 		}
@@ -212,6 +244,9 @@ class Db implements InterfaceDao {
 		}else{
 			$sql = 'DELETE FROM '.$this->getTable().' WHERE `'.$primaryKey.'` = \''.$id.'\'';
 		}
+
+		$this->log($sql);
+
 		return $this->getConnector()->query($sql);
 	}
 

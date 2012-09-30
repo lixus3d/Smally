@@ -11,6 +11,7 @@ class Application {
 	static protected $_singleton 	= null;
 
 	protected $_environnement 		= self::ENV_DEVELOPMENT;
+	protected $_logger				= null;
 
 	protected $_bootstrap			= null;
 	protected $_factory				= null;
@@ -141,6 +142,18 @@ class Application {
 	 */
 	public function getEnvironnement(){
 		return $this->_environnement;
+	}
+
+	/**
+	 * Return the application logger
+	 * @return \Smally\Logger
+	 */
+	public function getLogger(){
+		if(is_null($this->_logger)){
+			$this->_logger = new Logger($this->getConfig()->smally->logger->path!=''?:ROOT_PATH.'logs/',$this);
+			$this->_logger->setInstance(); // The application logger is a singleton and by so the default logger
+		}
+		return $this->_logger;
 	}
 
 	/**
