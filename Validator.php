@@ -48,7 +48,7 @@ class Validator {
 	 */
 	public function addError($field, array $errors){
 		if(!isset($this->_errors[$field])) $this->_errors[$field] = array();
-		$this->_errors[$field] += $errors;
+		$this->_errors[$field] = array_merge($this->_errors[$field],$errors);
 		return $this;
 	}
 
@@ -81,15 +81,17 @@ class Validator {
 
 	/**
 	 * Execute the validator rules on $fields
-	 * @param  boolean $stopAtFirstError [description]
-	 * @return [type]                    [description]
+	 * @param  boolean $stopAtFirstError Do we stop the test of each field at the first error find , default is true
+	 * @return boolean
 	 */
 	public function x($stopAtFirstError=true){
 		$this->resetError();
 		foreach($this->_rules as $field => $rules){
+			$fieldValue = $this->getValue($field);
 			foreach($rules as $rule){
-				if(!$rule->x($this->getValue($field))){
+				if(!$rule->x($fieldValue)){
 					$this->addError($field, $rule->getError());
+					if($stopAtFirstError) break;
 				}
 			}
 		}
