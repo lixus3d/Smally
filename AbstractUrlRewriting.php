@@ -18,6 +18,7 @@ abstract class AbstractUrlRewriting {
 	 * Add a rewrite rule
 	 * @param string $rule Can be a equal string or a regex if leaded by a '#' char
 	 * @param mixed $options Can be a string or an array for regex with the matches key
+	 * @return \Smally\AbstractUrlRewriting
 	 */
 	public function addRule($rule,$options){
 		if($options){
@@ -34,6 +35,8 @@ abstract class AbstractUrlRewriting {
 				}
 			}
 		}
+
+		return $this;
 	}
 
 	/**
