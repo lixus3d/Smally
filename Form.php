@@ -191,10 +191,10 @@ class Form {
 
 	/**
 	 * Fill each field with a value if present in $values
-	 * @param  array  $values Array of $fieldName => $value
+	 * @param  array  $values Array of $fieldName => $value or Iterator
 	 * @return \Smally\Form
 	 */
-	public function populateValue(array $values=array()){
+	public function populateValue($values=array()){
 		if($values){
 			$this->populate($values,'populateValue');
 		}
@@ -219,7 +219,7 @@ class Form {
 	 * @param  string $method     Method to execute
 	 * @return \Smally\Form
 	 */
-	private function populate(array $population,$method){
+	private function populate($population,$method){
 		foreach($population as $fieldName => $info){
 			if(isset($this->_fields[$fieldName]) && method_exists($this->_fields[$fieldName], $method)){
 				$this->_fields[$fieldName]->{$method}($info);
