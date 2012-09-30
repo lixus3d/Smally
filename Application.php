@@ -50,7 +50,7 @@ class Application {
 
 	/**
 	 * Define the used environnement for the current execution
-	 * @param [type] $environnement [description]
+	 * @param string $environnement The environnement you want for the current Application (use Application constant)
 	 * @return \Smally\Application
 	 */
 	public function setEnvironnement($environnement){
