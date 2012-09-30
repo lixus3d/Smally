@@ -129,7 +129,7 @@ class Logger {
 		if(is_array($text)) $text = print_r($text,true);
 
 		$typeLabel = isset(self::$typeLabel[$level])?self::$typeLabel[$level]:'OTHER';
-		$typeLabel[6] = ' ';
+		$typeLabel[7] = ' ';
 
 		$completeText = date('Y-m-d H:i:s'). $this->_separator .$typeLabel. $this->_separator .$text;
 
