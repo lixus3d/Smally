@@ -185,8 +185,6 @@ class View {
 			throw new Exception('Template not found : '.$template);
 		}
 		return ob_get_clean();
-
-		return '';
 	}
 
 }
