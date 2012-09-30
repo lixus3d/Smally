@@ -16,6 +16,8 @@ abstract class AbstractElement implements InterfaceElement {
 
 	protected $_decorator	= 'input'; // input default decorator
 
+	protected $_attributes  = array();
+
 	/**
 	 * Construct a new form Element (field)
 	 * @param array $options An associative array where key = property name
@@ -112,6 +114,25 @@ abstract class AbstractElement implements InterfaceElement {
 	}
 
 	/**
+	 * Define an attribute of the input tag
+	 * @param string $attribute the attribute name to define
+	 * @param mixed $value the value
+	 * @return \Smally\Form\Element\AbstractElement
+	 */
+	public function setAttribute($attribute,$value){
+		switch($attribute){
+			case 'class':
+				if(!isset($this->_attributes[$attribute])) $this->_attributes[$attribute] = array();
+				$this->_attributes[$attribute][] = $value;
+			break;
+			default:
+				$this->_attributes[$attribute] = $value;
+			break;
+		}
+		return $this;
+	}
+
+	/**
 	 * Get the associate form
 	 * @return \Smally\Form associate form
 	 */
@@ -184,6 +205,14 @@ abstract class AbstractElement implements InterfaceElement {
 	 */
 	public function getError(){
 		return $this->_error;
+	}
+
+	/**
+	 * Return the input tag attributes
+	 * @return array the attributes
+	 */
+	public function getAttributes(){
+		return $this->_attributes;
 	}
 
 	/**

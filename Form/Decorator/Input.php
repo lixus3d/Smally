@@ -16,6 +16,9 @@ class Input extends AbstractDecorator {
 				'type' => $this->getElement()->getType(),
 				'value' => $this->getElement()->getValue(),
 			);
+
+		$attributes = array_merge($attributes,$this->_element->getAttributes());
+
 		$html = '<div class="input">';
 		$html .= '<input '.\Smally\HtmlUtil::toAttributes($attributes).'/>';
 		$html  = $this->getForm()->getDecorator('help',$this->_element)->render($html);
