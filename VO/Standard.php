@@ -67,7 +67,7 @@ class Standard {
 	 */
 	public function getTable(){
 		if(is_null($this->_table)){
-			$this->_table = trim(preg_replace('#([A-Z])#e',"strtolower('_\\1')",$this->getVoName()),'-');
+			$this->_table = trim(preg_replace('#([A-Z])#e',"strtolower('_\\1')",$this->getVoName()),'_');
 		}
 		return $this->_table;
 	}
