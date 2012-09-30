@@ -44,29 +44,29 @@ abstract class AbstractUrlRewriting {
 	 */
 	public function getControllerRewriting($controllerPath,$params=array()){
 		$controllerPathLowered = strtolower($controllerPath);
+		$getPart = $params?'?'.http_build_query($params):'';
 		if(isset($this->_controllerRewriting[$controllerPathLowered])){
 			$rule = $this->_controllerRewriting[$controllerPathLowered];
 			$test = $rule['rule'];
 			if(strpos($test,'#')===0){
-				if(isset($rule['options']['reverse'])){
-					//return sprintf($rule['options']['reverse'],$params);
-
+				if(isset($rule['options']['reverse'])&&$params){
 					return call_user_func_array('sprintf',array_merge(array($rule['options']['reverse']),$params));
 				}
 			}else{
-				return $test;
+				return $test.$getPart;
 			}
 		}
-		return str_replace('\\','/',$controllerPath);
+		return str_replace('\\','/',$controllerPath).$getPart;
 	}
 
 	/**
 	 * Return the url rewriting if specific or false if no specific rule found
 	 * @param  string  $controllerPath The controllerpath to test
+	 * @param  array   $params Array if $key => $value to place in the url
 	 * @return mixed
 	 */
 	public function hasControllerRewriting($controllerPath){
-		return  ($url = $this->getControllerRewriting($controllerPath))==str_replace('\\','/',$controllerPath) ? false : $url;
+		return  $this->getControllerRewriting($controllerPath) === str_replace('\\','/',$controllerPath) ? false : true;
 	}
 
 	/**

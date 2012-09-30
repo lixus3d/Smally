@@ -141,8 +141,14 @@ class View {
 		return implode(NN.TT,$output);
 	}
 
-	public function getControllerUrl($controllerPath){
-		return $this->getApplication()->getBaseUrl($this->getApplication()->makeControllerUrl($controllerPath));
+	/**
+	 * Get a controller url from his $path and $params
+	 * @param  string $controllerPath The controller path ( with action )
+	 * @param  array  $params         Array of $key => $value to put in the generated $url
+	 * @return string
+	 */
+	public function getControllerUrl($controllerPath,$params=array()){
+		return $this->getApplication()->getBaseUrl($this->getApplication()->makeControllerUrl($controllerPath,$params));
 	}
 
 	/**
