@@ -12,7 +12,10 @@ class Error extends AbstractDecorator{
 	public function render($content){
 
 		$html = '';
-		if($error = $this->getElement()->getError()) $html .= '<div class="error">'.$error.'</div>';
+		if($error = $this->getElement()->getError()){
+			if(is_array($error)) $error = implode(BR,$error);
+			$html .= '<div class="error">'.$error.'</div>';
+		}
 		return $this->concat($html,$content);
 	}
 }
