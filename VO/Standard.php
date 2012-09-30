@@ -6,7 +6,7 @@ namespace Smally\VO;
  * The default value object, every vo must extends this class
  */
 
-class Standard {
+class Standard extends \stdClass {
 
 	protected $_voName = null;
 	protected $_table = null;
@@ -20,11 +20,21 @@ class Standard {
 	 * @param array $vars array of $property => $value of the value object
 	 */
 	public function __construct($vars=array()){
+		$this->initVars($vars);
+	}
+
+	/**
+	 * Overwrite any existing property with the value in $vars
+	 * @param  array $vars array of $property => $value of the value object
+	 * @return \Smally\VO\Standard
+	 */
+	public function initVars(array $vars){
 		foreach($vars as $name => $value){
 			if(property_exists($this, $name)){
 				$this->{$name} = $value;
 			}
 		}
+		return $this;
 	}
 
 	/**
@@ -82,6 +92,19 @@ class Standard {
 			$this->_primaryKey = $this->getTable().'Id';
 		}
 		return $this->_primaryKey;
+	}
+
+	/**
+	 * Convert the class to an array representation ( recursive )
+	 * @return array
+	 */
+	public function toArray(){
+		$array = array();
+		foreach($this as $key => $value){
+			if(strpos($key,'_')===0) continue;
+			$array[$key] = $value;
+		}
+		return $array;
 	}
 
 }
