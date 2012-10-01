@@ -2,7 +2,7 @@
 
 class UrlRewriting extends \Smally\AbstractUrlRewriting {
 
-	public function __construct(){
+	public function init(){
 		// Basic rule
 		$this->addRule('albums.html', 'Index/albums');
 		// REGEX rule
