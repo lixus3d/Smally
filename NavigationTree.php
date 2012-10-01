@@ -65,4 +65,12 @@ class NavigationTree extends Tree{
 		return $this->url;
 	}
 
+	/**
+	 * Return the controllerPath of the given element if defined
+	 * @return string
+	 */
+	public function getActionPath(){
+		return $this->controllerPath?:'';
+	}
+
 }

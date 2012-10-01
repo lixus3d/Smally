@@ -5,6 +5,7 @@ namespace Smally\Helper;
 class Menu {
 
 	protected $_tree = null;
+	protected $_parent = null;
 
 	protected $_decoratorNamespace = '\\Smally\\Helper\\Decorator';
 
@@ -42,6 +43,11 @@ class Menu {
 	 */
 	public function setTree(\Smally\Tree $tree){
 		$this->_tree = $tree;
+		return $this;
+	}
+
+	public function setParent(\Smally\Tree $parent){
+		$this->_parent = $parent;
 		return $this;
 	}
 
@@ -121,6 +127,10 @@ class Menu {
 
 	public function getTree(){
 		return $this->_tree;
+	}
+
+	public function getParent(){
+		return $this->_parent;
 	}
 
 	/**

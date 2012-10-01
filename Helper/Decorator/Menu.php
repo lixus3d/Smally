@@ -6,7 +6,7 @@ class Menu extends AbstractDecorator {
 
 	/**
 	 * Return the element (menu) attributes
-	 * @return [type] [description]
+	 * @return array
 	 */
 	public function getAttributes(){
 		return $this->getElement()->getAttributes();
@@ -19,8 +19,10 @@ class Menu extends AbstractDecorator {
 	 * @return string
 	 */
 	public function render($content=''){
+		// we render children before to adapt attributes if necessary (active class for example, or hasChildren)
+		$children = $this->renderChildren();
 		$html  = '<ul'.\Smally\HtmlUtil::toAttributes($this->getAttributes()).'>' . NN;
-		$html .= $this->renderChildren();
+		$html .= $children;
 		$html .= '</ul>' . NN;
 		return $this->concat($html,$content);
 	}
@@ -32,14 +34,32 @@ class Menu extends AbstractDecorator {
 	 */
 	public function renderChildren(){
 		$html = '';
+		// we get the sub items
 		$items = $this->getElement()->getItems();
+
+		// we filter on visible false
+		$toRender = array();
 		foreach($items as $key => $item){
+			// item that are invisible influence parent attributes but don't need to be rendered
+			if($item->visible === false){
+				$this->getElement()
+							->getDecorator('menuElement',$item)
+								->setMenu($this->getElement())
+								->getAttributes(); // TODO : Change to a x function
+				continue;
+			}
+			$toRender[] = $item;
+		}
+
+		// we render each sub items
+		foreach($toRender as $key => $item){
 			$html .= $this->getElement()
 							->getDecorator('menuElement',$item)
 								->setMenu($this->getElement())
-								->setElementNumber($key,count($items))
+								->setElementNumber($key,count($toRender))
 								->render();
 		}
+
 		return $html;
 	}
 }

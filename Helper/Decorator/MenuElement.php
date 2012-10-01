@@ -59,11 +59,17 @@ class MenuElement extends AbstractDecorator {
 			$attributes = array_merge($this->getMenu()->getAttributesElement(),$attributes); // Attributes of the menu element, a generic class for
 		}
 
+		// TODO : Do a x logic function
 		// Add the active automatically
 		if($application = \Smally\Application::getInstance()){
-			$actualUrl = $application->getRooter()->getActualUrl();
-			if($this->getElement()->getUrl() == $actualUrl){
+			$actualUrl = $application->getRooter()->getActionPath();
+			if($this->getElement()->getActionPAth() == $actualUrl){
 				$attributes['class'][] = $this->_classActive;
+				// Add the active class to the parent of the current menu
+				if($parent = $this->getMenu()->getParent()){
+					$parent->setAttribute('class',$this->_classActive);
+				}
+
 			}
 		}
 
@@ -81,6 +87,8 @@ class MenuElement extends AbstractDecorator {
 	 * @return string
 	 */
 	public function render($content=''){
+		// we render children before to adapt attributes if necessary (active class for example, or hasChildren)
+		$children = $this->renderChildren();
 		$html  = '<li'.\Smally\HtmlUtil::toAttributes($this->getAttributes()).'>';
 		$html .= '<a href="'.$this->getElement()->getUrl().'">';
 		$html .= '<span>';
@@ -89,7 +97,7 @@ class MenuElement extends AbstractDecorator {
 		$html .= '</span>';
 		$html .= '</span>';
 		$html .= '</a>';
-		$html .= $this->renderChildren();
+		$html .= $children;
 		$html .= '</li>' . NN;
 		return $this->concat($html,$content);
 	}
@@ -102,6 +110,7 @@ class MenuElement extends AbstractDecorator {
 		if($this->getElement()->hasChildren()){ // if we have subchildren
 			$subMenu = clone $this->getMenu(); // clone the menu generator to copy the parent menu behaviors and attributes
 			$subMenu->setTree($this->getElement()); // set the correct tree
+			$subMenu->setParent($this->getElement());
 			return $subMenu ->render(); // render the sub menu in the actual menuElement
 		}
 		return '';
