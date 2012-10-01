@@ -14,6 +14,9 @@ class Textarea extends AbstractDecorator {
 		$attributes = array(
 				'name' => $this->getElement()->getName(),
 			);
+
+		$attributes = array_merge($attributes,$this->_element->getAttributes());
+
 		$html = '<div class="input">';
 		$html .= '<textarea '.\Smally\HtmlUtil::toAttributes($attributes).'>'. htmlentities($this->getElement()->getValue(),ENT_COMPAT,'UTF-8').'</textarea>';
 		$html  = $this->getForm()->getDecorator('help',$this->_element)->render($html);
