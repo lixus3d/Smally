@@ -128,5 +128,33 @@ class Criteria {
 		return $this;
 	}
 
+	/**
+	 * Set every associative array to an equal filter
+	 * @example You can use the 'search' key that will search on multiple field using like
+	 * @param  array $array An array or class with associative key => value to use has filter
+	 * @return \Smally\Criteria
+	 */
 
+	public function arrayToFilter($array,$vo=null){
+		$filter = array();
+
+		foreach($array as $key => $value){
+			$value = (string) $value;
+
+			if($value === '') continue; // we don't filter on empty value , carefull 0 is a correct value
+			if($key != 'search' && !is_null($vo) && !property_exists($vo,$key)) continue;
+
+			switch($key){
+				case strpos($key,'uts')===0:
+					list($day,$month,$year) = explode('/',$value);
+					if(!is_numeric($day)||!is_numeric($month)||!is_numeric($year)) continue(2);
+					$value = mktime(0,0,0,$month,$day,$year);
+				break;
+			}
+
+			$filter[$key] = array('value'=>$value);
+		}
+		$this->setFilter($filter);
+		return $this;
+	}
 }
