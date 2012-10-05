@@ -11,9 +11,11 @@ class Standard extends \stdClass {
 	protected $_voName = null;
 	protected $_table = null;
 	protected $_primaryKey = null;
+	protected $_searchFields = null;
 
 	protected $_factory = null;
 	protected $_dao = null;
+
 
 	/**
 	 * Init a value object with $vars
@@ -95,6 +97,10 @@ class Standard extends \stdClass {
 			$this->_primaryKey = $this->getTable().'Id';
 		}
 		return $this->_primaryKey;
+	}
+
+	public function getSearchFields(){
+		return $this->_searchFields;
 	}
 
 	/**
