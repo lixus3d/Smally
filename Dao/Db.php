@@ -6,7 +6,7 @@ class Db implements InterfaceDao {
 
 	protected $_table = null;
 	protected $_primaryKey = null;
-	protected $_valueObjectClass = null;
+	protected $_voName = null;
 	protected $_connector = null;
 
 	protected $_logLevel = null;
@@ -31,11 +31,11 @@ class Db implements InterfaceDao {
 	}
 
 	/**
-	 * Define the valueObjectClass name for use in all SELECT statement
+	 * Define the voName name for use in all SELECT statement
 	 * @param string $class The value object class name
 	 */
-	public function setValueObjectClass($class){
-		$this->_valueObjectClass = $class;
+	public function setVoName($class){
+		$this->_voName = $class;
 		return $this;
 	}
 
@@ -79,8 +79,8 @@ class Db implements InterfaceDao {
 	 * Get the value object class name
 	 * @return string
 	 */
-	public function getValueObjectClass(){
-		return $this->_valueObjectClass;
+	public function getVoName(){
+		return $this->_voName;
 	}
 
 	/**
@@ -119,8 +119,6 @@ class Db implements InterfaceDao {
 	/**
 	 * Return a ValueObject by it's primary id
 	 * @param  int $id               The id of the value object you want
-	 * @param  string $valueObjectClass Optionnal : ValueObjectClass that will be return, stdClass if not given
-	 * @param  string $primaryKey       Optionnal : The name of the primary key , if not given {$table.'Id'} or 'id' use instead
 	 * @return \stdClass
 	 */
 	public function getById($id){
@@ -147,7 +145,6 @@ class Db implements InterfaceDao {
 	/**
 	 * Return a specific element from the $criteria
 	 * @param  \Smally\Criteria $criteria         The criteria to filter the data
-	 * @param  string           $valueObjectClass Optionnal ValueObjectClass that will be return, stdClass if not given
 	 * @return \stdClass
 	 */
 	public function fetch(\Smally\Criteria $criteria){
@@ -158,7 +155,7 @@ class Db implements InterfaceDao {
 
 		if($result = $this->getConnector()->query($sql)){
 			if($result->num_rows==1){
-				$object = $this->fetchValueObject($result,$this->getValueObjectClass());
+				$object = $this->fetchValueObject($result,$this->getVoName());
 				$result->free();
 				return $object;
 			}elseif($result->num_rows>1) throw new \Smally\Exception('Fetch return more than one entry : '.$result->num_rows);
@@ -170,11 +167,12 @@ class Db implements InterfaceDao {
 	/**
 	 * Return specific elements from the $criteria
 	 * @param  \Smally\Criteria $criteria         The criteria to filter the data
-	 * @param  string           $valueObjectClass Optionnal ValueObjectClass that will be return, stdClass if not given
 	 * @return array
 	 */
-	public function fetchAll(\Smally\Criteria $criteria){
+	public function fetchAll(\Smally\Criteria $criteria=null){
 		$return = array();
+
+		if(is_null($criteria)) $criteria = $this->getCriteria();
 
 		$sql = $this->criteriaToSelect($criteria);
 
@@ -182,7 +180,7 @@ class Db implements InterfaceDao {
 
 		if($result = $this->getConnector()->query($sql)){
 			if($result->num_rows>=1){
-				while($object = $this->fetchValueObject($result,$this->getValueObjectClass())){
+				while($object = $this->fetchValueObject($result,$this->getVoName())){
 					$return[] = $object;
 				}
 				$result->free();
@@ -254,12 +252,12 @@ class Db implements InterfaceDao {
 	/**
 	 * Fetch a $result to the given $valuObjectClass
 	 * @param  \mysqli_result $result           mysqli_result object to fetch
-	 * @param  string $valueObjectClass Optionnal ValueObjectClass that will be return, stdClass if not given
+	 * @param  string $voName Optionnal voName that will be return, stdClass if not given
 	 * @return \stdClass
 	 */
-	public function fetchValueObject($result,$valueObjectClass=null){
-		if($valueObjectClass){
-			return $result->fetch_object($valueObjectClass);
+	public function fetchValueObject($result,$voName=null){
+		if($voName){
+			return $result->fetch_object($voName);
 		}else{
 			return $result->fetch_object();
 		}
@@ -326,10 +324,29 @@ class Db implements InterfaceDao {
 		$groupby = array();
 
 		foreach($criteria->getFilter() as $field => $params){
+
+			$operator = isset($params['operator'])?$params['operator']:'=';
+			$value = isset($params['value'])?$params['value']:'0';
+
+			// field or operator 'search' means to do a search in field(s) with LIKE
+			if( $field === 'search' || $operator === 'search' ) {
+				if($field === 'search'){
+					if($voName = $this->getVoName()){
+						$vo = new $this->_voName();
+						$searchFields = $vo->getSearchFields();
+					}else throw new \Smally\Exception('field \'search\' in the criteria but no Vo define in the dao !');
+				}else{
+					if(isset($params['fields'])&&$params['fields']) $searchFields = $params['fields'];
+					else throw new \Smally\Exception('operator \'search\' in the criteria but no \'fields\' key in the params !');
+				}
+				if($searchFields){
+					$where[] = $this->toLike(isset($params['value'])?$params['value']:'0', $searchFields,$params);
+				}
+				continue;
+			}
+
 			if(!is_array($params)) $where[] = $params;
 			else{
-				$operator = isset($params['operator'])?$params['operator']:'=';
-				$value = isset($params['value'])?$params['value']:'0';
 				switch($operator){
 					case '=':
 					case '>':
@@ -337,6 +354,8 @@ class Db implements InterfaceDao {
 					case '>=':
 					case '<=':
 					case '!=':
+					case 'LIKE':
+					case 'NOT LIKE':
 						$where[$field] = '`'.$field.'` '.$operator.' \''.$this->getConnector()->real_escape_string($value).'\'';
 						break;
 					case 'IN':
@@ -360,4 +379,53 @@ class Db implements InterfaceDao {
 
 		return array('where'=>$where,'order'=>$order,'limit'=>$limit,'fields'=>$fields,'join'=>$join,'groupby'=>$groupby);
 	}
+
+	/**
+	 * Return a LIKE part for a sql request from the $value search into $fields
+	 * @param  string $value  The search string
+	 * @param  array $fields The fields to search in
+	 * @return string
+	 */
+	public function toLike($value,$fields,$options=array()){
+
+		$patterns = array();
+
+		$value = (string) trim($value,' ,');
+
+		// extract all exact sentence > "foo bar" and 'foo bar'
+		if(preg_match_all('#(["\'])((?!\\1).+)\\1#iU',$value,$matches,PREG_SET_ORDER)){
+			foreach($matches as $match){
+				$patterns[]= $match[2];
+				$value = str_replace($match[0],'',$value);
+			}
+		}
+
+		// extract all others words
+		$value = str_replace(array('`'),array('\''),$value);
+		$value = preg_replace('#[^a-zA-Z0-9 \'",.-]#','',$value);
+		$words = explode(' ',str_replace(',',' ',$value));
+		foreach($words as $word){
+			if(!$word) continue;
+			$patterns[] = $word;
+		}
+
+		$parts = array();
+		$crossParts = array();
+
+		foreach($fields as $fieldName){
+			$like = array();
+			foreach($patterns as $pattern){
+				$test = $fieldName.' LIKE \'%'. $this->getConnector()->real_escape_string($pattern) .'%\'';
+				$like[] = $test;
+			}
+			$parts[] 		= '(' . implode(' AND ',$like) . ')' ;
+			$crossParts[] 	= '(' . implode(' OR ', $like) . ')' ;
+		}
+
+		$finalTest = '( ('.implode(' OR ',$parts).') OR ('.implode(' AND ',$crossParts).') )';
+
+		return $finalTest;
+
+	}
+
 }
