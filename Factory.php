@@ -116,7 +116,7 @@ class Factory {
 				$this->_dao[$voName] = $this->getDefaultDao();
 				$vo = new $voName(); // TODO : Find a better solution for getting table and primary key
 				$this->_dao[$voName]
-						->setValueObjectClass($voName)
+						->setVoName($voName)
 						->setTable($vo->getTable())
 						->setPrimaryKey($vo->getPrimaryKey())
 						;
@@ -167,6 +167,15 @@ class Factory {
 			}
 		}
 		return $this->_validator[$voName];
+	}
+
+	/**
+	 * Return a listing object for the given Value object $voName
+	 * @param  string $voName Name of the vo you want to request
+	 * @return \Smally\Listing
+	 */
+	public function getListing(){
+		return new \Smally\Listing($this->getApplication());
 	}
 
 	/**
