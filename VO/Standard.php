@@ -11,8 +11,10 @@ class Standard extends \stdClass {
 	protected $_voName = null;
 	protected $_table = null;
 	protected $_primaryKey = null;
+	protected $_nameKey = 'name';
 	protected $_searchFields = null;
 
+	protected $_application = null;
 	protected $_factory = null;
 	protected $_dao = null;
 
@@ -43,6 +45,17 @@ class Standard extends \stdClass {
 	}
 
 	/**
+	 * Return the current application instance, store it the first time called
+	 * @return \Smally\Application
+	 */
+	public function getApplication(){
+		if(is_null($this->_application)){
+			$this->_application = \Smally\Application::getInstance();
+		}
+		return $this->_application;
+	}
+
+	/**
 	 * Return the appropriate dao for the current value object , default dao is database + mysqli
 	 * @return \Smally\Dao\InterfaceDao
 	 */
@@ -59,7 +72,7 @@ class Standard extends \stdClass {
 	 */
 	public function getFactory(){
 		if(is_null($this->_factory)){
-			$this->_factory = \Smally\Application::getInstance()->getFactory();
+			$this->_factory = $this->getApplication()->getFactory();
 		}
 		return $this->_factory;
 	}
@@ -99,6 +112,10 @@ class Standard extends \stdClass {
 		return $this->_primaryKey;
 	}
 
+	/**
+	 * Return the default fields for a search
+	 * @return array
+	 */
 	public function getSearchFields(){
 		return $this->_searchFields;
 	}
@@ -122,8 +139,42 @@ class Standard extends \stdClass {
 	}
 
 	/**
+	 * GENERIC METHODS
+	 */
+
+	/**
+	 * Generic wrapper to the makeControllerUrl and getBaseUrl from application that will give name and id of the current object
+	 * @param  string $controllerPath The controller action you want
+	 * @return string The absolute url of the controller action wanted
+	 */
+	public function getUrl($controllerPath){
+		$params = array(
+				'id' => $this->getId(),
+				'name' => $this->getName(),
+			);
+		$url = $this->getApplication()->makeControllerUrl($controllerPath,$params);
+		return $this->getApplication()->getBaseUrl($url);
+	}
+
+	/**
 	 * GENERIC GETTER AND SETTER FOR USUAL PROPERTY FORMAT
 	 */
+
+	/**
+	 * Generic method that will return the primaryId of the vo
+	 * @return int
+	 */
+	public function getId(){
+		return $this->{$this->getPrimaryKey()};
+	}
+
+	/**
+	 * Generic method that will return the name of the vo
+	 * @return string
+	 */
+	public function getName(){
+		return $this->{$this->_nameKey};
+	}
 
 	/**
 	 * Generic setter for uts field
