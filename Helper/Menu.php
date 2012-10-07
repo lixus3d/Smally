@@ -4,10 +4,10 @@ namespace Smally\Helper;
 
 class Menu {
 
+	protected $_decoratorNamespace = '\\Smally\\Helper\\Decorator';
+
 	protected $_tree = null;
 	protected $_parent = null;
-
-	protected $_decoratorNamespace = '\\Smally\\Helper\\Decorator';
 
 	protected $_attributes  = array();
 	protected $_attributesElement = array();
