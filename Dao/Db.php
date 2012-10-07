@@ -190,6 +190,28 @@ class Db implements InterfaceDao {
 		return $return;
 	}
 
+	public function fetchCount(\Smally\Criteria $criteria=null){
+		$return = 0;
+
+		if(is_null($criteria)) $criteria = $this->getCriteria();
+
+		$params = $this->criteriaToSql($criteria);
+		$params['fields'] = array('COUNT(*) as nb');
+		extract($params);
+		$sql = $this->makeSelect($where,$order,$limit,$fields,$join,$groupby);
+
+		$this->log($sql);
+
+		if($result = $this->getConnector()->query($sql)){
+			if($result->num_rows>=1){
+				$return = $result->fetch_object()->nb;
+				$result->free();
+			}
+		}else throw new \Smally\Exception('Db fetch error : '.$this->getConnector()->error . NN . 'Query : '.$sql);
+
+		return $return;
+	}
+
 	/**
 	 * Store a value object. Use INSERT or UPDATE in case of $primaryKey not null
 	 * @param  \stdClass $vo The value object you want to store
@@ -288,7 +310,7 @@ class Db implements InterfaceDao {
 
 		if(!is_array($fields)||count($fields)==0) $fields = array($fields?:'*');
 		foreach($fields as &$field){
-			if($field === '*') continue;
+			if($field === '*' OR strpos($field,'COUNT')===0 ) continue;
 			$field = '`'.$field.'`';
 		}
 
