@@ -130,7 +130,7 @@ class Criteria {
 
 	/**
 	 * Set every associative array to an equal filter
-	 * @example You can use the 'search' key that will search on multiple field using like
+	 * @example You can use the 'search' key or operator that will search on multiple field using like
 	 * @param  array $array An array or class with associative key => value to use has filter
 	 * @return \Smally\Criteria
 	 */
