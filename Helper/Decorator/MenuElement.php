@@ -63,7 +63,7 @@ class MenuElement extends AbstractDecorator {
 		// Add the active automatically
 		if($application = \Smally\Application::getInstance()){
 			$actualUrl = $application->getRooter()->getActionPath();
-			if($this->getElement()->getActionPAth() == $actualUrl){
+			if($this->getElement()->getActionPath() == $actualUrl){
 				$attributes['class'][] = $this->_classActive;
 				// Add the active class to the parent of the current menu
 				if($parent = $this->getMenu()->getParent()){
