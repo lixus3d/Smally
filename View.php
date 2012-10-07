@@ -186,7 +186,7 @@ class View {
 	public function render($template,$params=array()){
 		$templatePath = 'template'.DIRECTORY_SEPARATOR.$template.'.php';
 		ob_start();
-		if(!@include(ROOT_PATH.$templatePath)){
+		if(!include(ROOT_PATH.$templatePath)){
 			throw new Exception('Template not found : '.$template);
 		}
 		return ob_get_clean();
