@@ -43,8 +43,6 @@ Todo
 ----
 - Form :
 	- Add others type of field :
-		- date 
-		- html wysiwyg 		
 		- color 
 		- other value object and objects  
 - Validator :
