@@ -107,10 +107,6 @@ class Listing {
 	public function getPaging(){
 		if(is_null($this->_paging)){
 			$this->_paging = new \Smally\Helper\Paging();
-			$this->_paging
-						->setNbItems($this->getNbItems())
-						->setPage()
-						;
 		}
 		return $this->_paging;
 	}
@@ -134,6 +130,11 @@ class Listing {
 									->getDao($this->getVoName())
 										->fetchCount($this->getCriteria())
 										);
+		// We init the paging
+		$this->getPaging()
+				->setNbItems($this->getNbItems())
+				->setPage()
+				;
 
 		// We init the final criteria with the paging interval
 		$this->getCriteria()->setLimit($this->getPaging()->getInterval());
