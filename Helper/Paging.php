@@ -14,13 +14,26 @@ class Paging {
 	protected $_page = 0; // 0 is the first page, the setPage correct automatically by substracting 1 to the given value
 
 	protected $_url = null;
+	protected $_urlInfos = null;
 
 	protected $_attributes  = array();
 	protected $_attributesElement = array();
 
+	protected $_listing = null;
+
 	public function __construct($limit=null,$urlParam=null){
 		$this->setLimit($limit);
 		$this->setUrlParam($urlParam);
+	}
+
+	/**
+	 * Define a back reference to the listing
+	 * @param \Smally\Listing $listing The listing where the order is used
+	 * @return  \Smally\Helper\Paging
+	 */
+	public function setListing(\Smally\Listing $listing){
+		$this->_listing = $listing;
+		return $this;
 	}
 
 	/**
@@ -171,6 +184,14 @@ class Paging {
 	}
 
 	/**
+	 * Return the url parameter for page
+	 * @return string
+	 */
+	public function getUrlParam(){
+		return $this->_urlParam;
+	}
+
+	/**
 	 * Return the current interval for a request
 	 * @return array array( Offset, Limit )
 	 */
@@ -199,7 +220,17 @@ class Paging {
 	 * @return string
 	 */
 	public function getUrl($pageNumber=1){
-		return strpos($this->_url,'?')!==false ? $this->_url.'&amp;'.$this->_urlParam.'='.$pageNumber : $this->_url.'?'.$this->_urlParam.'='.$pageNumber ;
+
+		if(is_null($this->_urlInfos)){
+			$this->_urlInfos = parse_url($this->_url);
+			if(isset($this->_urlInfos['query'])) parse_str($this->_urlInfos['query'],$this->_urlInfos['params']);
+			else $this->_urlInfos['params'] = array();
+		}
+		$params = $this->_urlInfos['params'];
+
+		$params[$this->_urlParam] = $pageNumber;
+
+		return 'http://'.$this->_urlInfos['host'].$this->_urlInfos['path'].'?'.http_build_query($params);
 	}
 
 	/**

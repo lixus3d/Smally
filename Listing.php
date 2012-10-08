@@ -7,7 +7,9 @@ class Listing {
 	protected $_application = null;
 
 	protected $_voName = null;
+
 	protected $_paging = null;
+	protected $_order = null;
 	protected $_criteria = null;
 
 	protected $_nbItems = null;
@@ -102,13 +104,26 @@ class Listing {
 
 	/**
 	 * Return the paging object, create it the first time
-	 * @return \Smally\Paging
+	 * @return \Smally\Helper\Paging
 	 */
 	public function getPaging(){
 		if(is_null($this->_paging)){
 			$this->_paging = new \Smally\Helper\Paging();
+			$this->_paging->setListing($this);
 		}
 		return $this->_paging;
+	}
+
+	/**
+	 * Return the order object, create it the first time
+	 * @return \Smally\Helper\Order
+	 */
+	public function getOrder(){
+		if(is_null($this->_order)){
+			$this->_order = new \Smally\Helper\Order();
+			$this->_order->setListing($this);
+		}
+		return $this->_order;
 	}
 
 	/**
@@ -136,8 +151,16 @@ class Listing {
 				->setPage()
 				;
 
-		// We init the final criteria with the paging interval
-		$this->getCriteria()->setLimit($this->getPaging()->getInterval());
+		// We init the order
+		$this->getOrder()
+				->setOrder()
+				;
+
+		// We init the final criteria with the paging interval and the order field and direction
+		$this->getCriteria()
+				->setLimit($this->getPaging()->getInterval())
+				->setOrder($this->getOrder()->getOrder())
+				;
 
 		// we request the dao for the final items set with interval filter
 		return $this->getFactory()
