@@ -58,11 +58,17 @@ class Order {
 		if(is_null($field)){
 			$getVar = \Smally\Application::getInstance()->getContext()->{$this->_urlParam};
 			if(is_array($getVar)||($getVar instanceof \Smally\ContextStdClass)){
-				$this->_order = array();
+				$add = array(); // tricks to avoid reseting default order if no order present in the url
 				foreach($getVar as $order){
 					if(strpos($order,',')>=1){
 						list($field,$direction) = explode(',',$order);
 						if(!in_array($direction, array('ASC','DESC'))) $direction='ASC';
+						$add[$field] = $direction;
+					}
+				}
+				if($add){
+					$this->_order = array();
+					foreach($add as $field => $direction){
 						$this->addOrder($field,$direction);
 					}
 				}
@@ -70,7 +76,7 @@ class Order {
 			}
 		}
 
-		if($field&&$direction){
+		if(!is_null($field)&&$direction){
 			$this->_order = array(array($field,$direction));
 		}
 
