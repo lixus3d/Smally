@@ -244,7 +244,7 @@ class Application {
 	 * @return \Bootstrap
 	 */
 	public function getBootstrap(){
-		if(is_null($this->_bootstrap)&&class_exists('\Bootstrap')){
+		if(is_null($this->_bootstrap)&&class_exists('Bootstrap')){
 			$this->_bootstrap = new \Bootstrap($this);
 		}
 		return $this->_bootstrap;

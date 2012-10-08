@@ -10,7 +10,7 @@ class Paging {
 
 	protected $_nbPages = 0;
 	protected $_nbItems = 0;
-	protected $_limit = 5;
+	protected $_limit = 10;
 	protected $_page = 0; // 0 is the first page, the setPage correct automatically by substracting 1 to the given value
 
 	protected $_url = null;
@@ -18,12 +18,18 @@ class Paging {
 	protected $_attributes  = array();
 	protected $_attributesElement = array();
 
-	public function __construct($limit=5){
+	public function __construct($limit=null,$urlParam=null){
 		$this->setLimit($limit);
+		$this->setUrlParam($urlParam);
 	}
 
-	public function setUrlParam($key='p'){
-		$this->_urlParam = $key;
+	/**
+	 * Define the url param for get and set the page in the url
+	 * @param string $key The name of the param
+	 * @return  \Smally\Helper\Paging
+	 */
+	public function setUrlParam($key){
+		$this->_urlParam = $key ?: ((string)\Smally\Application::getInstance()->getConfig()->smally->default->paging->urlParam?:'p');
 		return $this;
 	}
 
@@ -33,7 +39,7 @@ class Paging {
 	 * @return \Smally\Helper\Paging
 	 */
 	public function setLimit($limit){
-		$this->_limit = $limit>0?$limit:10;
+		$this->_limit = $limit>0 ? $limit : ((string)\Smally\Application::getInstance()->getConfig()->smally->default->paging->limit?:10);
 		return $this;
 	}
 

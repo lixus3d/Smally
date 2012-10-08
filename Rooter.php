@@ -9,6 +9,7 @@ class Rooter {
 
 	protected $_baseUrl = null;
 	protected $_uri = '';
+	protected $_uriQuery = '';
 	protected $_actualUrl = '';
 	protected $_controllerPath = null;
 	protected $_action = null;
@@ -79,8 +80,8 @@ class Rooter {
 	 * Return the part of the url that is for the page / action
 	 * @return string
 	 */
-	public function getRequestUri(){
-		return $this->_uri;
+	public function getRequestUri($full=true){
+		return $this->_uri.($full&&$this->_uriQuery?'?'.$this->_uriQuery:'');
 	}
 
 	/**
@@ -186,6 +187,10 @@ class Rooter {
 			if($uriElems){
 				$this->_uri = implode('/',array_reverse($uriElems));
 			}
+			if(isset($queryArray['query'])){
+				$this->_uriQuery = $queryArray['query'];
+			}
+
 			$this->_actualUrl = $this->_baseUrl.$this->_uri;
 		}
 		return $this;
@@ -225,7 +230,7 @@ class Rooter {
 
 		$this->parseUri();
 
-		if($queryPath = $this->getRequestUri()){
+		if($queryPath = $this->getRequestUri(false)){
 
 			// detect '..' and throw exception
 			if(strpos($queryPath,'..') !== false) throw new Exception('We don\'t like ".." in the url ...');

@@ -190,6 +190,11 @@ class Db implements InterfaceDao {
 		return $return;
 	}
 
+	/**
+	 * Return the number of rows in a request with criteria
+	 * @param  \Smally\Criteria $criteria The criteria to test
+	 * @return int
+	 */
 	public function fetchCount(\Smally\Criteria $criteria=null){
 		$return = 0;
 

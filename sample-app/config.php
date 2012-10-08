@@ -14,6 +14,9 @@ $config['smally']['logger']['level']['default'] = 100 ;
 $config['smally']['logger']['level']['dao']  	= \Smally\Logger::LVL_ERROR ;
 $config['smally']['logger']['level']['rooter']  = \Smally\Logger::LVL_ERROR ;
 
+$config['smally']['default']['paging']['limit'] = 10;
+$config['smally']['default']['paging']['urlParam'] = 'page';
+
 
 if(\Smally\Application::getInstance()->isDev()){
 	/* PLACE YOUR DEVELOPMENT SPECIAL CONFIG HERE */
