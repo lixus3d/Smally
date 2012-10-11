@@ -20,7 +20,7 @@ class Logger {
 	const DEST_SMS		= 16;
 
 	static $typeLabel = array(
-		self::LVL_INFO 	=> 'INFO',
+		self::LVL_INFO 		=> 'INFO',
 		self::LVL_DEBUG 	=> 'DEBUG',
 		self::LVL_WARNING 	=> 'WARNING',
 		self::LVL_ERROR 	=> 'ERROR',
