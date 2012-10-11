@@ -44,15 +44,18 @@ Todo
 - Form :
 	- Add others type of field :
 		- color 
+		- input file
 		- other value object and objects  
 - Validator :
 	- Add others type of validator :
-		- email
-		- date
 		- numeric
 		- alpha 
 		- alpha and numeric 
-		- regex  
 - Dao :
 	- Add array values store and fetch possibility 
 	- Add gestion of join in Criteria
+- Mail possibilities : 
+	- Mailer class 
+	- Mail spool system
+- Metas :
+	- A metas "config" file 
