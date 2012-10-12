@@ -49,7 +49,11 @@ class NavigationTree extends Tree{
 	 * @return string
 	 */
 	public function getName(){
-		return $this->name;
+		return isset($this->name)&&$this->name?$this->name:'';
+	}
+
+	public function getType(){
+		return isset($this->type)&&$this->type?$this->type:'page';
 	}
 
 	/**
@@ -59,7 +63,7 @@ class NavigationTree extends Tree{
 	public function getUrl(){
 		if(!isset($this->url)){ // if url is not directly set or not yet compiled
 			// Test against url rewriting if existing
-			$relativeUrl = $this->getNavigation()->getApplication()->makeControllerUrl($this->controllerPath);
+			$relativeUrl = $this->getNavigation()->getApplication()->makeControllerUrl($this->getActionPath());
 			$this->url = $this->getNavigation()->getApplication()->getBaseUrl($relativeUrl);
 		}
 		return $this->url;
@@ -70,7 +74,7 @@ class NavigationTree extends Tree{
 	 * @return string
 	 */
 	public function getActionPath(){
-		return $this->controllerPath?:'';
+		return isset($this->controllerPath)&&$this->controllerPath?$this->controllerPath:'';
 	}
 
 }

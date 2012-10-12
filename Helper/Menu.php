@@ -9,6 +9,10 @@ class Menu {
 	protected $_tree = null;
 	protected $_parent = null;
 
+	protected $_level = 0;
+	protected $_renderLevel = null;
+
+
 	protected $_attributes  = array();
 	protected $_attributesElement = array();
 
@@ -46,8 +50,33 @@ class Menu {
 		return $this;
 	}
 
+	/**
+	 * Define the parent of the Menu Helper , usually another Menu Helper in a sub menu logic
+	 * @param \Smally\Tree $parent A parent Menu Helper usually
+	 * @return  \Smally\Helper\Menu
+	 */
 	public function setParent(\Smally\Tree $parent){
 		$this->_parent = $parent;
+		return $this;
+	}
+
+	/**
+	 * Define the level of the actual Menu
+	 * @param int $level The level of the menu
+	 * @return  \Smally\Helper\Menu
+	 */
+	public function setLevel($level){
+		$this->_level = (int) $level;
+		return $this;
+	}
+
+	/**
+	 * Define the number of level to render , null for all
+	 * @param int $level The number of level to render , 0 and 1 are equivalent , null for all level
+	 * @return  \Smally\Helper\Menu
+	 */
+	public function setRenderLevel($level){
+		$this->_renderLevel = $level;
 		return $this;
 	}
 
@@ -79,6 +108,10 @@ class Menu {
 		return $this->setAttribute($attribute,$value,'_attributesElement');
 	}
 
+	public function resetAttribute($attribute,$type='_attributes'){
+		unset($this->{$type}[$attribute]) ;
+		return $this;
+	}
 
 	/**
 	 * Define the decorator namespace to use for the menu
@@ -87,6 +120,15 @@ class Menu {
 	 */
 	public function setDecoratorNamespace($ns){
 		$this->_decoratorNamespace = $ns;
+		return $this;
+	}
+
+	/**
+	 * Quickly set the Decorator namespace to use twitter Bootstrap one
+	 * @return \Smally\Helper\Menu
+	 */
+	public function setBootstrapDecorator(){
+		$this->setDecoratorNamespace('\\Smally\\Helper\\Decorator\\Bootstrap\\');
 		return $this;
 	}
 
@@ -125,12 +167,36 @@ class Menu {
 		return new $name($obj);
 	}
 
+	/**
+	 * Return the Tree of the Helper Menu object
+	 * @return \Smally\Tree
+	 */
 	public function getTree(){
 		return $this->_tree;
 	}
 
+	/**
+	 * Return the parent of the currennt Helper Menu object , usually another Helper Menu object
+	 * @return \Smally\Helper\Menu
+	 */
 	public function getParent(){
 		return $this->_parent;
+	}
+
+	/**
+	 * Return the level of the current Helper Menu object
+	 * @return int
+	 */
+	public function getLevel(){
+		return $this->_level;
+	}
+
+	/**
+	 * Return the number of level to render
+	 * @return int
+	 */
+	public function getRenderLevel(){
+		return $this->_renderLevel;
 	}
 
 	/**
