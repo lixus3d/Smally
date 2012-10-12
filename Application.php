@@ -352,11 +352,12 @@ class Application {
 	 * @return \Smally\Application
 	 */
 	public function x(){
-		// Execute the bootstrap if present
-		if($this->getBootstrap()) $this->getBootstrap()->x();
 
 		// Execute the rooter logic : Parse URL, define controller path and controller action
 		$this->getRooter()->x();
+
+		// Execute the bootstrap if present
+		if($this->getBootstrap()) $this->getBootstrap()->x();
 
 		// Execute the controller and view
 		$this->getRooter()->getController()->x();
