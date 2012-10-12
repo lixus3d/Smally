@@ -27,6 +27,7 @@ class Form{
 				.$this->_form->getSeparator()
 				.$content
 				.$this->_form->getSeparator()
+				.'<hr />'
 				.'</form>';
 	}
 }

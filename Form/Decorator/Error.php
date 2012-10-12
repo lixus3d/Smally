@@ -14,7 +14,7 @@ class Error extends AbstractDecorator{
 		$html = '';
 		if($error = $this->getElement()->getError()){
 			if(is_array($error)) $error = implode(BR,$error);
-			$html .= '<div class="error">'.$error.'</div>';
+			$html .= '<div class="error text-error italic">'.$error.'</div>';
 		}
 		return $this->concat($html,$content);
 	}

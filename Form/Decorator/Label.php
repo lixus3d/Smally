@@ -11,10 +11,14 @@ class Label extends AbstractDecorator{
 	 */
 	public function render($content){
 
-		$html = '<div class="label">';
-		$html = $this->getForm()->getDecorator('comment',$this->_element)->render($html);
-		$html .= '<label for="'.$this->getElement()->getName().'">'.$this->getElement()->getLabel().'</label>';
-		$html .= '</div>';
+		$html = '';
+
+		if($label = $this->getElement()->getLabel()){
+			$html .= '<div class="inputLabel">';
+			$html = $this->getForm()->getDecorator('comment',$this->_element)->render($html);
+			$html .= '<label for="'.$this->getElement()->getName().'">'.$label.'</label>';
+			$html .= '</div>';
+		}
 
 		return $this->concat($html,$content);
 	}

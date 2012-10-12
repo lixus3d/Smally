@@ -15,6 +15,8 @@ class Select extends AbstractDecorator {
 
 		$html = '<div class="input">';
 
+		$html  = $this->getForm()->getDecorator('error',$this->_element)->render($html);
+
 		$attributes = array(
 				'name' => $this->getElement()->getName() . ( $type=='multiselect'?'[]':'') ,
 			);
@@ -37,7 +39,6 @@ class Select extends AbstractDecorator {
 		$html .= '</select>';
 
 		$html  = $this->getForm()->getDecorator('help',$this->_element)->render($html);
-		$html  = $this->getForm()->getDecorator('error',$this->_element)->render($html);
 
 		$html .= '</div>';
 

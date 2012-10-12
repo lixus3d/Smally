@@ -18,6 +18,8 @@ class Radio extends AbstractDecorator {
 
 		$html = '<div class="input">';
 
+		$html  = $this->getForm()->getDecorator('error',$this->_element)->render($html);
+
 		$html .= '<ul>';
 
 		if( !is_array($this->getElement()->getValue()) ) $values = array($this->getElement()->getValue()=>$this->getElement()->getValue());
@@ -38,7 +40,7 @@ class Radio extends AbstractDecorator {
 		$html .= '</ul>';
 
 		$html  = $this->getForm()->getDecorator('help',$this->_element)->render($html);
-		$html  = $this->getForm()->getDecorator('error',$this->_element)->render($html);
+
 
 		$html .= '</div>';
 

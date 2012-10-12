@@ -20,9 +20,9 @@ class Input extends AbstractDecorator {
 		$attributes = array_merge($attributes,$this->_element->getAttributes());
 
 		$html = '<div class="input">';
+		$html  = $this->getForm()->getDecorator('error',$this->_element)->render($html);
 		$html .= '<input '.\Smally\HtmlUtil::toAttributes($attributes).'/>';
 		$html  = $this->getForm()->getDecorator('help',$this->_element)->render($html);
-		$html  = $this->getForm()->getDecorator('error',$this->_element)->render($html);
 		$html .= '</div>';
 
 		return $this->concat($html,$content);
