@@ -147,11 +147,12 @@ class Standard extends \stdClass {
 	 * @param  string $controllerPath The controller action you want
 	 * @return string The absolute url of the controller action wanted
 	 */
-	public function getUrl($controllerPath){
-		$params = array(
+	public function getUrl($controllerPath,$params=array()){
+		$defaultParams = array(
 				'id' => $this->getId(),
 				'name' => $this->getName(),
 			);
+		$params = array_merge($defaultParams,$params);
 		$url = $this->getApplication()->makeControllerUrl($controllerPath,$params);
 		return $this->getApplication()->getBaseUrl($url);
 	}
