@@ -19,6 +19,11 @@ class Menu extends AbstractDecorator {
 	 * @return string
 	 */
 	public function render($content=''){
+
+		if(method_exists($this, 'onRender')){
+			$this->{'onRender'}();
+		}
+
 		// we render children before to adapt attributes if necessary (active class for example, or hasChildren)
 		$children = $this->renderChildren();
 		$html  = '<ul'.\Smally\HtmlUtil::toAttributes($this->getAttributes()).'>' . NN;
