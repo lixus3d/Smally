@@ -58,6 +58,16 @@ abstract class Controller {
 	}
 
 	/**
+	 * Define the view to use for this controller or action
+	 * @param \Smally\View $view The forced view to use for this controller or action
+	 * @return \Smally\Controller
+	 */
+	public function setView(\Smally\View $view){
+		$this->_view = $view;
+		return $this;
+	}
+
+	/**
 	 * Return the called action of the controller
 	 * @return string
 	 */
@@ -82,9 +92,20 @@ abstract class Controller {
 	 * @return \Smally\Controller
 	 */
 	public function x(){
+
+		// pseudo event system
+		if(method_exists($this, 'onX')){
+			$this->{'onX'}();
+		}
 		$method = $this->getAction().'Action';
 		$this->$method();
+
+		// pseudo event system before view execution
+		if(method_exists($this, 'onViewX')){
+			$this->{'onViewX'}();
+		}
 		$this->getView()->x();
+
 		return $this;
 	}
 
