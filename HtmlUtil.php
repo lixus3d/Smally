@@ -21,7 +21,7 @@ class HtmlUtil {
 				switch (true) {
 					case (strlen($value) > 0) : // a value must be defined , except for special $key
 					case $key == 'action' : // action key has valid empty value
-						$str .= $key . $equal . $enclosure . htmlentities($value,ENT_COMPAT,'UTF-8') . $enclosure .$sep;
+						$str .= $key . $equal . $enclosure . htmlspecialchars($value,ENT_COMPAT,'UTF-8',false) . $enclosure .$sep;
 						break;
 				}
 			}

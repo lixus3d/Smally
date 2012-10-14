@@ -285,6 +285,14 @@ class Application {
 			case $this->isDev(): // If we are in developpement context, then we always use the standard base url but we prefix with type directory
 				$path = $type.'/'.$path;
 			break;
+			case 'data':
+				if( !$this->getConfig()->smally->paths->data->isEmpty() && $dataPaths = $this->getConfig()->smally->paths->data->toArray()){
+					// generate a unique key (ip + $path first char)
+					$ip = substr(strrchr($this->getContext()->getIp(), '.'),1); // serv always same domain to a particular ip
+					$ip += ord(basename($path)) + strlen($path);
+					$url = $dataPaths[$ip % count($dataPaths)];
+				}
+			break;
 			case 'assets':
 				if( !$this->getConfig()->smally->paths->assets->isEmpty() && $assetsPaths = $this->getConfig()->smally->paths->assets->toArray()){
 					// generate a unique key (ip + $path first char)
@@ -296,7 +304,7 @@ class Application {
 		}
 		if(!isset($url)) $url = $baseUrl;
 		$url .= $path;
-		return $htmlspecialchars?htmlspecialchars($url):$url;
+		return $htmlspecialchars?htmlspecialchars($url,ENT_COMPAT,'UTF-8'):$url;
 	}
 
 	/**
@@ -309,6 +317,11 @@ class Application {
 	public function urlAssets($path='',$type='assets',$htmlspecialchars=true){
 		return $this->getBaseUrl($path,$type,$htmlspecialchars);
 	}
+
+	public function urlData($path='',$type='data',$htmlspecialchars=true){
+		return $this->getBaseUrl($path,$type,$htmlspecialchars);
+	}
+
 
 	/**
 	 * Return the name of the global layout
