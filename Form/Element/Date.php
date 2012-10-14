@@ -18,8 +18,8 @@ class Date extends AbstractElement{
 				->setJs('js/jquery.min.js')
 				->setJs('js/jquery-ui.min.js')
 				->setCss('css/jqueryui-adn-theme/jquery-ui-1.8.24.custom.css')
-				->setJs('js/form/DefaultValue.js')
-				->setJs('js/form/DateSelector.js')
+				->setJs('js/smally/form/DefaultValue.js')
+				->setJs('js/smally/form/DateSelector.js')
 				;
 		}
 	}

@@ -18,7 +18,7 @@ class Wysiwyg extends Textarea{
 				->setJs('js/jquery.min.js')
 				->setJs('js/tiny_mce/jquery.tinymce.js')
 				->setJs('js/tiny_mce/tiny_mce.js')
-				->setJs('js/form/Wysiwyg.js')
+				->setJs('js/smally/form/Wysiwyg.js')
 				;
 		}
 	}
