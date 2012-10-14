@@ -39,40 +39,6 @@ class Criteria {
 	}
 
 	/**
-	 * Mix two criteria together
-	 * @param \Smally\Criteria $criteria
-	 */
-	public function import(\Smally\Criteria $criteria){
-		$this->setFilter($criteria->getFilter());
-		$this->setOrder($criteria->getOrder());
-		$this->setLimit($criteria->getLimit());
-	}
-
-	/**
-	 * Return the where conditions of the criteria
-	 * @return array
-	 */
-	public function getFilter(){
-		return $this->_where;
-	}
-
-	/**
-	 * Return the order part of the criteria
-	 * @return array
-	 */
-	public function getOrder(){
-		return $this->_order;
-	}
-
-	/**
-	 * Return the limit of the criteria can be either null or array
-	 * @return mixed
-	 */
-	public function getLimit(){
-		return $this->_limit;
-	}
-
-	/**
 	 * Set filter(s) of the criteria
 	 * @example $filter = array('mykey'=>array('value'=>10,'operator'=>'<=')) , $filter = array('mykey2'=>array('value'=>array(5,16),'operator'=>'IN'))
 	 * @param array $filter Associative array of $field => $filter ;
@@ -126,6 +92,40 @@ class Criteria {
 			if($value > 0) $this->_limit = array(0,$value);
 		}
 		return $this;
+	}
+
+	/**
+	 * Return the where conditions of the criteria
+	 * @return array
+	 */
+	public function getFilter(){
+		return $this->_where;
+	}
+
+	/**
+	 * Return the order part of the criteria
+	 * @return array
+	 */
+	public function getOrder(){
+		return $this->_order;
+	}
+
+	/**
+	 * Return the limit of the criteria can be either null or array
+	 * @return mixed
+	 */
+	public function getLimit(){
+		return $this->_limit;
+	}
+
+	/**
+	 * Mix two criteria together
+	 * @param \Smally\Criteria $criteria
+	 */
+	public function import(\Smally\Criteria $criteria){
+		$this->setFilter($criteria->getFilter());
+		$this->setOrder($criteria->getOrder());
+		$this->setLimit($criteria->getLimit());
 	}
 
 	/**
