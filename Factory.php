@@ -170,12 +170,22 @@ class Factory {
 	}
 
 	/**
-	 * Return a listing object for the given Value object $voName
+	 * Return a Listing object for the given Value object $voName
 	 * @param  string $voName Name of the vo you want to request
 	 * @return \Smally\Listing
 	 */
 	public function getListing(){
 		return new \Smally\Listing($this->getApplication());
+	}
+
+	/**
+	 * Return a new Uploader object with the default upload path defined
+	 * @return \Smally\Uploader
+	 */
+	public function getUploader(){
+		$uploader = new \Smally\Uploader($this->getApplication());
+		$uploader->setUploadPath( (string)$this->getApplication()->getConfig()->smally->upload->path?:ROOT_PATH.'public/data/' ) ;
+		return $uploader;
 	}
 
 	/**
