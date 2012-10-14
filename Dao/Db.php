@@ -262,7 +262,9 @@ class Db implements InterfaceDao {
 		$this->log($sql);
 
 		if($return = $this->getConnector()->query($sql)){
-			$vo->{$primaryKey} = $this->getLastInsertId();
+			if($statement=='INSERT INTO'&&!$vo->{$primaryKey}){
+				$vo->{$primaryKey} = $this->getLastInsertId();
+			}
 		}
 
 		return $return;
