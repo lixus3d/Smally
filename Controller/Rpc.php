@@ -4,6 +4,7 @@ namespace Smally\Controller;
 
 class Rpc extends \Smally\Controller {
 
+	protected $_json = null;
 
 	public $code = 0;
 	public $text = 'KO';
@@ -86,7 +87,10 @@ class Rpc extends \Smally\Controller {
 	 * @return string Json
 	 */
 	public function getJson(){
-		return json_encode($this);
+		if(is_null($this->_json)){
+			$this->_json = json_encode($this);
+		}
+		return $this->_json;
 	}
 
 }
