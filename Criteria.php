@@ -119,6 +119,15 @@ class Criteria {
 	}
 
 	/**
+	 * Return weither or not a $field is filtered in the criteria
+	 * @param  string  $field The field name you want to check
+	 * @return boolean
+	 */
+	public function hasFilter($field){
+		return isset($this->_where[$field]);
+	}
+
+	/**
 	 * Mix two criteria together
 	 * @param \Smally\Criteria $criteria
 	 */
