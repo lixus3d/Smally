@@ -129,6 +129,16 @@ class Db implements InterfaceDao {
 		return $this->fetch($criteria);
 	}
 
+	public function hasUtsDelete($vo=null){
+		if(is_null($vo)&&$voName=$this->getVoName()){
+			$vo = new $voName();
+		}
+		if($vo instanceof \Smally\VO\Standard){
+			return property_exists($vo, 'utsDelete');
+		}
+		return false;
+	}
+
 	/**
 	 * Wrapper to the Logger but test if we have to log before sending
 	 * @param  string $text     Usually the request to log
@@ -173,6 +183,7 @@ class Db implements InterfaceDao {
 		$return = array();
 
 		if(is_null($criteria)) $criteria = $this->getCriteria();
+		if( $this->hasUtsDelete() && !$criteria->hasFilter('utsDelete') ) $criteria->setFilter(array('utsDelete'=>array('value'=>0)));
 
 		$sql = $this->criteriaToSelect($criteria);
 
@@ -199,6 +210,7 @@ class Db implements InterfaceDao {
 		$return = 0;
 
 		if(is_null($criteria)) $criteria = $this->getCriteria();
+		if( $this->hasUtsDelete() && !$criteria->hasFilter('utsDelete') ) $criteria->setFilter(array('utsDelete'=>array('value'=>0)));
 
 		$params = $this->criteriaToSql($criteria);
 		$params['fields'] = array('COUNT(*) as nb');
@@ -261,13 +273,13 @@ class Db implements InterfaceDao {
 	 * @param  int $id               The id of the value object you want to delete
 	 * @return boolean true if delete succeded
 	 */
-	public function delete($id,$utsDeleteMode=true){
+	public function delete($vo,$forceDelete=false){
 		$primaryKey = $this->getPrimaryKey();
 
-		if($utsDeleteMode){
-			$sql = 'UPDATE '.$this->getTable().' SET utsDelete=UNIX_TIMESTAMP() WHERE `'.$primaryKey.'` = \''.$id.'\'';
+		if($this->hasUtsDelete($vo)){
+			$sql = 'UPDATE '.$this->getTable().' SET utsDelete=UNIX_TIMESTAMP() WHERE `'.$primaryKey.'` = \''.$this->getConnector()->escape_string($vo->getId()).'\'';
 		}else{
-			$sql = 'DELETE FROM '.$this->getTable().' WHERE `'.$primaryKey.'` = \''.$id.'\'';
+			$sql = 'DELETE FROM '.$this->getTable().' WHERE `'.$primaryKey.'` = \''.$this->getConnector()->escape_string($vo->getId()).'\'';
 		}
 
 		$this->log($sql);
