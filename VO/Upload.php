@@ -92,7 +92,7 @@ class Upload extends \Smally\VO\Standard {
 	}
 
 	public function getExtension(){
-		return substr(strrchr($this->name,'.'),1);
+		return strtolower(substr(strrchr($this->name,'.'),1));
 	}
 
 	public function getReadableSize() {
@@ -109,10 +109,10 @@ class Upload extends \Smally\VO\Standard {
 		$application = \Smally\application::getInstance();
 		$url = '';
 		switch($type){
+			case 'thumbnail':
 			default:
 				$url = $application->urlData(str_replace(DIRECTORY_SEPARATOR, '/', $this->filePath));
 			break;
-			case 'thumbnail':
 			break;
 			case 'delete':
 				$url = $application->getBaseUrl($application->makeControllerUrl('Upload\\delete',array('id'=>$this->getId())));

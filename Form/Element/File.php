@@ -56,12 +56,13 @@ class File extends AbstractElement{
 				);
 				$this->_itemTemplate = '
 					<div class="file-preview jsFileTemplate" style="display:none">
+						<i class="icon-move floatRight"></i>
 						<input class="id" '.\Smally\HtmlUtil::toAttributes($attributes).'/>
 						<h3 class="name"></h3>
-						<span class="size"></span>
 						<div class="preview"></div>
-						<a href="#" class="url btn" target="_blank"><i class="icon-zoom-in"></i></a>
+						<span class="size"></span>
 						<a href="#" class="delete btn" data-smally-delete-parentselector=".jsFileTemplate" data-smally-delete-url="#"><i class="icon-remove"></i></a>
+						<a href="#" class="url btn" target="_blank"><i class="icon-zoom-in"></i></a>
 					</div>
 				';
 			}

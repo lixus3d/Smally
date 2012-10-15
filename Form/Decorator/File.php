@@ -24,11 +24,12 @@ class File extends AbstractDecorator {
 
 		$attributes = array_merge($attributes,$this->_element->getAttributes());
 
-		$html = '<div class="input">';
+		$html = '<div class="input file">';
 		$html  = $this->getForm()->getDecorator('error',$this->_element)->render($html);
 		$html .= '<input '.\Smally\HtmlUtil::toAttributes($attributes).'/>';
 		$html .= $this->getElement()->getItemTemplate();
 		$html  = $this->getForm()->getDecorator('help',$this->_element)->render($html);
+		$html .= '<hr />';
 		$html .= '</div>';
 
 		return $this->concat($html,$content);
