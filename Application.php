@@ -1,6 +1,6 @@
 <?php
 
-namespace Smally;
+namespace Smally {
 
 class Application {
 
@@ -387,4 +387,25 @@ class Application {
 		return $this;
 	}
 
+}
+
+}
+
+namespace {
+	/**
+	 * A shortcut to htmlentities
+	 * @param  string $string The string you want to htmlentities
+	 * @return string
+	 */
+	function _h($string){
+		return htmlentities($string,ENT_COMPAT,'UTF-8');
+	}
+
+	/**
+	 * Future translate function
+	 * @return string
+	 */
+	function __(){
+
+	}
 }
