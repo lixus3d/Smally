@@ -18,6 +18,7 @@ class Standard extends \stdClass {
 	protected $_factory = null;
 	protected $_dao = null;
 
+	protected $_logger = null;
 
 	/**
 	 * Init a value object with $vars
@@ -39,6 +40,8 @@ class Standard extends \stdClass {
 				$this->{$method}($value);
 			}else if(property_exists($this, $name)){
 				$this->{$name} = $value;
+			}else{
+				\Smally\Logger::getInstance()->log('Trying to set a non declared propery of '.$this->getVoName().' : '.((string)$name),\Smally\Logger::LVL_WARNING);
 			}
 		}
 		return $this;
@@ -121,13 +124,24 @@ class Standard extends \stdClass {
 	}
 
 	/**
+	 * Return the application logger and store it for future uses
+	 * @return \Smally\Logger
+	 */
+	public function getLogger(){
+		if(is_null($this->_logger)){
+			$this->_logger = $this->getApplication()->getLogger();
+		}
+		return $this->_logger;
+	}
+
+	/**
 	 * Convert the class to an array representation ( recursive )
 	 * @return array
 	 */
 	public function toArray(){
 		$array = array();
 		foreach($this as $key => $value){
-			if(strpos($key,'_')===0) continue;
+			if(strpos($key,'_')===0) continue; // we did not export _protected values
 			$method = 'get'.ucfirst($key);
 			if(method_exists($this, $method)){
 				$array[$key] = $this->{$method}();
@@ -136,6 +150,17 @@ class Standard extends \stdClass {
 			}
 		}
 		return $array;
+	}
+
+	/**
+	 * Easily log something with this \Smally\Logger->log() shortcut
+	 * @param  string $text        The text to log , array are converted with print_r
+	 * @param  int $level       the level of the text to log
+	 * @param  int $destination destination of the log, bitfield so you can log to multiple destination
+	 * @return boolean
+	 */
+	public function log($text='',$level=\Smally\Logger::LVL_INFO,$destination=\Smally\Logger::DEST_LOG){
+		return $this->getLogger()->log($text,$level,$destination);
 	}
 
 	/**
