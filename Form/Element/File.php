@@ -42,31 +42,57 @@ class File extends AbstractElement{
 		return $this;
 	}
 
-	public function getItemTemplate(){
-		if(is_null($this->_itemTemplate)){
+	public function getItemTemplate($upload=null){
+
+		if(is_null($this->_itemTemplate)||!is_null($upload)){
+
+			// We get the upload element or we construct an empty one
+			if(!is_null($upload)) $uploadObject = $upload;
+			else $uploadObject = new \Smally\VO\Upload;
+
+			// We have set a particular item Template
 			if(!is_null($this->_itemTemplatePath)){
+
 				$view = new \Smally\View(\Smally\Application::getInstance());
 				$view->setTemplatePath($this->_itemTemplatePath);
-				$this->_itemTemplate = $view->x()->getContent();
+				$view->uploadObject = $uploadObject;
+				$template = $view->x()->getContent();
+
+				if(is_null($upload)){
+					$this->_itemTemplate = $template;
+				}else return $template;
+
 			}else{
+
+				// HERE IS THE DEFAULT ITEM TEMPLATE
 				$attributes = array(
-					'name' => $this->getName(),
+					'name' => $this->getName().'[]',
 					'type' => 'hidden',
-					'disabled' => 'disabled'
+
 				);
-				$this->_itemTemplate = '
-					<div class="file-preview jsFileTemplate" style="display:none">
+
+				if(is_null($upload)){
+					$attributes['disabled'] = 'disabled';
+				}
+
+				$template = '
+					<div class="file-preview'.(is_null($upload)?' jsFileTemplate':'').'" style="display:'.(is_null($upload)?'none':'block').'">
 						<i class="icon-move floatRight"></i>
-						<input class="id" '.\Smally\HtmlUtil::toAttributes($attributes).'/>
-						<h3 class="name"></h3>
-						<div class="preview"></div>
-						<span class="size"></span>
-						<a href="#" class="delete btn" data-smally-delete-parentselector=".jsFileTemplate" data-smally-delete-url="#"><i class="icon-remove"></i></a>
-						<a href="#" class="url btn" target="_blank"><i class="icon-zoom-in"></i></a>
+						<input class="id" '.\Smally\HtmlUtil::toAttributes($attributes).' value="'.$uploadObject->getId().'" />
+						<h3 class="name">'._h($uploadObject->name).'</h3>
+						<div class="preview"><span class="enclose"><img src="'._h($uploadObject->getUrl('thumbnail')).'" alt="upload" class="img100"/></span></div>
+						<span class="size">'._h($uploadObject->size).'</span>
+						<a href="'._h($uploadObject->getUrl('delete')).'" class="delete btn'.(is_null($upload)?'':' jsDeleteVo').'" data-smally-delete-parentselector=".file-preview" data-smally-delete-url="'._h($uploadObject->getUrl('delete')).'"><i class="icon-remove"></i></a>
+						<a href="'._h($uploadObject->getUrl()).'" class="url btn" target="_blank"><i class="icon-zoom-in"></i></a>
 					</div>
 				';
+
+				if(is_null($upload)){
+					$this->_itemTemplate = $template;
+				}else return $template;
 			}
 		}
+
 		return $this->_itemTemplate;
 	}
 
