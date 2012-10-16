@@ -117,18 +117,10 @@ class Db implements InterfaceDao {
 	}
 
 	/**
-	 * Return a ValueObject by it's primary id
-	 * @param  int $id               The id of the value object you want
-	 * @return \stdClass
+	 * Return true if the current $vo as a utsDelete field
+	 * @param  \Smally\VO\Standard  $vo A valid value object or null to instanciate an empty one
+	 * @return boolean
 	 */
-	public function getById($id){
-		$primaryKey = $this->getPrimaryKey();
-		$criteria = $this->getCriteria()
-							->setFilter(array($primaryKey=>array('value'=>$id)))
-							;
-		return $this->fetch($criteria);
-	}
-
 	public function hasUtsDelete($vo=null){
 		if(is_null($vo)&&$voName=$this->getVoName()){
 			$vo = new $voName();
@@ -150,6 +142,33 @@ class Db implements InterfaceDao {
 		if(!is_null($this->_logger)&&$this->_logLevel<=$level){
 			$this->_logger->log($text,$level,$destination);
 		}
+	}
+
+	/**
+	 * Return a ValueObject by it's primary id
+	 * @param  int $id               The id of the value object you want
+	 * @return \stdClass
+	 */
+	public function getById($id){
+		$primaryKey = $this->getPrimaryKey();
+		$criteria = $this->getCriteria()
+							->setFilter(array($primaryKey=>array('value'=>$id)))
+							;
+		return $this->fetch($criteria);
+	}
+
+	/**
+	 * Return a ValuObject if exists in data with this $values
+	 * @param  array  $values Array of $property => $value to find in DB
+	 * @return \Smally\VO\Standard
+	 */
+	public function exists(array $values){
+		$primaryKey = $this->getPrimaryKey();
+		$criteria = $this->getCriteria();
+		foreach($values as $key => $value){
+			$criteria->setFilter(array($key=>array('value'=>$value)));
+		}							;
+		return $this->fetch($criteria);
 	}
 
 	/**
@@ -236,6 +255,11 @@ class Db implements InterfaceDao {
 	 */
 	public function store($vo){
 
+		// pseudo event system
+		if(method_exists($vo, 'onStore')){
+			$vo->onStore();
+		}
+
 		// get the primary key
 		$primaryKey = $this->getPrimaryKey();
 
@@ -264,6 +288,17 @@ class Db implements InterfaceDao {
 		if($return = $this->getConnector()->query($sql)){
 			if($statement=='INSERT INTO'&&!$vo->{$primaryKey}){
 				$vo->{$primaryKey} = $this->getLastInsertId();
+			}
+		}
+
+		// pseudo event system
+		if($return){
+			if(method_exists($vo, 'onStoreSuccess')){
+				$vo->onStoreSuccess();
+			}
+		}else{
+			if(method_exists($vo, 'onStoreFail')){
+				$vo->onStoreFail();
 			}
 		}
 

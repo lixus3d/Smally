@@ -84,7 +84,8 @@ class Standard extends \stdClass {
 	 * Return the Value Object name ( pure , without namespace )
 	 * @return string
 	 */
-	public function getVoName(){
+	public function getVoName($complete=false){
+		if($complete) return get_called_class();
 		if(is_null($this->_voName)){
 			$this->_voName = substr(strrchr(get_called_class(),'\\'),1);
 		}
@@ -204,23 +205,97 @@ class Standard extends \stdClass {
 
 	/**
 	 * Generic setter for uts field
-	 * @param  string $field the field name
+	 * @param  string $fieldName the field name
 	 * @param  string $date  the given date in dd/mm/YYYY format
 	 * @return \Smally\VO\Standard
 	 */
-	protected function _genericSetUts($field,$date){
+	protected function _genericSetUts($fieldName,$date){
 		list($day,$month,$year) = explode('/',$date);
-		$this->{$field} = mktime(0,0,0,$month,$day,$year);
+		$this->{$fieldName} = mktime(0,0,0,$month,$day,$year);
 		return $this;
 	}
 
 	/**
 	 * Generic getter for uts field
-	 * @param  string $field the field name
+	 * @param  string $fieldName the field name
 	 * @return string Date in dd/mm/YYYY format
 	 */
-	protected function _genericGetUts($field){
-		return date('d/m/Y',$this->{$field});
+	protected function _genericGetUts($fieldName){
+		return date('d/m/Y',$this->{$fieldName});
+	}
+
+	/**
+	 * Generic storer for file/upload field
+	 * @param  string $fieldName    the field name
+	 * @param  array  $uploadIdList An array of uploadId you want to associate
+	 * @return \Smally\VO\Standard
+	 */
+	protected function _genericStoreUpload($fieldName){
+
+		$uploadIdList = $this->{$fieldName};
+		$inBaseIdList = $this->_genericGetUpload($fieldName);
+
+		$jVoName = '\\Smally\\VO\\jUpload';
+		$jUploadDao = $this->getApplication()->getFactory()->getDao($jVoName);
+
+		// We update/insert uploads
+		foreach($uploadIdList as $ord => $uploadId){
+
+			$vars = array(
+				'uploadId' => $uploadId,
+				'voName' => $this->getVoName(true),
+				'voId' => $this->getId()
+			);
+
+			if(!($jObject = $jUploadDao->exists($vars))){
+				$jObject = new $jVoName($vars);
+			}
+
+			$jObject->ord = $ord;
+
+			$jUploadDao->store($jObject);
+			if(in_array($uploadId,$inBaseIdList)){
+				unset($inBaseIdList[array_search($uploadId, $inBaseIdList)]);
+			}
+		}
+
+		// We delete uploads that we didn't found in the field
+		foreach($inBaseIdList as $uploadId){
+			$vars = array(
+				'uploadId' => $uploadId,
+				'voName' => $this->getVoName(true),
+				'voId' => $this->getId()
+			);
+			if($jObject = $jUploadDao->exists($vars)) {
+				$jUploadDao->delete($jObject);
+			}
+		}
+
+		return $this;
+	}
+
+	protected function _genericGetUpload($fieldName){
+		$idList = array();
+
+		$jVoName = '\\Smally\\VO\\jUpload';
+
+		$jUploadDao = $this->getApplication()->getFactory()->getDao($jVoName);
+
+		$criteria = $this->getApplication()->getFactory()->getCriteria($jVoName);
+		$criteria->setFilter(array(
+								'voName' => array('value'=>$this->getVoName(true)),
+								'voId' => array('value'=>$this->getId())
+						))
+					->setOrder(array(array('ord','ASC')))
+					;
+
+		if($results = $jUploadDao->fetchAll($criteria)){
+			foreach($results as $joint){
+				$idList[]= (int) $joint->uploadId;
+			}
+		}
+
+		return $idList;
 	}
 
 }
