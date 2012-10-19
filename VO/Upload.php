@@ -4,6 +4,8 @@ namespace Smally\VO;
 
 class Upload extends \Smally\VO\Standard {
 
+	protected $_application = null;
+
 	public $uploadId = null;
 	public $namespace = null;
 	public $name = null;
@@ -14,18 +16,137 @@ class Upload extends \Smally\VO\Standard {
 	public $utsCreate = null;
 
 	/**
+	 * Set the data folder where the upload is stored
+	 * @param string $dataFolder A valid data folder
+	 * @return  \Smally\VO\Upload
+	 */
+	public function setDataFolder($dataFolder){
+		if(is_dir($dataFolder)){
+			$this->_dataFolder = $dataFolder;
+		}else throw new \Smally\Exception('Invalid data folder given.');
+		return $this;
+	}
+
+	/**
+	 * Get the current Smally Application
+	 * @return \Smally\Application
+	 */
+	public function getApplication(){
+		if(is_null($this->_application)){
+			$this->_application = \Smally\Application::getInstance();
+		}
+		return $this->_application;
+	}
+
+	/**
+	 * Return the datafolder path where the current upload is stored
+	 * @return string
+	 */
+	public function getDataFolder(){
+		if(is_null($this->_dataFolder)){
+			$this->_dataFolder = (string)$this->getApplication()->getConfig()->smally->upload->path?:ROOT_PATH.'public/data/';
+		}
+		return $this->_dataFolder;
+	}
+
+	/**
+	 * Get upload uid , generate it if not yet created
+	 * @return string
+	 */
+	public function getUid(){
+		if(!$this->uid){
+			$this->uid = uniqid();
+			$this->getDao()->store($this);
+		}
+		return $this->uid;
+	}
+
+	/**
+	 * Return the upload file extension ( from name )
+	 * @return string
+	 */
+	public function getExtension(){
+		return strtolower(substr(strrchr($this->name,'.'),1));
+	}
+
+	/**
+	 * Return the Upload filesize in a human readable format
+	 * @return string
+	 */
+	public function getReadableSize() {
+		$size = $this->size;
+	    $mod = 1024;
+	    $units = explode(' ','o Ko Mo Go To Po');
+	    for ($i = 0; $size > $mod; $i++) {
+	        $size /= $mod;
+	    }
+	    return round($size, 2) . ' ' . $units[$i];
+	}
+
+	/**
+	 * Get an upload url
+	 * @param  string $type   The type of url you want , empty for download url
+	 * @param  array  $params Some params to give to the url maker
+	 * @return string
+	 */
+	public function getUrl($type=null,$params=array()){
+		$application = \Smally\application::getInstance();
+		$url = '';
+		switch($type){
+			case 'thumbnail':
+			break;
+			default:
+				$url = $application->urlData(str_replace(DIRECTORY_SEPARATOR, '/', $this->filePath));
+			break;
+			break;
+			case 'delete':
+				$url = $application->getBaseUrl($application->makeControllerUrl('Upload\\delete',array('id'=>$this->getId())));
+			break;
+		}
+		return $url;
+	}
+
+	/**
+	 * Get the file relative path ( means without the data folder )
+	 * @param  boolean $mkdir Weither to create the path or not
+	 * @return string
+	 */
+	public function getRelativePath($mkdir=false){
+		if(is_null($this->_relativePath)){
+			$basePath = $this->cutUid($this->getUid());
+			if($mkdir){
+				$this->makePath($basePath);
+			}
+			$this->_relativePath = .DIRECTORY_SEPARATOR.$this->name;
+		}
+		return $this->_relativePath;
+	}
+
+	/**
+	 * Get a file path on disk ( complete mean from the current execution directory to the final file, thru the data folder so )
+	 * @param  boolean $mkdir Weither to create the path or not
+	 * @return string
+	 */
+	public function getCompletePath($mkdir=false){
+		if(is_null($this->_filePath)){
+			$this->_filePath = $this->getDataFolder().$this->getRelativePath($mkdir);
+		}
+		return $this->_filePath;
+	}
+
+	/**
 	 * Move the actual Upload from it's uploaded_file directory to it's final path in $dataFolder
 	 * @param  string $dataFolder the base path where to store the file
 	 * @return boolean true if the move success, false otherwise
 	 */
-	public function moveFromTemp($dataFolder){
+	public function moveFromTemp($dataFolder=null){
 
-		$inDataFolderPath = $this->generatePath($dataFolder,$this->getUid());
+		if(!is_null($dataFolder)) $this->setDataFolder($dataFolder);
 
-		$destinationFilePath = $dataFolder.$inDataFolderPath.DIRECTORY_SEPARATOR.$this->name;
+		$destinationFilePath = $this->getCompletePath(true); // true for making directory path if not existing
 
 		if(@move_uploaded_file($this->filePath, $destinationFilePath)){
-			$this->filePath = $inDataFolderPath.DIRECTORY_SEPARATOR.$this->name;
+			$this->filePath = $this->getRelativePath();
 			$this->getDao()->store($this);
 			return true;
 		}
@@ -49,26 +170,14 @@ class Upload extends \Smally\VO\Standard {
 	}
 
 	/**
-	 * Generate path for storing
-	 * @param  string $dataFolder The base folder of the generated path
-	 * @param  string $uid The uid of the path to generate
-	 * @return string
-	 */
-	public function generatePath($dataFolder,$uid){
-		$path = $this->cutUid($uid);
-		$this->makePath($dataFolder,$path);
-		return $path;
-	}
-
-	/**
 	 * Use makePath to create directory on disk of a $path in $basePath folder
 	 * @param  string $basePath The base path where to create the folder of $path
 	 * @param  string $path     The path in the $basePath you want to create
 	 * @return null
 	 */
-	public function makePath($basePath,$path){
+	public function makePath($path){
 		$pathParts = explode(DIRECTORY_SEPARATOR,$path);
-		$path = $basePath;
+		$path = $this->getDataFolder();
 		foreach($pathParts as $part){
 			$path .= $part;
 			if(!is_dir($path)){
@@ -80,52 +189,19 @@ class Upload extends \Smally\VO\Standard {
 	}
 
 	/**
-	 * Get upload uid , generate it if not yet created
-	 * @return string
+	 * Delete the upload ( delete the file so)
+	 * @return \Smally\VO\Upload
 	 */
-	public function getUid(){
-		if(!$this->uid){
-			$this->uid = uniqid();
-			$this->getDao()->store($this);
-		}
-		return $this->uid;
-	}
-
-	public function getExtension(){
-		return strtolower(substr(strrchr($this->name,'.'),1));
-	}
-
-	public function getReadableSize() {
-		$size = $this->size;
-	    $mod = 1024;
-	    $units = explode(' ','o Ko Mo Go To Po');
-	    for ($i = 0; $size > $mod; $i++) {
-	        $size /= $mod;
-	    }
-	    return round($size, 2) . ' ' . $units[$i];
-	}
-
-	public function getUrl($type=null,$params=array()){
-		$application = \Smally\application::getInstance();
-		$url = '';
-		switch($type){
-			case 'thumbnail':
-			default:
-				$url = $application->urlData(str_replace(DIRECTORY_SEPARATOR, '/', $this->filePath));
-			break;
-			break;
-			case 'delete':
-				$url = $application->getBaseUrl($application->makeControllerUrl('Upload\\delete',array('id'=>$this->getId())));
-			break;
-		}
-		return $url;
-	}
-
 	public function delete(){
+		unlink($this->getCompletePath());
 		return $this;
 	}
 
-	public function toJson(){
+	/**
+	 * Convert the upload to an array format, usually for ajax return
+	 * @return array
+	 */
+	public function toArray(){
 		return array(
 				'id' => $this->getId(),
 				'name' => $this->name,
@@ -136,6 +212,50 @@ class Upload extends \Smally\VO\Standard {
 				'delete_url' => $this->getUrl('delete'),
 				'delete_type' => 'DELETE'
 			);
+	}
+
+	/**
+	 * Get a thumbnail generator for the current upload
+	 * @return \Smally\Helper\ThumbnailGenerator
+	 */
+	public function getThumbnailGenerator(){
+		if(is_null($this->_thumbnailGenerator)){
+			$this->_thumbnailGenerator = new \Smally\Helper\ThumbnailGenerator();
+			$this->_thumbnailGenerator->setFilePath($this->getCompletePath());
+		}
+		return $this->_thumbnailGenerator;
+	}
+
+	/**
+	 * Create a thumbnail of the current file and return the created thumbnail path
+	 * @param  string $paramString A parameter string of the format x555-y333-tFill-k34
+	 * @return string
+	 */
+	public function createThumbnail($paramString=null){
+
+		// We get the ThumbnailGenerator Helper
+		return $this->getThumbnailGenerator()
+						// We set the generator Params ( from string )
+						->setParamsFromString($paramsString)
+						// We create the thumbnail
+						->create()
+						// And finally we return the thumbnail path
+						->getThumbnailPath()
+						;
+	}
+
+	/**
+	 * Read a thumbnail file and echo it, default logic also send correct headers ( type, expiration, etc ...)
+	 * @param  string  $thumbnailPath The thumbnail to read
+	 * @param  boolean $withHeaders   Do we also send the headers ?
+	 * @return string
+	 */
+	public function readThumbnail($thumbnailPath,$withHeaders=true){
+		if($withHeaders){
+			header('Content-Type: image/jpg');
+		}
+		echo file_get_contents($thumbnailPath);
+		return $this;
 	}
 
 }
