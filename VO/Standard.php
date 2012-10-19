@@ -230,10 +230,10 @@ class Standard extends \stdClass {
 	 * @param  array  $uploadIdList An array of uploadId you want to associate
 	 * @return \Smally\VO\Standard
 	 */
-	protected function _genericStoreUpload($fieldName){
+	protected function _genericStoreUploadId($fieldName){
 
 		$uploadIdList = $this->{$fieldName};
-		$inBaseIdList = $this->_genericGetUpload($fieldName);
+		$inBaseIdList = $this->_genericGetUploadId($fieldName);
 
 		$jVoName = '\\Smally\\VO\\jUpload';
 		$jUploadDao = $this->getApplication()->getFactory()->getDao($jVoName);
@@ -274,7 +274,7 @@ class Standard extends \stdClass {
 		return $this;
 	}
 
-	protected function _genericGetUpload($fieldName){
+	protected function _genericGetUploadId($fieldName){
 		$idList = array();
 
 		$jVoName = '\\Smally\\VO\\jUpload';
@@ -296,6 +296,25 @@ class Standard extends \stdClass {
 		}
 
 		return $idList;
+	}
+
+	protected function _genericGetUpload($fieldName){
+		$getterName = 'get'.ucfirst($fieldName);
+		if(method_exists($this, $getterName)){
+			$idList = $this->{$getterName}();
+		}else $idList = $this->_genericGetUploadId($fieldName);
+
+		$uploadVoList = array();
+		if($idList){
+			$uploadVoName = '\\Smally\\VO\\Upload';
+			$uploadDao = $this->getApplication()->getFactory()->getDao($uploadVoName);
+			foreach($idList as $id){
+				if($upload = $uploadDao->getById($id)){
+					$uploadVoList[] = $upload;
+				}
+			}
+		}
+		return $uploadVoList;
 	}
 
 }
