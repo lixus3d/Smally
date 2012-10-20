@@ -41,10 +41,12 @@ Install for multiple projects
 
 Todo
 ----
+- Mail possibilities : 
+	- Mailer class 
+	- Mail spool system
 - Form :
 	- Add others type of field :
 		- color 
-		- input file
 		- other value object and objects  
 - Validator :
 	- Add others type of validator :
@@ -54,8 +56,5 @@ Todo
 - Dao :
 	- Add array values store and fetch possibility 
 	- Add gestion of join in Criteria
-- Mail possibilities : 
-	- Mailer class 
-	- Mail spool system
 - Metas :
 	- A metas "config" file 
