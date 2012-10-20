@@ -155,7 +155,7 @@ class Uploader {
 			foreach($names as $field => $name){
 				$upload = $this->getNewVo();
 				$upload->namespace = $voName.'\\'.$field;
-				$upload->name = $name;
+				$upload->setName($name);
 				$upload->filePath = $tmp_names[$field];
 				$upload->mimetype = $types[$field];
 				$upload->size = $sizes[$field];

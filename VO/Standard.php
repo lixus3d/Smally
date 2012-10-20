@@ -317,4 +317,10 @@ class Standard extends \stdClass {
 		return $uploadVoList;
 	}
 
+	protected function _genericThumbnailUrl($params=array()){
+		if(method_exists($this,'getThumbnailGenerator')) $thbGen = $this->getThumbnailGenerator();
+		else $thbGen = new \Smally\Helper\ThumbnaiGenerator($filePath);
+
+	}
+
 }

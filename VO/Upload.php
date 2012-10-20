@@ -5,6 +5,7 @@ namespace Smally\VO;
 class Upload extends \Smally\VO\Standard {
 
 	protected $_application = null;
+	protected $_thumbnailGenerator = null;
 
 	public $uploadId = null;
 	public $namespace = null;
@@ -14,6 +15,20 @@ class Upload extends \Smally\VO\Standard {
 	public $uid = null;
 	public $filePath = null;
 	public $utsCreate = null;
+
+	protected $_filePath = null;
+	protected $_dataFolder = null;
+	protected $_relativePath = null;
+
+	public function setName($name){
+		$this->name = $this->filterName($name);
+		return $this;
+	}
+
+	public function filterName($name){
+		//$name = preg_replace('#[^a-z0-9 \'"`\[\]()+=.,:!_àâäéèëêïîôöùüû-]#i','',$name);
+		return $name;
+	}
 
 	/**
 	 * Set the data folder where the upload is stored
@@ -94,6 +109,13 @@ class Upload extends \Smally\VO\Standard {
 		$url = '';
 		switch($type){
 			case 'thumbnail':
+				if($this->filePath){
+					$relative = str_replace(DIRECTORY_SEPARATOR,'/',$this->cutUid($this->getUid()));
+					$relative .= '/thumbnail/';
+					$relative .= $this->getThumbnailGenerator()->constructParamsString($params);
+					$relative .= '/'.$this->name;
+					$url = $application->urlData($relative);
+				}
 			break;
 			default:
 				$url = $application->urlData(str_replace(DIRECTORY_SEPARATOR, '/', $this->filePath));
@@ -107,6 +129,25 @@ class Upload extends \Smally\VO\Standard {
 	}
 
 	/**
+	 * Return the mime type of the file from it's extension
+	 * TODO : Must be greatly improve
+	 * @return string
+	 */
+	public function getMimeType(){
+		$extension = $this->getExtension();
+		switch($extension){
+			case 'jpg':
+			case 'jpeg':
+				return 'image/jpg';
+			case 'png':
+			case 'gif':
+				return 'image/'.$extension;
+			default:
+				return 'image/image';
+		}
+	}
+
+	/**
 	 * Get the file relative path ( means without the data folder )
 	 * @param  boolean $mkdir Weither to create the path or not
 	 * @return string
@@ -117,7 +158,7 @@ class Upload extends \Smally\VO\Standard {
 			if($mkdir){
 				$this->makePath($basePath);
 			}
-			$this->_relativePath = .DIRECTORY_SEPARATOR.$this->name;
+			$this->_relativePath = $basePath.DIRECTORY_SEPARATOR.$this->name;
 		}
 		return $this->_relativePath;
 	}
@@ -145,6 +186,8 @@ class Upload extends \Smally\VO\Standard {
 
 		$destinationFilePath = $this->getCompletePath(true); // true for making directory path if not existing
 
+		if(SMALLY_PLATFORM=='windows') $destinationFilePath = utf8_decode($destinationFilePath); // File will be stored in ISO on windows
+
 		if(@move_uploaded_file($this->filePath, $destinationFilePath)){
 			$this->filePath = $this->getRelativePath();
 			$this->getDao()->store($this);
@@ -170,9 +213,8 @@ class Upload extends \Smally\VO\Standard {
 	}
 
 	/**
-	 * Use makePath to create directory on disk of a $path in $basePath folder
-	 * @param  string $basePath The base path where to create the folder of $path
-	 * @param  string $path     The path in the $basePath you want to create
+	 * Use makePath to create directory on disk of a $path
+	 * @param  string $path     The path you want to create
 	 * @return null
 	 */
 	public function makePath($path){
@@ -228,10 +270,10 @@ class Upload extends \Smally\VO\Standard {
 
 	/**
 	 * Create a thumbnail of the current file and return the created thumbnail path
-	 * @param  string $paramString A parameter string of the format x555-y333-tFill-k34
+	 * @param  string $paramsString A parameter string of the format x555-y333-tFill-k34
 	 * @return string
 	 */
-	public function createThumbnail($paramString=null){
+	public function createThumbnail($paramsString=null){
 
 		// We get the ThumbnailGenerator Helper
 		return $this->getThumbnailGenerator()
@@ -252,7 +294,7 @@ class Upload extends \Smally\VO\Standard {
 	 */
 	public function readThumbnail($thumbnailPath,$withHeaders=true){
 		if($withHeaders){
-			header('Content-Type: image/jpg');
+			//header('Content-Type: '.$this->getMimeType());
 		}
 		echo file_get_contents($thumbnailPath);
 		return $this;
