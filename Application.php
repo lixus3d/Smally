@@ -34,10 +34,11 @@ class Application {
 	private $__startTime 			= 0;
 
 	public function __construct(){
+		$this->__startTime = microtime(true);
 		if(!self::$_singleton instanceof self){
 			$this->setInstance();
 		}
-		$this->__startTime = microtime(true);
+		defined('SMALLY_PLATFORM') || define('SMALLY_PLATFORM','windows');
 	}
 
 	/**
