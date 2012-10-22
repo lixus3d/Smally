@@ -5,7 +5,7 @@ namespace Smally {
 class Application {
 
 	const ENV_DEVELOPMENT 			= 'development';
-	const ENV_PRODUDCTION			= 'production';
+	const ENV_PRODUCTION			= 'production';
 	const ENV_STAGING				= 'staging';
 
 	static protected $_singleton 	= null;
