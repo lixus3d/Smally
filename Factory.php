@@ -60,6 +60,12 @@ class Factory {
 		return $this->_application;
 	}
 
+	public function getView($templatePath){
+		$view = new \Smally\View($this->getApplication());
+		$view->setTemplatePath($templatePath);
+		return $view;
+	}
+
 	/**
 	 * Compute a module path for objectType and check if the class exists
 	 * @param  string $moduleName The module name
@@ -186,6 +192,15 @@ class Factory {
 		$uploader = new \Smally\Uploader($this->getApplication());
 		$uploader->setUploadPath( (string)$this->getApplication()->getConfig()->smally->upload->path?:ROOT_PATH.'public/data/' ) ;
 		return $uploader;
+	}
+
+	/**
+	 * Return a new Mailer object
+	 * @return \Smally\Mailer
+	 */
+	public function getMailer(){
+		$mailer = new \Smally\Mailer($this->getApplication());
+		return $mailer;
 	}
 
 	/**

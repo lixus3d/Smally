@@ -5,10 +5,22 @@ $config['smally']['paths']['assets'][]		= 'http://assets.mysmally.com/';
 $config['smally']['paths']['assets'][]		= 'http://assets1.mysmally.com/';
 $config['smally']['paths']['assets'][]		= 'http://assets2.mysmally.com/';
 
+$config['smally']['paths']['data'][]		= 'http://data.mysmally.com/';
+$config['smally']['paths']['data'][]		= 'http://data2.mysmally.com/';
+$config['smally']['paths']['data'][]		= 'http://data3.mysmally.com/';
+
+$config['smally']['upload']['path']				= ROOT_PATH.'public/data/';
+
 $config['smally']['db']['host']				= 'localhost';
 $config['smally']['db']['username']			= 'root';
 $config['smally']['db']['password']			= 'password';
 $config['smally']['db']['database']			= 'database';
+
+$config['smally']['mailer']['host']				= 'smtp.mydomain.com';
+$config['smally']['mailer']['port']				= '25';
+$config['smally']['mailer']['SMTPAuth']			= true;
+$config['smally']['mailer']['username']			= 'myemail@domain.com';
+$config['smally']['mailer']['password']			= 'mypassword';
 
 $config['smally']['logger']['level']['default'] = 100 ;
 $config['smally']['logger']['level']['dao']  	= \Smally\Logger::LVL_ERROR ;
@@ -16,7 +28,7 @@ $config['smally']['logger']['level']['rooter']  = \Smally\Logger::LVL_ERROR ;
 
 $config['smally']['default']['paging']['limit'] = 10;
 $config['smally']['default']['paging']['urlParam'] = 'page';
-
+$config['smally']['default']['order']['urlParam'] = 'ord';
 
 if(\Smally\Application::getInstance()->isDev()){
 	/* PLACE YOUR DEVELOPMENT SPECIAL CONFIG HERE */
