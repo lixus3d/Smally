@@ -55,6 +55,8 @@ Todo
 		- alpha and numeric 
 		- file type 
 		- file number
+- Thumbnails : 
+	- Add others type of resizing
 - Dao :
 	- Add array values store and fetch possibility 
 	- Add gestion of join in Criteria
