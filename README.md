@@ -53,6 +53,8 @@ Todo
 		- numeric
 		- alpha 
 		- alpha and numeric 
+		- file type 
+		- file number
 - Dao :
 	- Add array values store and fetch possibility 
 	- Add gestion of join in Criteria
