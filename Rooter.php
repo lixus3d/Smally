@@ -106,7 +106,9 @@ class Rooter {
 	 */
 	public function getController(){
 		if(!isset($this->_controller)&&$this->_controllerPath){
-			$this->_controller = $this->getControllerObject($this->_controllerPath)->setAction($this->getAction());
+			$this->_controller = $this->getControllerObject($this->_controllerPath)
+											->setAction($this->getAction())
+											;
 		}
 		return $this->_controller;
 	}
