@@ -42,7 +42,6 @@ Install for multiple projects
 Todo
 ----
 - Mail possibilities : 
-	- Mailer class 
 	- Mail spool system
 - Form :
 	- Add others type of field :
