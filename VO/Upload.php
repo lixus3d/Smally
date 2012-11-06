@@ -294,7 +294,7 @@ class Upload extends \Smally\VO\Standard {
 	 */
 	public function readThumbnail($thumbnailPath,$withHeaders=true){
 		if($withHeaders){
-			//header('Content-Type: '.$this->getMimeType());
+			header('Content-Type: '.$this->getMimeType());
 		}
 		echo file_get_contents($thumbnailPath);
 		return $this;
