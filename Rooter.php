@@ -163,9 +163,8 @@ class Rooter {
 			$uriElems = array();
 
 			if(isset($queryArray['path'])){
-				$realPathArray = array_reverse(explode(DIRECTORY_SEPARATOR,REAL_PATH));
+				$realPathArray = array_reverse(explode(DIRECTORY_SEPARATOR,trim(REAL_PATH,'/\\')));
 				$queryPathArray = array_reverse(explode('/',trim($queryArray['path'],'/')));
-
 				$lastType = 'uri';
 				$rpKey = 0;
 				foreach($queryPathArray as $key => $rpElement){
@@ -176,6 +175,7 @@ class Rooter {
 					}else{
 						if($lastType == 'base'){
 							$uriElems[] = array_pop($baseElems); // finaly the previous part was not from base
+							$rpKey--;
 						}
 						$uriElems[] = $rpElement;
 						$lastType = 'uri';
@@ -189,6 +189,9 @@ class Rooter {
 			if($uriElems){
 				$this->_uri = implode('/',array_reverse($uriElems));
 			}
+/*			var_dump($baseElems);
+			var_dump($uriElems);
+			die();*/
 			if(isset($queryArray['query'])){
 				$this->_uriQuery = $queryArray['query'];
 			}
