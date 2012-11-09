@@ -280,7 +280,11 @@ class Rooter {
 			break;
 		}
 
-		$this->_action = $this->parseAction(strtolower(array_pop($controllerPath)))?:'index';
+		// Fix first letter of action to lowercase
+		$action = $this->parseAction(array_pop($controllerPath))?:'index';
+		$action[0] = strtolower($action[0]);
+
+		$this->_action = $action;
 		$this->_controllerPath = implode('\\',$controllerPath);
 
 		$this->log($this->getActionPath());
