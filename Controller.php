@@ -68,6 +68,17 @@ abstract class Controller {
 	}
 
 	/**
+	 * Define the view to use by passing only the view $templatePath
+	 * @param string $templatePath the template path
+	 * @return \Smally\Controller
+	 */
+	public function setViewTemplatePath($templatePath){
+		$this->_view = new View($this->getApplication());
+		$this->_view->setTemplatePath( $templatePath );
+		return $this;
+	}
+
+	/**
 	 * Return the called action of the controller
 	 * @return string
 	 */
@@ -91,20 +102,20 @@ abstract class Controller {
 	 * Execute the controller called action and the attached view
 	 * @return \Smally\Controller
 	 */
-	public function x(){
+	public function x($params=array()){
 
 		// pseudo event system
 		if(method_exists($this, 'onX')){
-			$this->{'onX'}();
+			$this->onX();
 		}
 		$method = $this->getAction().'Action';
-		$this->$method();
+		$this->$method($params);
 
 		// pseudo event system before view execution
 		if(method_exists($this, 'onViewX')){
-			$this->{'onViewX'}();
+			$this->onViewX();
 		}
-		$this->getView()->x();
+		$this->getView()->x($params);
 
 		return $this;
 	}

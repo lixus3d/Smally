@@ -34,6 +34,7 @@ class View {
 	 */
 	public function setTemplatePath($templatePath){
 		$this->_templatePath = $templatePath;
+		return $this;
 	}
 
 	/**
@@ -163,7 +164,7 @@ class View {
 				->getRooter()
 				->getControllerObject($controllerPath)
 				->setAction($action)
-				->x()
+				->x($params)
 				->getView()
 				->getContent();
 	}
@@ -172,8 +173,8 @@ class View {
 	 * Execute the view logic : Get the template path, start a buffer, require the template, push the buffer to the content property
 	 * @return \Smally\View
 	 */
-	public function x(){
-		$this->_content = $this->render($this->getTemplatePath());
+	public function x($params=array()){
+		$this->_content = $this->render($this->getTemplatePath(),$params);
 		return $this;
 	}
 
