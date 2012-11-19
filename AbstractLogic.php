@@ -18,6 +18,9 @@ class AbstractLogic {
 	 */
 	public function __construct(\Smally\Application $application){
 		$this->setApplication($application);
+		if(method_exists($this, 'init')){
+			$this->init();
+		}
 	}
 
 	/**
