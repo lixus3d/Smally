@@ -8,6 +8,8 @@ class Form {
 	const METHOD_GET 		= 2;
 	const METHOD_FILE		= 3;
 
+	protected $_application = null;
+
 	protected $_decoratorNamespace = '\\Smally\\Form\\Decorator\\';
 
 	protected $_action 		= '';
@@ -107,6 +109,13 @@ class Form {
 	public function setNamePrefix($prefix){
 		$this->_namePrefix = $prefix;
 		return $this;
+	}
+
+	public function getApplication(){
+		if(is_null($this->_application)){
+			$this->_application = \Smally\Application::getInstance();
+		}
+		return $this->_application;
 	}
 
 	/**
