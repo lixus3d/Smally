@@ -34,7 +34,7 @@ class Radio extends AbstractDecorator {
 			if(in_array($value,$this->getElement()->getChecked())){
 				$attributes['checked'] = 'checked';
 			}
-			$html .= '<li class="'.$type.'-element"><label><input '.\Smally\HtmlUtil::toAttributes($attributes).'/> <span class="'.$type.'-label">'.$label.'</span></label></li>';
+			$html .= '<li class="'.$type.'-element"><label class="'.$type.'"><input '.\Smally\HtmlUtil::toAttributes($attributes).'/> <span class="'.$type.'-label">'.$label.'</span></label></li>';
 		}
 
 		$html .= '</ul>';
