@@ -20,13 +20,24 @@ class Upload extends \Smally\VO\Standard {
 	protected $_dataFolder = null;
 	protected $_relativePath = null;
 
+	/**
+	 * Set the upload name
+	 * @param string $name The name to set for the upload
+	 * @return  \Smally\VO\Upload
+	 */
 	public function setName($name){
 		$this->name = $this->filterName($name);
 		return $this;
 	}
 
+	/**
+	 * Filter a name to keep only acceptable character
+	 * @param  string $name The name to filter
+	 * @return string the filtered name
+	 */
 	public function filterName($name){
-		//$name = preg_replace('#[^a-z0-9 \'"`\[\]()+=.,:!_àâäéèëêïîôöùüû-]#i','',$name);
+		$name = preg_replace('#[^a-z0-9 \'"`\[\]()+.,_àâäéèëêïîôöùüûç-]#iu','',$name);
+		//$name = preg_replace('#[^a-z0-9àâäéèëêïîôöùüûç.]#u','',$name);
 		return $name;
 	}
 
