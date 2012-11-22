@@ -92,6 +92,10 @@ class Standard extends \stdClass {
 		return $this->_voName;
 	}
 
+	public function getModule(){
+		return substr($this->getVoName(true),0,strpos('\\',$this->getVoName(true)));
+	}
+
 	/**
 	 * Return the table name for the current value object, generic is a lowercase version of vo name with '_' before each uppercase letter
 	 * @example ArticleTag will become article_tag , if you extends the standard value object you can define a specific table just by defining the $_table property
@@ -224,80 +228,146 @@ class Standard extends \stdClass {
 		return date('d/m/Y',$this->{$fieldName});
 	}
 
+
 	/**
-	 * Generic storer for file/upload field
-	 * @param  string $fieldName    the field name
-	 * @param  array  $uploadIdList An array of uploadId you want to associate
-	 * @return \Smally\VO\Standard
+	 * Generic storer for joint between two VO (many to many relation)
+	 * @param  string $fieldName The field that contains id
+	 * @param  string $jVoName   The voName of the joint table
+	 * @param  array  $jointVars The values to have in the joint table in addition of the $fieldName key => value pair
+	 * @param  string $destinationFieldName The fieldName in the join table for the given $fieldName (usefull for multi joint table like j_upload)
+	 * @return \Smally\Vo\Standard
 	 */
-	protected function _genericStoreUploadId($fieldName){
+	protected function _genericStoreModelId($fieldName,$jVoName=null,$jointVars=null,$destinationFieldName=null){
 
-		$uploadIdList = $this->{$fieldName};
-		$inBaseIdList = $this->_genericGetUploadId($fieldName);
+		if(is_null($destinationFieldName)) $destinationFieldName = $fieldName;
 
-		$jVoName = '\\Smally\\VO\\jUpload';
-		$jUploadDao = $this->getApplication()->getFactory()->getDao($jVoName);
+		// We try to determine a valid jVoName for the fieldName
+		if(is_null($jVoName)){
+			$jVoName = $this->getModule().'\\VO\\'.'j'.(ucfirst(str_replace('Id','',$fieldName))).$this->getVoName();
+		}
 
-		// We update/insert uploads
-		foreach($uploadIdList as $ord => $uploadId){
+		$jDao = $this->getApplication()->getFactory()->getDao($jVoName);
 
-			$vars = array(
-				'uploadId' => $uploadId,
-				'voName' => $this->getVoName(true),
-				'voId' => $this->getId()
+		// default vars for the joint Vo / table , usually the current model primaryKey, key => value pair
+		if(is_null($jointVars)){
+			$jointVars = array(
+				$this->getPrimaryKey() => $this->getId(),
 			);
+		}
 
-			if(!($jObject = $jUploadDao->exists($vars))){
+		$modelIdList = $this->{$fieldName};
+		$inBaseIdList = $this->_genericGetModelId($fieldName,$jVoName,$jointVars);
+
+		// We update/insert joints
+		foreach($modelIdList as $ord => $modelId){
+			$vars = array_merge($jointVars,array($destinationFieldName => $modelId));
+
+			if(!($jObject = $jDao->exists($vars))){
 				$jObject = new $jVoName($vars);
 			}
 
-			$jObject->ord = $ord;
+			if(property_exists($jObject, 'ord')){
+				$jObject->ord = $ord;
+			}
 
-			$jUploadDao->store($jObject);
-			if(in_array($uploadId,$inBaseIdList)){
-				unset($inBaseIdList[array_search($uploadId, $inBaseIdList)]);
+			$jDao->store($jObject);
+			if(in_array($modelId,$inBaseIdList)){
+				unset($inBaseIdList[array_search($modelId, $inBaseIdList)]);
 			}
 		}
 
-		// We delete uploads that we didn't found in the field
-		foreach($inBaseIdList as $uploadId){
-			$vars = array(
-				'uploadId' => $uploadId,
-				'voName' => $this->getVoName(true),
-				'voId' => $this->getId()
-			);
-			if($jObject = $jUploadDao->exists($vars)) {
-				$jUploadDao->delete($jObject);
+		// We delete joints that we didn't found in the field
+		foreach($inBaseIdList as $modelId){
+
+			$vars = array_merge($jointVars,array($destinationFieldName => $modelId));
+
+			if($jObject = $jDao->exists($vars)) {
+				$jDao->delete($jObject);
 			}
 		}
 
 		return $this;
+
 	}
 
-	protected function _genericGetUploadId($fieldName){
+
+	/**
+	 * Generic storer for file/upload field (Quick wrapper to the _genericStoreModelId)
+	 * @param  string $fieldName    the field name
+	 * @return \Smally\VO\Standard
+	 */
+	protected function _genericStoreUploadId($fieldName){
+		return $this->_genericStoreModelId($fieldName,'\\Smally\\VO\\jUpload',array('voName' => $this->getVoName(true),'voId' => $this->getId()),'uploadId');
+	}
+
+	/**
+	 * Generic many to many relation getter for id list
+	 * @param  string $fieldName            The field that contains id
+	 * @param  string $jVoName              The voName of the joint table
+	 * @param  array $jointVarsFilter       The filter of values to have in the joint table
+	 * @param  array $orderFilter          	The order array for the joint dao
+	 * @param  string $destinationFieldName The fieldname of the joint table if different from $fieldName
+	 * @return array
+	 */
+	protected function _genericGetModelId($fieldName,$jVoName=null,$jointVarsFilter=null,$orderFilter=null,$destinationFieldName=null){
+
+		if(is_null($destinationFieldName)) $destinationFieldName = $fieldName;
+
 		$idList = array();
 
-		$jVoName = '\\Smally\\VO\\jUpload';
+		// We try to determine a valid jVoName for the fieldName
+		if(is_null($jVoName)){
+			$jVoName = $this->getModule().'\\VO\\'.'j'.(ucfirst(str_replace('Id','',$fieldName))).$this->getVoName();
+		}
 
-		$jUploadDao = $this->getApplication()->getFactory()->getDao($jVoName);
+		$jDao = $this->getApplication()->getFactory()->getDao($jVoName);
+
+		// default vars for the joint Vo / table , usually the current model primaryKey, key => value pair
+		if(is_null($jointVarsFilter)){
+			$jointVarsFilter = array(
+				$this->getPrimaryKey() => array('value'=>$this->getId()),
+			);
+		}else{
+			foreach($jointVarsFilter as $key => &$value){
+				$value = array('value'=>$value);
+			}
+		}
 
 		$criteria = $this->getApplication()->getFactory()->getCriteria($jVoName);
-		$criteria->setFilter(array(
-								'voName' => array('value'=>$this->getVoName(true)),
-								'voId' => array('value'=>$this->getId())
-						))
-					->setOrder(array(array('ord','ASC')))
-					;
+		$criteria->setFilter($jointVarsFilter);
 
-		if($results = $jUploadDao->fetchAll($criteria)){
+		if($orderFilter){
+			$criteria->setOrder($orderFilter);
+		}
+
+		if($results = $jDao->fetchAll($criteria)){
 			foreach($results as $joint){
-				$idList[]= (int) $joint->uploadId;
+				$idList[]= (int) $joint->{$destinationFieldName};
 			}
 		}
 
 		return $idList;
 	}
 
+	/**
+	 * Get uploadId list of the given fieldName for the current model
+	 * @param  string $fieldName The fieldName to get uploadId from
+	 * @return array
+	 */
+	protected function _genericGetUploadId($fieldName){
+		$filter = array(
+							'voName' => $this->getVoName(true),
+							'voId' => $this->getId()
+						);
+		$order = array(array('ord','ASC'));
+		return $this->_genericGetModelId($fieldName, '\\Smally\\VO\\jUpload', $filter, $order, 'uploadId');
+	}
+
+	/**
+	 * Generic method to get all Upload VO for the given $fieldName of the current model
+	 * @param  string $fieldName The fieldName to get upload Vo from
+	 * @return array
+	 */
 	protected function _genericGetUpload($fieldName){
 		$getterName = 'get'.ucfirst($fieldName);
 		if(method_exists($this, $getterName)){
@@ -317,10 +387,11 @@ class Standard extends \stdClass {
 		return $uploadVoList;
 	}
 
+	/*
 	protected function _genericThumbnailUrl($params=array()){
 		if(method_exists($this,'getThumbnailGenerator')) $thbGen = $this->getThumbnailGenerator();
-		else $thbGen = new \Smally\Helper\ThumbnaiGenerator($filePath);
-
+		else $thbGen = new \Smally\Helper\ThumbnailGenerator($filePath);
 	}
+	*/
 
 }

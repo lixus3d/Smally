@@ -4,6 +4,9 @@ namespace Smally\Dao;
 
 class Db implements InterfaceDao {
 
+	const STATEMENT_INSERT = 'INSERT INTO';
+	const STATEMENT_UPDATE = 'UPDATE';
+
 	protected $_table = null;
 	protected $_primaryKey = null;
 	protected $_voName = null;
@@ -251,9 +254,10 @@ class Db implements InterfaceDao {
 	/**
 	 * Store a value object. Use INSERT or UPDATE in case of $primaryKey not null
 	 * @param  \stdClass $vo The value object you want to store
+	 * @param  const $statement Force a particular statement (use Dao constant)
 	 * @return boolean true if store succeded
 	 */
-	public function store($vo){
+	public function store($vo,$statement=null){
 
 		// pseudo event system
 		if(method_exists($vo, 'onStore')){
@@ -265,10 +269,10 @@ class Db implements InterfaceDao {
 
 		// determine if we insert or update the data
 		if(property_exists($vo,$primaryKey)&&$vo->{$primaryKey}!=''){
-			$statement = 'UPDATE';
+			$statement = is_null($statement)?self::STATEMENT_UPDATE:$statement;
 			if(property_exists($vo,'utsUpdate')) $vo->utsUpdate = time();
 		}else{
-			$statement = 'INSERT INTO';
+			$statement = is_null($statement)?self::STATEMENT_INSERT:$statement;
 			if(property_exists($vo,'utsCreate')) $vo->utsCreate = time();
 		}
 
@@ -281,12 +285,12 @@ class Db implements InterfaceDao {
 
 		$sql = $statement.' '.$this->getTable().' SET '.implode(',',$set);
 
-		if($statement == 'UPDATE') $sql.= ' WHERE `'.$primaryKey.'` = \''.$vo->{$primaryKey}.'\'';
+		if($statement == self::STATEMENT_UPDATE) $sql.= ' WHERE `'.$primaryKey.'` = \''.$vo->{$primaryKey}.'\'';
 
 		$this->log($sql);
 
 		if($return = $this->getConnector()->query($sql)){
-			if($statement=='INSERT INTO'&&!$vo->{$primaryKey}){
+			if($statement==self::STATEMENT_INSERT&&!$vo->{$primaryKey}){
 				$vo->{$primaryKey} = $this->getLastInsertId();
 			}
 		}
@@ -308,12 +312,13 @@ class Db implements InterfaceDao {
 	/**
 	 * Delete a value object. Use utsDelete if the valueObject contains the property
 	 * @param  int $id               The id of the value object you want to delete
+	 * @param  boolean $forceDelete  Force the use of DELETE FROM
 	 * @return boolean true if delete succeded
 	 */
 	public function delete($vo,$forceDelete=false){
 		$primaryKey = $this->getPrimaryKey();
 
-		if($this->hasUtsDelete($vo)){
+		if($this->hasUtsDelete($vo)&&!$forceDelete){
 			$sql = 'UPDATE '.$this->getTable().' SET utsDelete=UNIX_TIMESTAMP() WHERE `'.$primaryKey.'` = \''.$this->getConnector()->escape_string($vo->getId()).'\'';
 		}else{
 			$sql = 'DELETE FROM '.$this->getTable().' WHERE `'.$primaryKey.'` = \''.$this->getConnector()->escape_string($vo->getId()).'\'';
