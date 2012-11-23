@@ -61,6 +61,8 @@ class MenuElement extends AbstractDecorator {
 	 */
 	public function getAttributes(){
 		$attributes = $this->getElement()->getAttributes(); // Attributes of the current element , specific id or rel for example
+
+
 		if($menu = $this->getMenu()){
 			$attributes = array_merge($this->getMenu()->getAttributesElement(),$attributes); // Attributes of the menu element, a generic class for
 		}
@@ -82,6 +84,11 @@ class MenuElement extends AbstractDecorator {
 		// Add alpha and omega automatically
 		if($this->_elementNumber === 0) $attributes['class'][] = $this->_classAlpha;
 		if($this->_elementNumber === ($this->_elementTotal-1)) $attributes['class'][] = $this->_classOmega;
+
+		// Add element specific class
+		if(isset($this->getElement()->class) && $class = $this->getElement()->class){
+			$attributes['class'][] = $class;
+		}
 
 		return $attributes;
 	}
