@@ -33,7 +33,12 @@ class Breadcrumb extends AbstractDecorator {
 	public function renderPath(){
 
 		$html = '';
+
 		$path = $this->getElement()->getTree()->getPath();
+		if($defaultPath = $this->getElement()->getDefaultPath()){
+			$path = array_merge($defaultPath,$path);
+		}
+
 		foreach($path as $key => $item){
 			$html .= $this->getElement()
 							->getDecorator('breadcrumbElement',$item)

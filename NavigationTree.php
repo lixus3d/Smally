@@ -29,7 +29,9 @@ class NavigationTree extends Tree{
 	 */
 	public function setControllerPath($path){
 		$this->controllerPath = $path;
-		$this->getNavigation()->addPath($path,$this);
+		if($this->getNavigation()){
+			$this->getNavigation()->addPath($path,$this);
+		}
 		return $this;
 	}
 

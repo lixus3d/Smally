@@ -8,6 +8,8 @@ class Breadcrumb {
 
 	protected $_decoratorNamespace = '\\Smally\\Helper\\Decorator';
 
+	protected $_defaultPath = null;
+
 	protected $_attributes  = array();
 	protected $_attributesElement = array();
 
@@ -84,6 +86,28 @@ class Breadcrumb {
 		return $this;
 	}
 
+	/**
+	 * Define a default path to add at the beginning of the breadcrumb
+	 * @param array $path A path item like item in the navigation file
+	 */
+	public function setDefaultPath($path){
+		if(is_array($path)){
+			$this->_defaultPath = array();
+			foreach($path as $item){
+				$this->_defaultPath[] = new \Smally\NavigationTree($item,null,$this->getTree()->getNavigation());
+			}
+		}
+		return $this;
+	}
+
+
+	/**
+	 * Return the defaultPath for the breadcrumb, default is null
+	 * @return array Array of NavigationTree
+	 */
+	public function getDefaultPath(){
+		return $this->_defaultPath;
+	}
 
 	/**
 	 * Return the breadcrumb tag attributes
@@ -108,7 +132,10 @@ class Breadcrumb {
 	 * @param  mixed $obj  the object to give to the decorator
 	 * @return \Smally\Helper\Decorator\AbstractDecorator
 	 */
-	public function getDecorator($type,$obj=null){
+	public function getDecorator($type='breadcrumb',$obj=null){
+
+		if(is_null($obj)) $obj = $this;
+
 		$name = $this->_decoratorNamespace.ucfirst($type); // Try the form namespace
 		if(!class_exists($name)){
 			$name = '\\Smally\\Helper\\Decorator\\'.ucfirst($type); // try the form default namespace
@@ -132,7 +159,7 @@ class Breadcrumb {
 	 * @return string
 	 */
 	public function render(){
-		return $this->getDecorator('breadcrumb',$this)->render();
+		return $this->getDecorator()->render();
 	}
 
 }
