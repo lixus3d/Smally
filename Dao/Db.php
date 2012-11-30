@@ -283,7 +283,7 @@ class Db implements InterfaceDao {
 			$set[] = '`'.$property.'` = \''.$this->getConnector()->escape_string($value).'\'';
 		}
 
-		$sql = $statement.' '.$this->getTable().' SET '.implode(',',$set);
+		$sql = $statement.' `'.$this->getTable().'` SET '.implode(',',$set);
 
 		if($statement == self::STATEMENT_UPDATE) $sql.= ' WHERE `'.$primaryKey.'` = \''.$vo->{$primaryKey}.'\'';
 
@@ -319,9 +319,9 @@ class Db implements InterfaceDao {
 		$primaryKey = $this->getPrimaryKey();
 
 		if($this->hasUtsDelete($vo)&&!$forceDelete){
-			$sql = 'UPDATE '.$this->getTable().' SET utsDelete=UNIX_TIMESTAMP() WHERE `'.$primaryKey.'` = \''.$this->getConnector()->escape_string($vo->getId()).'\'';
+			$sql = 'UPDATE `'.$this->getTable().'` SET utsDelete=UNIX_TIMESTAMP() WHERE `'.$primaryKey.'` = \''.$this->getConnector()->escape_string($vo->getId()).'\'';
 		}else{
-			$sql = 'DELETE FROM '.$this->getTable().' WHERE `'.$primaryKey.'` = \''.$this->getConnector()->escape_string($vo->getId()).'\'';
+			$sql = 'DELETE FROM `'.$this->getTable().'` WHERE `'.$primaryKey.'` = \''.$this->getConnector()->escape_string($vo->getId()).'\'';
 		}
 
 		$this->log($sql);
@@ -374,7 +374,7 @@ class Db implements InterfaceDao {
 		}
 
 		$sql  = 'SELECT '.implode(', ',$fields);
-		$sql .= ' FROM '.$this->getTable();
+		$sql .= ' FROM `'.$this->getTable().'`';
 		if($join)
 			$sql .= ' '.implode(' ',$join);
 		if($where)
