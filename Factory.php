@@ -136,7 +136,7 @@ class Factory {
 	 * @param  string $voName The vo name of the criteria object you want
 	 * @return \Smally\Criteria
 	 */
-	public function getCriteria($voName){
+	public function getCriteria($voName=null){
 		if( !is_null($voName) && $path = $this->getObjectPath($voName,'Criteria')){
 			if(class_exists($path)){
 				return new $path();
