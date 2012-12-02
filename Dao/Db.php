@@ -115,8 +115,10 @@ class Db implements InterfaceDao {
 	 * @return \Smally\Criteria
 	 */
 	public function getCriteria(){
-		$criteria = new \Smally\Criteria();
-		return $criteria;
+		if($voName = $this->getVoName()){
+			return \Smally\Application::getInstance()->getFactory()->getCriteria($voName);
+		}
+		return new \Smally\Criteria();
 	}
 
 	/**
