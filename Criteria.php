@@ -15,6 +15,9 @@ class Criteria {
 	 * @param mixed $limit  Limit array or int
 	 */
 	public function __construct($filter=null,$order=null,$limit=null){
+		if( method_exists($this, 'init')){
+			$this->init();
+		}
 		if(!is_null($filter)){
 			$this->setFilter($filter);
 		}
