@@ -119,7 +119,7 @@ class Rooter {
 	 * @return \Smally\Controller
 	 */
 	public function getControllerObject($controllerPath){
-		$controllerName = '\controller\\'.$controllerPath;
+		$controllerName = '\\Controller\\'.$controllerPath;
 		if(class_exists($controllerName)){
 			$controller = new $controllerName($this->getApplication());
 		}else throw new Exception('Invalid controller path given : '.$controllerName);

@@ -20,6 +20,7 @@ class Loader {
 
 			$classItself = array_pop($parts);
 			$classItself = str_replace('\\','/',$classItself); // Change path issue
+			$classItself = preg_replace('#^(\\\\)?Controller#','$1controller',$classItself);
 
 			// Paths where we search
 			$possibleBasePath = self::getBasePath();
