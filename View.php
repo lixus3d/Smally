@@ -185,6 +185,7 @@ class View {
 	 * @return string
 	 */
 	public function render($template,$params=array()){
+		$template = str_replace('\\','/',$template);
 		$templatePath = 'template'.DIRECTORY_SEPARATOR.$template.'.php';
 		ob_start();
 		if(!include(ROOT_PATH.$templatePath)){
