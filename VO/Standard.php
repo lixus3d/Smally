@@ -29,6 +29,14 @@ class Standard extends \stdClass {
 	}
 
 	/**
+	 * Generic toString do a getName()
+	 * @return string
+	 */
+	public function __toString(){
+		return $this->getName();
+	}
+
+	/**
 	 * Overwrite any existing property with the value in $vars
 	 * @param  array $vars array of $property => $value of the value object
 	 * @return \Smally\VO\Standard
@@ -93,7 +101,7 @@ class Standard extends \stdClass {
 	}
 
 	public function getModule(){
-		return substr($this->getVoName(true),0,strpos('\\',$this->getVoName(true)));
+		return substr($this->getVoName(true),0,strpos($this->getVoName(true),'\\'));
 	}
 
 	/**
@@ -364,8 +372,36 @@ class Standard extends \stdClass {
 	}
 
 	/**
+	 * Generic method to get all VO for a given join $fieldName
+	 * @param  string $fieldName            The field that contains id
+	 * @param  string $voName    voName of the subvo
+	 * @return array()
+	 */
+	protected function _genericGetModel($fieldName,$voName=null){
+
+		if(is_null($voName)) $voName = '\\'.$this->getModule().'\\VO\\'.(ucfirst(str_replace('Id','',$fieldName)));
+
+		$getterName = 'get'.ucfirst($fieldName);
+		if(method_exists($this, $getterName)){
+			$idList = $this->{$getterName}();
+		}else $idList = $this->_genericGetModelId($fieldName);
+
+		$voList = array();
+		if($idList){
+			$voDao = $this->getApplication()->getFactory()->getDao($voName);
+			foreach($idList as $id){
+				if($vo = $voDao->getById($id)){
+					$voList[] = $vo;
+				}
+			}
+		}
+		return $voList;
+	}
+
+	/**
 	 * Generic method to get all Upload VO for the given $fieldName of the current model
 	 * @param  string $fieldName The fieldName to get upload Vo from
+	 * @todo  Try to include in _genericGetModel
 	 * @return array
 	 */
 	protected function _genericGetUpload($fieldName){
@@ -387,11 +423,5 @@ class Standard extends \stdClass {
 		return $uploadVoList;
 	}
 
-	/*
-	protected function _genericThumbnailUrl($params=array()){
-		if(method_exists($this,'getThumbnailGenerator')) $thbGen = $this->getThumbnailGenerator();
-		else $thbGen = new \Smally\Helper\ThumbnailGenerator($filePath);
-	}
-	*/
 
 }
