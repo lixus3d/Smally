@@ -371,7 +371,10 @@ class Db implements InterfaceDao {
 
 		if(!is_array($fields)||count($fields)==0) $fields = array($fields?:'*');
 		foreach($fields as &$field){
-			if($field === '*' OR strpos($field,'COUNT')===0 ) continue;
+			if($field === '*' OR strpos($field,'COUNT')===0 ){
+				if($field === '*') $field = '`'.$this->getTable().'`.*';
+				continue;
+			}
 			$field = '`'.$field.'`';
 		}
 
@@ -406,7 +409,8 @@ class Db implements InterfaceDao {
 		$values = array();
 		$groupby = array();
 
-		foreach($criteria->getFilter() as $field => $params){
+		$filter = $criteria->getFilter();
+		foreach($filter as $field => $params){
 
 			$operator = isset($params['operator'])?$params['operator']:'=';
 			$value = isset($params['value'])?$params['value']:'0';
@@ -428,6 +432,13 @@ class Db implements InterfaceDao {
 				continue;
 			}
 
+			// Special Filter must be defined in a dao extends
+			if(method_exists($this, 'filter'.$field)){
+				$this->{'filter'.$field}($value,$operator,$params,$filter,$where,$join,$continue);
+				if(!$continue) continue;
+			}
+
+
 			if(!is_array($params)) $where[] = $params;
 			else{
 				switch($operator){
@@ -439,21 +450,21 @@ class Db implements InterfaceDao {
 					case '!=':
 					case 'LIKE':
 					case 'NOT LIKE':
-						$where[$field] = '`'.$field.'` '.$operator.' \''.$this->getConnector()->real_escape_string($value).'\'';
+						$where[$field] = '`'.$this->getTable().'`.`'.$field.'` '.$operator.' \''.$this->getConnector()->real_escape_string($value).'\'';
 						break;
 					case 'IN':
 					case 'NOT IN':
 						foreach($value as &$val){
 							$val = '\''.$this->getConnector()->real_escape_string($val).'\'';
 						}
-						$where[$field] = '`'.$field.'` '.$operator.' '.implode(',',$value);
+						$where[$field] = '`'.$this->getTable().'`.`'.$field.'` '.$operator.' '.implode(',',$value);
 						break;
 				}
 			}
 		}
 
 		foreach($criteria->getOrder() as $orderField){
-			$order[] = '`'.$orderField[0].'` '.$orderField[1];
+			$order[] = '`'.$this->getTable().'`.`'.$orderField[0].'` '.$orderField[1];
 		}
 
 		if(is_array($criteria->getLimit())){
