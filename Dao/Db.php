@@ -432,20 +432,21 @@ class Db implements InterfaceDao {
 					else throw new \Smally\Exception('operator \'search\' in the criteria but no \'fields\' key in the params !');
 				}
 				if($searchFields){
-					$where[] = $this->toLike(isset($params['value'])?$params['value']:'0', $searchFields,$params);
+					$where[] = $this->toLike($value, $searchFields,$params);
 				}
 				continue;
-			}
-
-			// Special Filter must be defined in a dao extends
-			if(method_exists($this, 'filter'.$field)){
-				$this->{'filter'.$field}($value,$operator,$params,$filter,$where,$join,$continue);
-				if(!$continue) continue;
 			}
 
 
 			if(!is_array($params)) $where[] = $params;
 			else{
+
+				// Special Filter must be defined in a dao extends
+				if(method_exists($this, 'filter'.$field)){
+					$this->{'filter'.$field}($value,$operator,$params,$filter,$where,$join,$continue);
+					if(!$continue) continue;
+				}
+
 				switch($operator){
 					case '=':
 					case '>':
