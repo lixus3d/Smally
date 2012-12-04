@@ -7,6 +7,8 @@ abstract class AbstractUrlRewriting {
 	protected $_urlRewriting = array();
 	protected $_controllerRewriting = array();
 
+	protected $_replaceParams = null;
+
 	public function __construct(){
 		$this->addRule('','Index\index'); // The most default rewrite rule to avoid SEO duplicate content
 		$this->init();
@@ -53,13 +55,32 @@ abstract class AbstractUrlRewriting {
 			$test = $rule['rule'];
 			if(strpos($test,'#')===0){
 				if(isset($rule['options']['reverse'])&&$params){
-					return call_user_func_array('sprintf',array_merge(array($rule['options']['reverse']),$params));
+					$this->_replaceParams = $params;
+					return preg_replace_callback('#%([a-z]+)#', array($this,'paramToUrl'), $rule['options']['reverse'] );
 				}
 			}else{
 				return $test.$getPart;
 			}
 		}
 		return str_replace('\\','/',$controllerPath).$getPart;
+	}
+
+	/**
+	 * Replace in $matches the param key with the value for url
+	 * @example replace '%name' width 'emmanuel-gauthier' from the $this->_replaceParams
+	 * @param  array $matches Array of matches from preg_replace_callback
+	 * @return string
+	 */
+	public function paramToUrl($matches){
+		$param = $matches[1];
+		$value = isset($this->_replaceParams[$param])?$this->_replaceParams[$param]:'';
+		// convert accent
+		$value = iconv('UTF-8','ASCII//TRANSLIT//IGNORE',$value);
+		// lower case the string
+		$value = strtolower($value);
+		// convert space, comma, tabulation, etc to '-'
+		$value = preg_replace('#[\s,.\n]+#','-',$value);
+		return preg_replace('#[^a-z0-9-]#','',$value);
 	}
 
 	/**
