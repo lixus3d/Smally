@@ -150,11 +150,16 @@ class Criteria {
 	public function arrayToFilter($array,$vo=null){
 		$filter = array();
 
+		if(!is_null($vo)) $dao = \Smally\Application::getInstance()->getFactory()->getDao($vo->getVoName(true));
+		else $dao = null;
+
 		foreach($array as $key => $value){
 			$value = (string) $value;
 
 			if($value === '') continue; // we don't filter on empty value , carefull 0 is a correct value
-			if($key != 'search' && !is_null($vo) && !property_exists($vo,$key)) continue;
+			if($key != 'search' && !is_null($vo)){
+				if( ( is_null($dao) || !method_exists($dao, 'filter'.$key)) && (!property_exists($vo,$key)) ) continue;
+			}
 
 			switch($key){
 				case strpos($key,'uts')===0:
