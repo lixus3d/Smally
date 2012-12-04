@@ -12,6 +12,8 @@ class Db implements InterfaceDao {
 	protected $_voName = null;
 	protected $_connector = null;
 
+	protected $_getByIdCache = array();
+
 	protected $_logLevel = null;
 	protected $_logger = null;
 
@@ -155,11 +157,14 @@ class Db implements InterfaceDao {
 	 * @return \stdClass
 	 */
 	public function getById($id){
-		$primaryKey = $this->getPrimaryKey();
-		$criteria = $this->getCriteria()
-							->setFilter(array($primaryKey=>array('value'=>$id)))
-							;
-		return $this->fetch($criteria);
+		if(!isset($this->_getByIdCache[$id])){
+			$primaryKey = $this->getPrimaryKey();
+			$criteria = $this->getCriteria()
+								->setFilter(array($primaryKey=>array('value'=>$id)))
+								;
+			$this->_getByIdCache[$id] = $this->fetch($criteria);
+		}
+		return $this->_getByIdCache[$id];
 	}
 
 	/**
