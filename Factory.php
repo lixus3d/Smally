@@ -120,12 +120,15 @@ class Factory {
 				$this->_dao[$voName] = new $path();
 			}else{
 				$this->_dao[$voName] = $this->getDefaultDao();
-				$vo = new $voName(); // TODO : Find a better solution for getting table and primary key
-				$this->_dao[$voName]
+			}
+			$vo = new $voName(); // TODO : Find a better solution for getting table and primary key
+			$this->_dao[$voName]
 						->setVoName($voName)
 						->setTable($vo->getTable())
 						->setPrimaryKey($vo->getPrimaryKey())
 						;
+			if($this->_dao[$voName] instanceof \Smally\Dao\InterfaceExtendedDao){
+				$this->_dao[$voName]->init();
 			}
 		}
 		return $this->_dao[$voName];
