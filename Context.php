@@ -79,6 +79,8 @@ class Context {
  */
 class ContextStdClass extends \stdClass {
 
+	protected $_empty = true;
+
 	/**
 	 * Put $vars as object property
 	 * @param array $vars An array of properties
@@ -100,6 +102,14 @@ class ContextStdClass extends \stdClass {
 	}
 
 	/**
+	 * Return true if there isn't any value inserted in the class
+	 * @return boolean
+	 */
+	public function isEmpty(){
+		return $this->_empty;
+	}
+
+	/**
 	 * Automatically create a new property with string value or a sub ContextStdClass object
 	 * @param string $name  name of the property
 	 * @param mixed $value value of the property
@@ -110,6 +120,7 @@ class ContextStdClass extends \stdClass {
 		}else{
 			$this->{$name} = $value;
 		}
+		$this->_empty = false;
 	}
 
 	/**
@@ -128,6 +139,7 @@ class ContextStdClass extends \stdClass {
 	public function toArray(){
 		$array = array();
 		foreach($this as $key => $value){
+			if(strpos($key,'_')===0) continue;
 			if($value instanceof ContextStdClass){
 				$array[$key] = $value->toArray();
 			}else{

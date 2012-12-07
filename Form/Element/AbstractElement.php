@@ -56,7 +56,11 @@ abstract class AbstractElement implements InterfaceElement {
 	 */
 	public function setValue($value){
 		if($value instanceof \Smally\ContextStdClass){
-			$value = $value->toArray();
+			if($value->isEmpty()){
+				$value = null;
+			}else{
+				$value = $value->toArray();
+			}
 		}
 		$this->_value = $value;
 		return $this;
