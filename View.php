@@ -31,9 +31,25 @@ class View {
 	/**
 	 * Define the view template path
 	 * @param string $templatePath the template path
+	 * @return \Smally\View
 	 */
 	public function setTemplatePath($templatePath){
 		$this->_templatePath = $templatePath;
+		return $this;
+	}
+
+	/**
+	 * Import an array of key value to public properties of the view
+	 * @param  array $array Array of key => value, where key become object property name
+	 * @return \Smally\View
+	 */
+	public function import($array){
+		if(is_array($array)){
+			foreach($array as $key => $value){
+				if(strpos($key,'_')===0)continue;
+				$this->{$key} = $value;
+			}
+		}
 		return $this;
 	}
 
