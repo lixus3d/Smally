@@ -96,6 +96,9 @@ class Logger {
 				case self::DEST_MYSQL:
 					$path .= 'mysql-'.date('Y-m').'.log';
 					break;
+				case self::DEST_MAIL:
+					$path .= 'mail-'.date('Y-m-d').'.log';
+					break;
 			}
 			$this->_logPathFile[$destinationType] = $path;
 		}
@@ -145,6 +148,7 @@ class Logger {
 					break;
 				case $bit&self::DEST_MAIL:
 					// TODO : get the email from config or default server contact email
+					$return = $this->writeToFile($completeText,$this->getFilePath(self::DEST_MAIL));
 					$return = $this->writeToMail($completeText,'developpement@adreamaline.com');
 					break;
 				case $bit&self::DEST_CONSOLE:
