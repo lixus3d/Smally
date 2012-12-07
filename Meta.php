@@ -50,7 +50,7 @@ class Meta{
 	 * Add a meta
 	 * @param string  $type    title, keywords or description
 	 * @param string  $content Any content for the meta
-	 * @param boolean $default It this a default meta ?
+	 * @param boolean $default Is this a default meta ?
 	 * @return \Smally\Meta
 	 */
 	public function addMeta($type,$content='',$default=false){
@@ -66,9 +66,13 @@ class Meta{
 	 */
 	public function addMetaTag($tag){
 		if(is_array($tag)){
-			$this->_otherMetas[] = $tag;
-			return $this;
+			if(isset($tag['name'])&&$tag['name']){
+				$this->_otherMetas[$tag['name']] = $tag;
+			}else{
+				$this->_otherMetas[] = $tag;
+			}
 		}
+		return $this;
 	}
 
 	/**
