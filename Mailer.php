@@ -50,6 +50,9 @@ class Mailer {
 				$mail->Username   = (string)$this->getApplication()->getConfig()->smally->mailer->username?:'email@domain.com'; // SMTP account username
 				$mail->Password   = (string)$this->getApplication()->getConfig()->smally->mailer->password?:'password';        // SMTP account password
 			}
+			if( (string) $this->getApplication()->getConfig()->smally->mailer->SMTPSecure !== ''){
+				$mail->SMTPSecure   = (string)$this->getApplication()->getConfig()->smally->mailer->SMTPSecure;                  // enable SMTP securisation
+			}
 			$this->_mailerClass = $mail;
 		}
 		return $this->_mailerClass;
