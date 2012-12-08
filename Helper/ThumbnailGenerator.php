@@ -126,7 +126,12 @@ class ThumbnailGenerator {
 						$params[$key] = (int) $value;
 						break;
 					case 't':
-						if(preg_match('#^fit|fit+|fill|stretch$#i',$value)){
+						if(preg_match('#^fit|fitplus|fill|stretch$#i',$value)){
+							$params[$key] = strtolower($value);
+						}
+						break;
+					case 'b':
+						if(preg_match('#^[0-9]{6}$#i',$value)){
 							$params[$key] = strtolower($value);
 						}
 						break;
@@ -242,7 +247,7 @@ class ThumbnailGenerator {
 	}
 
 	/**
-	 * Fit an $img in the given $destWidth and $destHeight
+	 * Fit an $img in the given $destWidth and $destHeight, the destination is not necessary of $destWidth and $destHeight size
 	 * @param  integer  $img        The original image (GD image id )
 	 * @param  integer  $width      The original image width ( or portion width if $x is given )
 	 * @param  integer  $height     The original image height ( or portion height if $x is given )
@@ -250,7 +255,7 @@ class ThumbnailGenerator {
 	 * @param  integer  $destHeight The destination max height, can be null if determine by $destWidth and original image ratio
 	 * @param  integer $x          Original image portion left position
 	 * @param  integer $y          Original image portion top position
-	 * @return interger A new GD image id
+	 * @return integer A new GD image id
 	 */
 	public function fit($img,$width,$height,$destWidth,$destHeight,$x=0,$y=0){
 		if(is_null($destWidth)&&is_null($destHeight)){
@@ -281,6 +286,61 @@ class ThumbnailGenerator {
 	}
 
 	/**
+	 * Fit an $img in the given $destWidth and $destHeight, the destination is of $destWidth and $destHeight size.
+	 * $backgroundColor is use to fill gap due to different ratios
+	 * @param  integer  $img        The original image (GD image id )
+	 * @param  integer  $width      The original image width ( or portion width if $x is given )
+	 * @param  integer  $height     The original image height ( or portion height if $x is given )
+	 * @param  integer  $destWidth  The destination max width, can be null if determine by $destHeight and original image ratio
+	 * @param  integer  $destHeight The destination max height, can be null if determine by $destWidth and original image ratio
+	 * @param  integer $x          Original image portion left position
+	 * @param  integer $y          Original image portion top position
+	 * @param  string $backgroundColor color to use for background, default is white
+	 * @return integer A new GD image id
+	 */
+	public function fitplus($img,$width,$height,$destWidth,$destHeight,$x=0,$y=0,$backgroundColor=null){
+		if(is_null($destWidth)&&is_null($destHeight)){
+			throw new \Smally\Exception('Either destWidth or destHeight must be defined. Null for both given.');
+		}
+
+		// Get background color from the params if available
+		if(isset($this->_params['b'])&&$this->_params['b']) $backgroundColor = $this->_params['b'];
+
+		// calculate image ratio
+		$ratio = $width / $height ;
+
+		// Finalize destination size , if one of them is null it match the ratio of the given source
+		if(is_null($destHeight)) $destHeight = (int) ($destWidth / $ratio);
+		elseif(is_null($destWidth)) $destWidth = (int) ($destHeight * $ratio);
+
+		$destRatio = $destWidth / $destHeight;
+
+		if($ratio > $destRatio){
+			$inDestHeight = (int) $destWidth / $ratio;
+			$destY = ($destHeight - $inDestHeight) / 2;
+			$inDestWidth = $destWidth;
+			$destX = 0;
+		}elseif($ratio < $destRatio) {
+			$inDestWidth = (int) $destHeight*$ratio;
+			$destX = ($destWidth - $inDestWidth) / 2;
+			$inDestHeight = $destHeight;
+			$destY = 0;
+		}
+
+		$thb = imagecreatetruecolor($destWidth,$destHeight);
+		imagealphablending($thb, false);
+		imagesavealpha($thb, true);
+		// set background color
+		list($r,$g,$b) = $this->hex2rgb($backgroundColor?:'FFF');
+		$backColor = imagecolorallocate($thb, $r, $g, $b);
+		imagefill($thb, 0, 0,  $backColor );
+
+		imagecopyresampled($thb, $img, $destX, $destY, $x, $y, $inDestWidth, $inDestHeight, $width, $height);
+
+		return $thb;
+	}
+
+	/**
 	 * Fill an $img in the given $destWidth and $destHeight, the destination will be of $destWidth and $destHeight size
 	 * @param  integer  $img        The original image (GD image id )
 	 * @param  integer  $width      The original image width ( or portion width if $x is given )
@@ -289,7 +349,7 @@ class ThumbnailGenerator {
 	 * @param  integer  $destHeight The destination max height, cant be null
 	 * @param  integer $x          Original image portion left position
 	 * @param  integer $y          Original image portion top position
-	 * @return interger A new GD image id
+	 * @return integer A new GD image id
 	 */
 	public function fill($img,$width,$height,$destWidth,$destHeight,$x=null,$y=null){
 		if(is_null($destWidth)||is_null($destHeight)){
@@ -304,19 +364,46 @@ class ThumbnailGenerator {
 		$ratio = $width / $height ;
 		$destRatio = $destWidth / $destHeight;
 
-		if($ratio > $destRatio){
-			$heightMulti = $destHeight / $height ;
-		}elseif($ratio < $destRatio) {
 
+		if($ratio > $destRatio){ // initial image is wider than destination
+			$multi = $height / $destHeight;
+		}elseif($ratio < $destRatio) { // initial image is tighter than the destination
+			$multi = $width / $destWidth ;
 		}
 
-		imagecopyresampled($thb, $img, 0, 0, $x, $y, $destWidth, $destHeight, $width, $height);
+		$xcenter = ($x + $width) / 2;
+		$ycenter = ($y + $height) / 2;
+
+
+		imagecopyresampled($thb, $img, 0, 0, $xcenter-(($destWidth/2)*$multi), $ycenter-(($destHeight/2)*$multi), $destWidth, $destHeight, $destWidth*$multi, $destHeight*$multi);
+		// imagecopyresampled($thb, $img, 0, 0, $x, $y, $destWidth, $destHeight, $width, $height);
 
 		return $thb;
 	}
 
+	/**
+	 * The destination image will be of $destWidth and $destHeight size, but the proportion of the original image might change
+	 * @param  integer  $img        The original image (GD image id )
+	 * @param  integer  $width      The original image width ( or portion width if $x is given )
+	 * @param  integer  $height     The original image height ( or portion height if $x is given )
+	 * @param  integer  $destWidth  The destination max width, cant be null
+	 * @param  integer  $destHeight The destination max height, cant be null
+	 * @param  integer $x          Original image portion left position
+	 * @param  integer $y          Original image portion top position
+	 * @return integer A new GD image id
+	 */
 	public function stretch($img,$width,$height,$destWidth,$destHeight,$x=0,$y=0){
+		if(is_null($destWidth)||is_null($destHeight)){
+			throw new \Smally\Exception('Neither destWidth or destHeight can be null.');
+		}
 
+		$thb = imagecreatetruecolor($destWidth,$destHeight);
+		imagealphablending($thb, false);
+		imagesavealpha($thb, true);
+
+		imagecopyresampled($thb, $img, 0, 0, $x, $y, $destWidth, $destHeight, $width, $height);
+
+		return $thb;
 	}
 
 	/**
@@ -346,6 +433,26 @@ class ThumbnailGenerator {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Convert color from hexadecimal to rgb
+	 * @param  string $hex Hexadecimal color #?([0-9]{3}|[0-9]{6})
+	 * @return array RGB : array($r, $g, $b)
+	 */
+	public function hex2rgb($hex) {
+		$hex = str_replace('#', '', $hex);
+
+		if(strlen($hex) == 3) {
+			$r = hexdec($hex[0].$hex[0]);
+			$g = hexdec($hex[1].$hex[1]);
+			$b = hexdec($hex[2].$hex[2]);
+		} else {
+			$r = hexdec(substr($hex,0,2));
+			$g = hexdec(substr($hex,2,2));
+			$b = hexdec(substr($hex,4,2));
+		}
+		return array($r, $g, $b);
 	}
 
 }
