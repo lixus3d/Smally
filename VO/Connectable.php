@@ -26,7 +26,7 @@ class Connectable extends Standard implements \Smally\InterfaceAclRole {
 	 * Return the \Smally\Connectable instance
 	 * @return \Smally\Connectable
 	 */
-	public function getConnectable(){
+	static public function getConnectable(){
 		if(is_null(static::$_connectable)){
 			static::$_connectable = new \Smally\Connectable(get_called_class());
 		}
