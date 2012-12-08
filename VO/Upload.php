@@ -115,8 +115,8 @@ class Upload extends \Smally\VO\Standard {
 	 * @param  array  $params Some params to give to the url maker
 	 * @return string
 	 */
-	public function getUrl($type=null,$params=array()){
-		$application = \Smally\application::getInstance();
+	public function getUploadUrl($type=null,$params=array()){
+		$application = \Smally\Application::getInstance();
 		$url = '';
 		switch($type){
 			case 'thumbnail':
@@ -128,12 +128,11 @@ class Upload extends \Smally\VO\Standard {
 					$url = $application->urlData($relative);
 				}
 			break;
-			default:
-				$url = $application->urlData(str_replace(DIRECTORY_SEPARATOR, '/', $this->filePath));
-			break;
-			break;
 			case 'delete':
 				$url = $application->getBaseUrl($application->makeControllerUrl('Upload\\delete',array('id'=>$this->getId())));
+			break;
+			default:
+				$url = $application->urlData(str_replace(DIRECTORY_SEPARATOR, '/', $this->filePath));
 			break;
 		}
 		return $url;
@@ -260,9 +259,9 @@ class Upload extends \Smally\VO\Standard {
 				'name' => $this->name,
 				'size' => $this->size,
 				'readableSize' => $this->getReadableSize(),
-				'url' => $this->getUrl(),
-				'thumbnail_url' => $this->getUrl('thumbnail'),
-				'delete_url' => $this->getUrl('delete'),
+				'url' => $this->getUploadUrl(),
+				'thumbnail_url' => $this->getUploadUrl('thumbnail'),
+				'delete_url' => $this->getUploadUrl('delete'),
 				'delete_type' => 'DELETE'
 			);
 	}

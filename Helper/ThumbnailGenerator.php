@@ -27,7 +27,7 @@ class ThumbnailGenerator {
 		if(file_exists($filePath)){
 			$this->_filePath = $filePath;
 		}else{
-			throw new \Smally\Exception('Invalid filepath given for the ThumbnailGenerator : '.$filePath);
+			//throw new \Smally\Exception('Invalid filepath given for the ThumbnailGenerator : '.$filePath);
 		}
 		return $this;
 	}

@@ -80,10 +80,10 @@ class File extends AbstractElement{
 						<i class="icon-move floatRight"></i>
 						<input class="id" '.\Smally\HtmlUtil::toAttributes($attributes).' value="'.$uploadObject->getId().'" />
 						<h3 class="name">'._h($uploadObject->name).'</h3>
-						<div class="preview"><span class="enclose"><img src="'._h($uploadObject->getUrl('thumbnail')).'" alt="upload" class="img100"/></span></div>
+						<div class="preview"><span class="enclose"><img src="'._h($uploadObject->getUploadUrl('thumbnail')).'" alt="upload" class="img100"/></span></div>
 						<span class="size">'._h($uploadObject->size).'</span>
-						<a href="'._h($uploadObject->getUrl('delete')).'" class="delete btn'.(is_null($upload)?'':' jsDeleteVo').'" data-smally-delete-parentselector=".file-preview" data-smally-delete-url="'._h($uploadObject->getUrl('delete')).'"><i class="icon-remove"></i></a>
-						<a href="'._h($uploadObject->getUrl()).'" class="url btn" target="_blank"><i class="icon-zoom-in"></i></a>
+						<a href="'._h($uploadObject->getUploadUrl('delete')).'" class="delete btn'.(is_null($upload)?'':' jsDeleteVo').'" data-smally-delete-parentselector=".file-preview" data-smally-delete-url="'._h($uploadObject->getUploadUrl('delete')).'"><i class="icon-remove"></i></a>
+						<a href="'._h($uploadObject->getUploadUrl()).'" class="url btn" target="_blank"><i class="icon-zoom-in"></i></a>
 					</div>
 				';
 
