@@ -61,23 +61,26 @@ class Length extends AbstractRule {
 		$valueToTest = (string) $valueToTest;
 		$length = mb_strlen($valueToTest);
 
-		// min test
-		if(!is_null($this->_min)){
-			switch(true){
-				case  $this->_strict && $length<=$this->_min :
-				case !$this->_strict && $length< $this->_min :
-					$test = false;
-					$this->addError('La longueur minimum de '.$this->_min.' caractère(s) n\'est pas atteinte');
+		// You must do a required test if empty is not valid
+		if($length>=1){
+			// min test
+			if(!is_null($this->_min)){
+				switch(true){
+					case  $this->_strict && $length<=$this->_min :
+					case !$this->_strict && $length< $this->_min :
+						$test = false;
+						$this->addError('La longueur minimum de '.$this->_min.' caractère(s) n\'est pas atteinte');
+				}
 			}
-		}
 
-		// max test
-		if(!is_null($this->_max)){
-			switch(true){
-				case  $this->_strict && $length>=$this->_max :
-				case !$this->_strict && $length> $this->_max :
-					$test = false;
-					$this->addError('La longueur maximum de '.$this->_max.' caractère(s) est dépassée');
+			// max test
+			if(!is_null($this->_max)){
+				switch(true){
+					case  $this->_strict && $length>=$this->_max :
+					case !$this->_strict && $length> $this->_max :
+						$test = false;
+						$this->addError('La longueur maximum de '.$this->_max.' caractère(s) est dépassée');
+				}
 			}
 		}
 
