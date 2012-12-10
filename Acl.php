@@ -52,7 +52,7 @@ class Acl {
 
 		foreach($rules as $rule){
 			if(!in_array($rule,$this->_allow[$model])){
-				$this->_allow[$model][]= $rules;
+				$this->_allow[$model][]= $rule;
 			}
 		}
 		return $this;
