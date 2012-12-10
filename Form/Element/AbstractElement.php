@@ -159,8 +159,8 @@ abstract class AbstractElement implements InterfaceElement {
 	 * Get the element name
 	 * @return string
 	 */
-	public function getName(){
-		if($prefix = $this->getForm()->getNamePrefix()){
+	public function getName($withPrefix=true){
+		if($withPrefix && $prefix = $this->getForm()->getNamePrefix()){
 			return $prefix.'['.$this->_name.']';
 		}
 		return $this->_name;

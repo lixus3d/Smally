@@ -9,6 +9,7 @@ class Form {
 	const METHOD_FILE		= 3;
 
 	protected $_application = null;
+	protected $_validator = null;
 
 	protected $_decoratorNamespace = '\\Smally\\Form\\Decorator\\';
 
@@ -111,6 +112,21 @@ class Form {
 		return $this;
 	}
 
+	/**
+	 * Define the validator that will be used on form data
+	 * Use to show form validator tricks (required *, mininum chars, etc... )
+	 * @param \Smally\Validator $validator The validator you will use to validate form data
+	 * @return \Smally\Form
+	 */
+	public function setValidator(\Smally\Validator $validator){
+		$this->_validator = $validator;
+		return $this;
+	}
+
+	/**
+	 * Return the current Application instance
+	 * @return \Smally\Application
+	 */
 	public function getApplication(){
 		if(is_null($this->_application)){
 			$this->_application = \Smally\Application::getInstance();
@@ -179,8 +195,20 @@ class Form {
 		return new $name($obj);
 	}
 
+	/**
+	 * Return the string to use as field prefix ( array format prefix[fieldname] )
+	 * @return string
+	 */
 	public function getNamePrefix(){
 		return $this->_namePrefix;
+	}
+
+	/**
+	 * Return the validator that will be use to validate form datas
+	 * @return \Smally\Validator
+	 */
+	public function getValidator(){
+		return $this->_validator;
 	}
 
 	/**
