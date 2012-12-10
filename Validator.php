@@ -71,6 +71,15 @@ class Validator {
 	}
 
 	/**
+	 * Return validators defined for a particular field
+	 * @param  string $fieldName The name of the field you want validators from
+	 * @return array Array of \Smally\Validator\AbstractRule or null if no rules
+	 */
+	public function getFieldRules($fieldName){
+		return isset($this->_rules[$fieldName]) ? $this->_rules[$fieldName] : null;
+	}
+
+	/**
 	 * Empty error table
 	 * @return \Smally\Validator
 	 */
