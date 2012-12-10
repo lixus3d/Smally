@@ -42,6 +42,14 @@ class Application {
 	}
 
 	/**
+	 * You can't serialize an application
+	 * @return array
+	 */
+	public function __sleep(){
+		return array();
+	}
+
+	/**
 	 * Set the singleton instance of Application
 	 * @return \Smally\Application
 	 */
