@@ -30,14 +30,17 @@ class Element extends AbstractDecorator {
 	 * @return string
 	 */
 	public function render($content=''){
-		$this->setLineNumber(); // automatic even / odd
 
-		$html 	= '';
+		if( $this->_element->getType()!=='hidden' ){
+			$this->setLineNumber(); // automatic even / odd
+			$html 	= '';
+			$html 	= $this->getForm()->getDecorator('label',$this->_element)->render($html); // label render
+			$html   = $this->getForm()->getDecorator($this->_element->getDecorator(),$this->_element)->render($html); // field render
 
-		$html 	= $this->getForm()->getDecorator('label',$this->_element)->render($html); // label render
-		$html   = $this->getForm()->getDecorator($this->_element->getDecorator(),$this->_element)->render($html); // field render
-
-		$html 	='<div class="line'.($this->getLineNumber()%2?' even':' odd').'">'.$html.'</div>'; // wrap them in the Element div
+			$html 	='<div class="line'.($this->getLineNumber()%2?' even':' odd').'">'.$html.'</div>'; // wrap them in the Element div
+		}else{
+			$html   = '<div class="hidden">'.$this->getForm()->getDecorator($this->_element->getDecorator(),$this->_element)->render('').'</div>'; // field render
+		}
 
 		return $this->concat($html,$content);
 	}
