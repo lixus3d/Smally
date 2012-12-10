@@ -77,7 +77,7 @@ class Logger {
 	 * Return the singleton of the default Logger, a setInstance must have been called before
 	 * @return \Smally\Logger
 	 */
-	public function getInstance(){
+	static public function getInstance(){
 		return self::$_singleton; // can return null in case of no setInstance done before
 	}
 
