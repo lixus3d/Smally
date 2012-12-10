@@ -165,14 +165,14 @@ class Factory {
 	 * @param  string $voName The vo name of the validator object you want
 	 * @return \Smally\Validator
 	 */
-	public function getValidator($voName){
+	public function getValidator($voName,$validatorMode=\Smally\Validator::MODE_NEW){
 		if(is_null($voName)) return null;
 		if(!isset($this->_validator[$voName])){
 			$path = $this->getObjectPath($voName,'Validator');
 			if(class_exists($path)){
-				$this->_validator[$voName] = new $path();
+				$this->_validator[$voName] = new $path(array(),$validatorMode);
 			}else{
-				$this->_validator[$voName] = new \Smally\Validator(); // Generic empty validator
+				$this->_validator[$voName] = new \Smally\Validator(array(),$validatorMode); // Generic empty validator
 			}
 		}
 		return $this->_validator[$voName];

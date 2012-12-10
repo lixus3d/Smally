@@ -4,6 +4,10 @@ namespace Smally;
 
 class Validator {
 
+	const MODE_NEW = 0;
+	const MODE_EDIT = 1;
+
+	protected $_mode = self::MODE_NEW;
 	protected $_testValues = array();
 	protected $_rules = array();
 	protected $_errors = array();
@@ -12,16 +16,29 @@ class Validator {
 	 * You can pass directly the values to test to the constructor
 	 * @param array $testValues [description]
 	 */
-	public function __construct($testValues=array()){
+	public function __construct($testValues=array(),$mode=self::MODE_NEW){
+		$this->setMode($mode);
+		$this->setTestValues($testValues);
+
 		if(method_exists($this, 'init')){
 			$this->init();
 		}
-		$this->setTestValues($testValues);
+	}
+
+	/**
+	 * Define the mode of the validator new or edit
+	 * @param int $mode The mode you want , use class constants
+	 * @return  \Smally\Validator
+	 */
+	public function setMode($mode){
+		$this->_mode = $mode;
+		return $this;
 	}
 
 	/**
 	 * Set the testValues of the validator
 	 * @param array  $testValues The values to test
+	 * @return  \Smally\Validator
 	 */
 	public function setTestValues($testValues){
 		$this->_testValues = $testValues;
@@ -52,6 +69,13 @@ class Validator {
 		return $this;
 	}
 
+	/**
+	 * Return the validator mode (new or edit)
+	 * @return int Use it to compare with class constants
+	 */
+	public function getMode(){
+		return $this->_mode;
+	}
 
 	/**
 	 * Return the validator errors
