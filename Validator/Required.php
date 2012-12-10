@@ -4,6 +4,8 @@ namespace Smally\Validator;
 
 class Required extends AbstractRule {
 
+	protected $_labelAdd = ' <span class="required">*</span>';
+
 	/**
 	 * Validate if the $valueToTest is filled
 	 * @param  mixed $valueToTest
