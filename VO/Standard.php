@@ -36,6 +36,15 @@ class Standard extends \stdClass {
 		return $this->getName();
 	}
 
+	public function __sleep(){
+		$export = array();
+		foreach($this as $propertyName => $value){
+			if(strpos($propertyName, '_')===0) continue;
+			$export[] = $propertyName;
+		}
+		return $export;
+	}
+
 	/**
 	 * Overwrite any existing property with the value in $vars
 	 * @param  array $vars array of $property => $value of the value object
