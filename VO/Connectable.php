@@ -7,7 +7,7 @@ namespace Smally\VO;
  */
 class Connectable extends Standard implements \Smally\InterfaceAclRole {
 
-	static $_connectable = null;
+	static protected $_connectable = null;
 	protected $_rightable = null;
 
 
