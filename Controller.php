@@ -93,7 +93,10 @@ abstract class Controller {
 	public function getView(){
 		if(is_null($this->_view)){
 			$this->_view = new View($this->getApplication());
-			$this->_view->setTemplatePath( str_replace('Controller\\','',get_class($this)) . DIRECTORY_SEPARATOR . $this->getAction() );
+			$this->_view
+						->setController($this)
+						->setTemplatePath( str_replace('Controller\\','',get_class($this)) . DIRECTORY_SEPARATOR . $this->getAction() )
+						;
 		}
 		return $this->_view;
 	}

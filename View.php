@@ -5,6 +5,7 @@ namespace Smally;
 class View {
 
 	protected $_application = null;
+	protected $_controller = null;
 
 	protected $_templatePath = null;
 
@@ -25,6 +26,16 @@ class View {
 	 */
 	public function setApplication(\Smally\Application $application){
 		$this->_application = $application;
+		return $this;
+	}
+
+	/**
+	 * Set the controller reverse reference
+	 * @param \Smally\Controller $controller The controller linked to the view
+	 * @return \Smally\View
+	 */
+	public function setController(\Smally\Controller $controller){
+		$this->_controller = $controller;
 		return $this;
 	}
 
@@ -81,6 +92,14 @@ class View {
 	 */
 	public function getApplication(){
 		return $this->_application;
+	}
+
+	/**
+	 * Return the controller linked to the view
+	 * @return \Smally\Controller
+	 */
+	public function getController(){
+		return $this->_controller;
 	}
 
 	/**
