@@ -22,6 +22,13 @@ class Connectable extends Standard implements \Smally\InterfaceAclRole {
 		}
 	}
 
+	public function __sleep(){
+		$export = parent::__sleep();
+		$export[] = '_connectable';
+		$export[] = '_rightable';
+		return $export;
+	}
+
 	/**
 	 * Return the \Smally\Connectable instance
 	 * @return \Smally\Connectable
