@@ -55,4 +55,13 @@ class Session {
 		return isset($_SESSION[$name]) ? $_SESSION[$name] : null;
 	}
 
+	/**
+	 * Reset the $_SESSION array to an empty array
+	 * @return \Smally\Session
+	 */
+	public function reset(){
+		$_SESSION = array();
+		return $this;
+	}
+
 }
