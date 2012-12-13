@@ -36,8 +36,18 @@ class Upload extends \Smally\VO\Standard {
 	 * @return string the filtered name
 	 */
 	public function filterName($name){
-		$name = preg_replace('#[^a-z0-9 \'"`\[\]()+.,_àâäéèëêïîôöùüûç-]#iu','',$name);
-		//$name = preg_replace('#[^a-z0-9àâäéèëêïîôöùüûç.]#u','',$name);
+		// convert accent
+		$name = iconv('UTF-8','ASCII//TRANSLIT//IGNORE',$name);
+		// convert space, comma, tabulation, etc to '-'
+		$name = preg_replace('#[\s\'"`\[\]()\n]#iu','-',$name);
+		// list only valid chars
+		$name = preg_replace('#[^a-z0-9+._-]#iu','',$name);
+		// remove multiple following -
+		$name = preg_replace('#-{2,}#iu','-',$name);
+		// remove -.,+.,_. entities
+		$name = preg_replace('#[-+_]\.#iu','.',$name);
+		// trim trailing - and .
+		$name = trim($name,'-.');
 		return $name;
 	}
 
