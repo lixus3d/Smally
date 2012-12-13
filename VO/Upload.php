@@ -199,6 +199,7 @@ class Upload extends \Smally\VO\Standard {
 		if(SMALLY_PLATFORM=='windows') $destinationFilePath = utf8_decode($destinationFilePath); // File will be stored in ISO on windows
 
 		if(@move_uploaded_file($this->filePath, $destinationFilePath)){
+			chmod($destinationFilePath,0777);
 			$this->filePath = $this->getRelativePath();
 			$this->getDao()->store($this);
 			return true;
