@@ -432,6 +432,8 @@ class ThumbnailGenerator {
 				throw new Exception('Invalid file extension for thumbnail.');
 		}
 
+		chmod($filename,0777);
+
 		return true;
 	}
 
