@@ -37,7 +37,7 @@ class Element extends AbstractDecorator {
 			$html 	= $this->getForm()->getDecorator('label',$this->_element)->render($html); // label render
 			$html   = $this->getForm()->getDecorator($this->_element->getDecorator(),$this->_element)->render($html); // field render
 
-			$html 	='<div class="line'.($this->getLineNumber()%2?' even':' odd').'">'.$html.'</div>'; // wrap them in the Element div
+			$html 	='<div class="line'.($this->getLineNumber()%2?' even':' odd').' '.$this->_element->getType().' '.$this->_element->getName(false).'">'.$html.'</div>'; // wrap them in the Element div
 		}else{
 			$html   = '<div class="hidden">'.$this->getForm()->getDecorator($this->_element->getDecorator(),$this->_element)->render('').'</div>'; // field render
 		}
