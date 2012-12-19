@@ -256,7 +256,7 @@ class Standard extends \stdClass {
 	 * @param  string $destinationFieldName The fieldName in the join table for the given $fieldName (usefull for multi joint table like j_upload)
 	 * @return \Smally\Vo\Standard
 	 */
-	protected function _genericStoreModelId($fieldName,$jVoName=null,$jointVars=null,$destinationFieldName=null){
+	protected function _genericStoreJointModelId($fieldName,$jVoName=null,$jointVars=null,$destinationFieldName=null){
 
 		if(is_null($destinationFieldName)) $destinationFieldName = $fieldName;
 
@@ -275,7 +275,7 @@ class Standard extends \stdClass {
 		}
 
 		$modelIdList = $this->{$fieldName};
-		$inBaseIdList = $this->_genericGetModelId($fieldName,$jVoName,$jointVars);
+		$inBaseIdList = $this->_genericGetJointModelId($fieldName,$jVoName,$jointVars);
 
 		// We update/insert joints
 		foreach($modelIdList as $ord => $modelId){
@@ -316,7 +316,7 @@ class Standard extends \stdClass {
 	 * @return \Smally\VO\Standard
 	 */
 	protected function _genericStoreUploadId($fieldName){
-		return $this->_genericStoreModelId($fieldName,'\\Smally\\VO\\jUpload',array('voName' => $this->getVoName(true),'voId' => $this->getId()),'uploadId');
+		return $this->_genericStoreJointModelId($fieldName,'\\Smally\\VO\\jUpload',array('voName' => $this->getVoName(true),'voId' => $this->getId()),'uploadId');
 	}
 
 	/**
@@ -328,7 +328,7 @@ class Standard extends \stdClass {
 	 * @param  string $destinationFieldName The fieldname of the joint table if different from $fieldName
 	 * @return array
 	 */
-	protected function _genericGetModelId($fieldName,$jVoName=null,$jointVarsFilter=null,$orderFilter=null,$destinationFieldName=null){
+	protected function _genericGetJointModelId($fieldName,$jVoName=null,$jointVarsFilter=null,$orderFilter=null,$destinationFieldName=null){
 
 		if(is_null($destinationFieldName)) $destinationFieldName = $fieldName;
 
@@ -379,7 +379,7 @@ class Standard extends \stdClass {
 							'voId' => $this->getId()
 						);
 		$order = array(array('ord','ASC'));
-		return $this->_genericGetModelId($fieldName, '\\Smally\\VO\\jUpload', $filter, $order, 'uploadId');
+		return $this->_genericGetJointModelId($fieldName, '\\Smally\\VO\\jUpload', $filter, $order, 'uploadId');
 	}
 
 	/**
@@ -388,18 +388,19 @@ class Standard extends \stdClass {
 	 * @param  string $voName    voName of the subvo
 	 * @return array()
 	 */
-	protected function _genericGetModel($fieldName,$voName=null){
+	protected function _genericGetJointModel($fieldName,$voName=null){
 
 		if(is_null($voName)) $voName = '\\'.$this->getModule().'\\VO\\'.(ucfirst(str_replace('Id','',$fieldName)));
 
 		$getterName = 'get'.ucfirst($fieldName);
 		if(method_exists($this, $getterName)){
 			$idList = $this->{$getterName}();
-		}else $idList = $this->_genericGetModelId($fieldName);
+		}else $idList = $this->_genericGetJointModelId($fieldName);
 
 		$voList = array();
 		if($idList){
 			$voDao = $this->getApplication()->getFactory()->getDao($voName);
+			// TODO : Fetch all with id IN (X,Y,Z)
 			foreach($idList as $id){
 				if($vo = $voDao->getById($id)){
 					$voList[] = $vo;
