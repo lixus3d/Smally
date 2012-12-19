@@ -221,6 +221,7 @@ class Db implements InterfaceDao {
 		if($result = $this->getConnector()->query($sql)){
 			if($result->num_rows>=1){
 				while($object = $this->fetchValueObject($result,$this->getVoName())){
+					$this->_getByIdCache[$object->getId()] = $object;
 					$return[] = $object;
 				}
 				$result->free();
@@ -417,8 +418,9 @@ class Db implements InterfaceDao {
 		$filter = $criteria->getFilter();
 		foreach($filter as $field => $params){
 
-			$operator = isset($params['operator'])?$params['operator']:'=';
 			$value = isset($params['value'])?$params['value']:'0';
+			$operator = isset($params['operator'])?$params['operator']:(is_array($value)?'IN':'=');
+
 
 			// field or operator 'search' means to do a search in field(s) with LIKE
 			if( $field === 'search' || $operator === 'search' ) {
@@ -463,7 +465,7 @@ class Db implements InterfaceDao {
 						foreach($value as &$val){
 							$val = '\''.$this->getConnector()->real_escape_string($val).'\'';
 						}
-						$where[$field] = '`'.$this->getTable().'`.`'.$field.'` '.$operator.' '.implode(',',$value);
+						$where[$field] = '`'.$this->getTable().'`.`'.$field.'` '.$operator.' ('.implode(',',$value).')';
 						break;
 				}
 			}

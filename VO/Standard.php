@@ -400,6 +400,9 @@ class Standard extends \stdClass {
 		$voList = array();
 		if($idList){
 			$voDao = $this->getApplication()->getFactory()->getDao($voName);
+			// $criteria = $voDao->getCriteria();
+			// $criteria->setFilter(array($fieldName => array('value' => $idList)));
+			// $voList = $voDao->fetchAll($criteria);
 			// TODO : Fetch all with id IN (X,Y,Z)
 			foreach($idList as $id){
 				if($vo = $voDao->getById($id)){
@@ -426,6 +429,9 @@ class Standard extends \stdClass {
 		if($idList){
 			$uploadVoName = '\\Smally\\VO\\Upload';
 			$uploadDao = $this->getApplication()->getFactory()->getDao($uploadVoName);
+			// $criteria = $uploadDao->getCriteria();
+			// $criteria->setFilter(array('uploadId'=>array('value'=>$idList)));
+			// $uploadVoList = $uploadDao->fetchAll($criteria);
 			foreach($idList as $id){
 				if($upload = $uploadDao->getById($id)){
 					$uploadVoList[] = $upload;
