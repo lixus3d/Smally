@@ -16,6 +16,11 @@ class Input extends AbstractDecorator {
 				'type' => $this->getElement()->getType(),
 				'value' => $this->getElement()->getValue(),
 			);
+		$placeholder = $this->getElement()->getPlaceholder();
+		$default = $this->getElement()->getDefault();
+
+		if($placeholder !== '') $attributes['placeholder'] = $placeholder;
+		if($default !== '' && $attributes['value'] == '') $attributes['value'] = $default;
 
 		$attributes = array_merge($attributes,$this->_element->getAttributes());
 
@@ -27,4 +32,5 @@ class Input extends AbstractDecorator {
 
 		return $this->concat($html,$content);
 	}
+
 }

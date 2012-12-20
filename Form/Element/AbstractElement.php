@@ -6,6 +6,8 @@ abstract class AbstractElement implements InterfaceElement {
 
 	protected $_name 		= '';
 	protected $_value 		= null;
+	protected $_placeholder = null;
+	protected $_default		= null;
 	protected $_type 		= null;
 	protected $_label		= null;
 	protected $_comment 	= null; // shown near the label
@@ -30,11 +32,15 @@ abstract class AbstractElement implements InterfaceElement {
 				}else throw new Exception('invalid element construct option');
 			}
 		}
+		if(method_exists($this, 'init')){
+			$this->init();
+		}
 	}
 
 	/**
 	 * Define the Decorator name that will be used to render the field itself
 	 * @param string $decorator The decorator class name
+	 * @return \Smally\Form\Element\AbstractElement
 	 */
 	public function setDecorator($decorator){
 		$this->_decorator = $decorator;
@@ -44,6 +50,7 @@ abstract class AbstractElement implements InterfaceElement {
 	/**
 	 * Set the name of the element, usually use in name attribute of the input
 	 * @param string $name Name of the input
+	 * @return \Smally\Form\Element\AbstractElement
 	 */
 	public function setName($name){
 		$this->_name = $name;
@@ -53,6 +60,7 @@ abstract class AbstractElement implements InterfaceElement {
 	/**
 	 * Set the value of the element, usually use in value attribute of the input
 	 * @param string $name Name of the input
+	 * @return \Smally\Form\Element\AbstractElement
 	 */
 	public function setValue($value){
 		if($value instanceof \Smally\ContextStdClass){
@@ -67,8 +75,29 @@ abstract class AbstractElement implements InterfaceElement {
 	}
 
 	/**
+	 * Set placeholder text help to show in the field
+	 * @param string $placeholder The placeholder you want
+	 * @return \Smally\Form\Element\AbstractElement
+	 */
+	public function setPlaceholder($placeholder){
+		$this->_placeholder = $placeholder;
+		return $this;
+	}
+
+	/**
+	 * Set Default value shown in the field if no value present
+	 * @param string $default The default value you want to show in the field when no value present
+	 * @return \Smally\Form\Element\AbstractElement
+	 */
+	public function setDefault($default){
+		$this->_default = $default;
+		return $this;
+	}
+
+	/**
 	 * Set the type of the element
 	 * @param string $type Type of the element
+	 * @return \Smally\Form\Element\AbstractElement
 	 */
 	public function setType($type){
 		$this->_type = $type;
@@ -78,6 +107,7 @@ abstract class AbstractElement implements InterfaceElement {
 	/**
 	 * Set the field label used in render of the element
 	 * @param string $label The label shown near the field
+	 * @return \Smally\Form\Element\AbstractElement
 	 */
 	public function setLabel($label){
 		$this->_label = $label;
@@ -87,6 +117,7 @@ abstract class AbstractElement implements InterfaceElement {
 	/**
 	 * Set the back reference to the element's form
 	 * @param \Smally\Form $form The back referenced form
+	 * @return \Smally\Form\Element\AbstractElement
 	 */
 	public function setForm(\Smally\Form $form){
 		$this->_form = $form;
@@ -96,6 +127,7 @@ abstract class AbstractElement implements InterfaceElement {
 	/**
 	 * Set the field comment
 	 * @param string $comment A comment string
+	 * @return \Smally\Form\Element\AbstractElement
 	 */
 	public function setComment($comment){
 		$this->_comment = $comment;
@@ -105,6 +137,7 @@ abstract class AbstractElement implements InterfaceElement {
 	/**
 	 * Set the field help
 	 * @param string $help A help string
+	 * @return \Smally\Form\Element\AbstractElement
 	 */
 	public function setHelp($help){
 		$this->_help = $help;
@@ -114,6 +147,7 @@ abstract class AbstractElement implements InterfaceElement {
 	/**
 	 * Set the error text of the field
 	 * @param string $error Error or errors of the field
+	 * @return \Smally\Form\Element\AbstractElement
 	 */
 	public function setError($error){
 		$this->_error = $error;
@@ -172,6 +206,22 @@ abstract class AbstractElement implements InterfaceElement {
 	 */
 	public function getValue(){
 		return $this->_value;
+	}
+
+	/**
+	 * Get the placeholder
+	 * @return string
+	 */
+	public function getPlaceholder(){
+		return $this->_placeholder;
+	}
+
+	/**
+	 * Get the default value
+	 * @return string
+	 */
+	public function getDefault(){
+		return $this->_default;
 	}
 
 	/**
