@@ -314,6 +314,10 @@ class ThumbnailGenerator {
 		elseif(is_null($destWidth)) $destWidth = (int) ($destHeight * $ratio);
 
 		$destRatio = $destWidth / $destHeight;
+		$destX=0;
+		$destY=0;
+		$inDestWidth=$destWidth;
+		$inDestHeight=$destHeight;
 
 		if($ratio > $destRatio){
 			$inDestHeight = (int) $destWidth / $ratio;
@@ -369,6 +373,8 @@ class ThumbnailGenerator {
 			$multi = $height / $destHeight;
 		}elseif($ratio < $destRatio) { // initial image is tighter than the destination
 			$multi = $width / $destWidth ;
+		}else{
+			$multi=1;
 		}
 
 		$xcenter = ($x + $width) / 2;
