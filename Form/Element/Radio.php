@@ -25,9 +25,12 @@ class Radio extends AbstractElement{
 	public function populateValue($values){
 		if($values instanceof \Smally\ContextStdClass) $values = $values->toArray();
 		if(!is_array($values)) $values = array($values);
-		foreach($values as $value){
-			if(array_key_exists($value,$this->getValue())){
-				$this->_checked[] = $value;
+		$currentValue = $this->getValue();
+		if(is_array($currentValue)){
+			foreach($values as $value){
+				if(array_key_exists($value,$currentValue)){
+					$this->_checked[] = $value;
+				}
 			}
 		}
 		return $this;
