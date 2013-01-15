@@ -9,8 +9,9 @@ class Submodel extends AbstractElement{
 
 	protected $_voName = null;
 	protected $_voFields = array();
-
 	protected $_checked = array();
+	protected $_isOrder = false;
+	protected $_addLabel = 'Ajouter un élément';
 
 	/**
 	 * Define the vo name of the sub item
@@ -24,6 +25,21 @@ class Submodel extends AbstractElement{
 
 	public function setVoFields($fields){
 		$this->_voFields = $fields;
+		return $this;
+	}
+
+	public function setIsOrder($state){
+		$this->_isOrder = (boolean) $state;
+		return $this;
+	}
+
+	public function setAddLabel($addLabel){
+		$this->_addLabel = $addLabel;
+		return $this;
+	}
+
+	public function isOrder(){
+		return $this->_isOrder;
 	}
 
 	/**
@@ -44,6 +60,10 @@ class Submodel extends AbstractElement{
 
 	public function getVoFields(){
 		return $this->_voFields;
+	}
+
+	public function getAddLabel(){
+		return $this->_addLabel;
 	}
 
 	public function getValue(){

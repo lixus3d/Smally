@@ -18,19 +18,36 @@ class Submodel extends AbstractDecorator {
 
 
 		$formFields = $form->getFields();
+		foreach($formFields as &$field){
+			$label = $field->getLabel();
+			$field->setLabel('');
+			$field->setPlaceholder($label);
+		}
 		$wantedFields = $this->getElement()->getVoFields();
 
-		$html = '<div class="input submodel">';
-		$html .= '<a href="#" class="submodel-add">Ajouter un autre élément</a>';
-		foreach($this->getElement()->getValue() as $k => $valueVo){
+		$html = '<div class="input submodel jsSubmodel">';
+
+		$html .= '<a href="#" class="submodel-add">'.$this->getElement()->getAddLabel().'</a>';
+
+		$value = $this->getElement()->getValue();
+		$value[] = new $voName();
+
+		foreach($value as $k => $valueVo){
+			// Each line must have it's own prefix
 			$form->setNamePrefix($this->getElement()->getName().'['.$k.']');
+			// We populate each line with correct values if actual $vo
 			$form->populateValue($valueVo->toArray());
+
 			$line = '<div class="submodel-line line-'.$k.'">';
-			foreach($formFields as $field){
+			if($this->getElement()->isOrder()){
+				$line .= '<a href="#" class="btn btn-small floatLeft submodel-order"><i class="icon-resize-vertical"></i></a>';
+			}
+			foreach($formFields as &$field){
 				if(in_array($field->getName(false),$wantedFields)){
 					$line .= $field->render();
 				}
 			}
+			$line .= '<a href="#" class="btn btn-danger btn-small submodel-delete floatLeft" ><i class="icon-remove icon-white"></i></a>';
 			$line .= '<hr />';
 			$line .= '</div>';
 			$html .= $line;
