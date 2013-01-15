@@ -13,6 +13,16 @@ class Submodel extends AbstractElement{
 	protected $_isOrder = false;
 	protected $_addLabel = 'Ajouter un élément';
 
+	public function init(){
+		if($app = \Smally\Application::getInstance()){
+			$app
+				->setJs('js/jquery.min.js')
+				->setJs('js/smally/vo/DeleteVo.js')
+				->setJs('js/smally/form/Submodel.js')
+				;
+		}
+	}
+
 	/**
 	 * Define the vo name of the sub item
 	 * @param string $voName The vo name of the sub item you want to add
@@ -69,6 +79,14 @@ class Submodel extends AbstractElement{
 	public function getValue(){
 		$return = array();
 		if($this->getChecked() && $app = \Smally\Application::getInstance()){
+			$voName = $this->getVoName();
+			foreach($this->getChecked() as $vars){
+				$vo = new $voName($vars);
+				$return[] = $vo;
+			}
+		}
+		/*
+		if($this->getChecked() && $app = \Smally\Application::getInstance()){
 			$dao = $app->getFactory()->getDao($this->getVoName());
 			$criteria = $dao->getCriteria();
 			$criteria ->setFilter(array($dao->getPrimaryKey()=>array('value'=>$this->getChecked(),'operator'=>'IN')));
@@ -76,6 +94,7 @@ class Submodel extends AbstractElement{
 				$return = $list;
 			}
 		}
+		*/
 		return $return;
 	}
 
@@ -83,7 +102,17 @@ class Submodel extends AbstractElement{
 		if($values instanceof \Smally\ContextStdClass) $values = $values->toArray();
 		if(!is_array($values)) $values = array($values);
 		foreach($values as $value){
-			$this->_checked[] = $value;
+			// don't populate with empty value values (:))
+			$ok = false;
+			foreach($value as $key => $v){
+				if($v!==''){
+					$ok = true;
+					break;
+				}
+			}
+			if($ok){
+				$this->_checked[] = $value;
+			}
 		}
 		return $this;
 	}

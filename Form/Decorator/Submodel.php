@@ -13,11 +13,13 @@ class Submodel extends AbstractDecorator {
 	public function render($content){
 
 		$app = \Smally\Application::getInstance();
+		// Get the submodel vo
 		$voName = $this->getElement()->getVoName();
+		// Get the default form for the submodel
 		$form = $app->getFactory()->getForm($voName);
-
-
+		// Get fields of the form
 		$formFields = $form->getFields();
+		// Sub form will use placeholder instead of label
 		foreach($formFields as &$field){
 			$label = $field->getLabel();
 			$field->setLabel('');
@@ -36,9 +38,16 @@ class Submodel extends AbstractDecorator {
 			// Each line must have it's own prefix
 			$form->setNamePrefix($this->getElement()->getName().'['.$k.']');
 			// We populate each line with correct values if actual $vo
-			$form->populateValue($valueVo->toArray());
+			if($k < count($value)-1){
+				$form->populateValue($valueVo->toArray());
+			}else{
+				$form->populateValue($valueVo);
+			}
 
-			$line = '<div class="submodel-line line-'.$k.'">';
+
+
+			$line = '<div class="submodel-line">';
+			$line .= '<input type="hidden" name="'.$form->getNamePrefix().'['.$valueVo->getPrimaryKey().']" value="'.$valueVo->getId().'" />';
 			if($this->getElement()->isOrder()){
 				$line .= '<a href="#" class="btn btn-small floatLeft submodel-order"><i class="icon-resize-vertical"></i></a>';
 			}
@@ -47,7 +56,13 @@ class Submodel extends AbstractDecorator {
 					$line .= $field->render();
 				}
 			}
-			$line .= '<a href="#" class="btn btn-danger btn-small submodel-delete floatLeft" ><i class="icon-remove icon-white"></i></a>';
+			$line .= '<a href="#"
+			class="btn btn-danger btn-small jsDeleteVo"
+			data-smally-delete-parentselector=".submodel-line"
+			data-smally-delete-url="'.$valueVo->getUrl('Administration\\GenericRpc\\delete',array('voName'=>'Cucina\\VO\\Date')).'"
+			>
+			<i class="icon-remove icon-white"></i>
+		</a>';
 			$line .= '<hr />';
 			$line .= '</div>';
 			$html .= $line;

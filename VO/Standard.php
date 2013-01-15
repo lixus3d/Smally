@@ -233,8 +233,10 @@ class Standard extends \stdClass {
 	 * @return \Smally\VO\Standard
 	 */
 	protected function _genericSetUts($fieldName,$date){
-		list($day,$month,$year) = explode('/',$date);
-		$this->{$fieldName} = mktime(0,0,0,$month,$day,$year);
+		if(strpos($date, '/') !== false){
+			list($day,$month,$year) = explode('/',$date);
+			$this->{$fieldName} = mktime(0,0,0,$month,$day,$year);
+		}
 		return $this;
 	}
 
@@ -441,5 +443,46 @@ class Standard extends \stdClass {
 		return $uploadVoList;
 	}
 
+	/**
+	 * Generic method to get submodel VO for the given field
+	 * @param  string $fieldName The fieldName to get the Vo
+	 * @param  string $voName    The vo of the submodel
+	 * @return array
+	 */
+	protected function _genericGetSubmodel($fieldName,$voName){
+		$results = array();
+		if($this->getId()){
+			$dao = $this->getFactory()->getDao($voName);
+			$criteria = $dao->getCriteria()->setFilter(array($this->getPrimaryKey()=>array('value'=>$this->getId())));
+			if($list = $dao->fetchAll($criteria)){
+				foreach($list as $submodel){
+					$results[] = $submodel->toArray();
+				}
+			}
+		}
+		return $results;
+	}
+
+	/**
+	 * Generic method to store a submodel for a given field
+	 * @param  string $fieldName The fieldName to store the Vo from
+	 * @param  string $voName    The vo of the submodel
+	 * @return null
+	 */
+	protected function _genericStoreSubmodel($fieldName,$voName){
+
+		$getterName = 'get'.ucfirst($fieldName);
+		if(method_exists($this, $getterName)){
+			$values = $this->{$getterName}();
+		}else $values = $this->{$fieldName};
+
+		foreach($values as $k => $vars){
+			$vo = new $voName($vars);
+			$vo->{$this->getPrimaryKey()} = $this->getId();
+			$vo->getDao()->store($vo);
+		}
+
+		return $this;
+	}
 
 }
