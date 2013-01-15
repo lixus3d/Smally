@@ -443,6 +443,25 @@ class Standard extends \stdClass {
 		return $uploadVoList;
 	}
 
+	protected function _genericSetSubmodel($fieldName,$values){
+		$return = array();
+		if(is_array($values)){
+			foreach($values as $k => $value){
+				$ok = false;
+				foreach($value as $field => $v){
+					if($v !== ''){
+						$ok = true;
+						break;
+					}
+				}
+				if($ok){
+					$return[] = $value;
+				}
+			}
+		}
+		return $return;
+	}
+
 	/**
 	 * Generic method to get submodel VO for the given field
 	 * @param  string $fieldName The fieldName to get the Vo
