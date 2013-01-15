@@ -21,6 +21,7 @@ class Select extends AbstractDecorator {
 				'name' => $this->getElement()->getName() . ( $type=='multiselect'?'[]':'') ,
 			);
 		if($type=='multiselect') $attributes['multiple'] = 'multiple';
+		$attributes = array_merge($attributes,$this->_element->getAttributes());
 
 		$html .= '<select '.\Smally\HtmlUtil::toAttributes($attributes).'>';
 
