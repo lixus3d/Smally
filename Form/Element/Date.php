@@ -8,7 +8,7 @@ class Date extends AbstractElement{
 
 	protected $_attributes = array(
 			'class' => array('jsDateSelector'),
-			'data-form-defaultValue' => 'JJ/MM/YYYY'
+			//'data-form-defaultValue' => 'JJ/MM/YYYY'
 		);
 
 	public function __construct(array $options=array()){
@@ -18,9 +18,10 @@ class Date extends AbstractElement{
 				->setJs('js/jquery.min.js')
 				->setJs('js/jquery-ui.min.js')
 				->setCss('css/jqueryui-adn-theme/jquery-ui-1.8.24.custom.css')
-				->setJs('js/smally/form/DefaultValue.js')
+				//->setJs('js/smally/form/DefaultValue.js')
 				->setJs('js/smally/form/DateSelector.js')
 				;
 		}
+		$this->setPlaceholder('JJ/MM/YYYY');
 	}
 }
