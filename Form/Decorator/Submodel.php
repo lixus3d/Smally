@@ -44,8 +44,6 @@ class Submodel extends AbstractDecorator {
 				$form->populateValue($valueVo);
 			}
 
-
-
 			$line = '<div class="submodel-line">';
 			$line .= '<input type="hidden" name="'.$form->getNamePrefix().'['.$valueVo->getPrimaryKey().']" value="'.$valueVo->getId().'" />';
 			if($this->getElement()->isOrder()){
@@ -68,31 +66,7 @@ class Submodel extends AbstractDecorator {
 			$html .= $line;
 		}
 
-		// $html .= $lines;
 		$html .= '</div>';
-
-		/*
-		$attributes = array(
-				'name' => $this->getElement()->getName(),
-				'type' => $this->getElement()->getType(),
-				'data-url' => $this->getUploadUrl(),
-				'multiple' => 'multiple'
-			);
-
-		$uploadsHtml = $this->renderUploads();
-
-		$attributes = array_merge($attributes,$this->_element->getAttributes());
-
-		$html = '<div class="input file">';
-		$html  = $this->getForm()->getDecorator('error',$this->_element)->render($html);
-		$html .= '<input '.\Smally\HtmlUtil::toAttributes($attributes).'/> <span class="html5-browser">Glisser-déposer vos fichiers ici</span>';
-		$html .= '<hr />';
-		$html .= $this->getElement()->getItemTemplate();
-		$html .= $uploadsHtml;
-		$html  = $this->getForm()->getDecorator('help',$this->_element)->render($html);
-		$html .= '<hr />';
-		$html .= '</div>';
-		*/
 
 		return $this->concat($html,$content);
 	}
