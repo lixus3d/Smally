@@ -85,16 +85,6 @@ class Submodel extends AbstractElement{
 				$return[] = $vo;
 			}
 		}
-		/*
-		if($this->getChecked() && $app = \Smally\Application::getInstance()){
-			$dao = $app->getFactory()->getDao($this->getVoName());
-			$criteria = $dao->getCriteria();
-			$criteria ->setFilter(array($dao->getPrimaryKey()=>array('value'=>$this->getChecked(),'operator'=>'IN')));
-			if($list = $dao->fetchAll($criteria)){
-				$return = $list;
-			}
-		}
-		*/
 		return $return;
 	}
 
