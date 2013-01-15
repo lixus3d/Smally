@@ -212,6 +212,14 @@ class Form {
 	}
 
 	/**
+	 * Return the fields array of the form
+	 * @return array Array of \Smally\Form\Element\AbstractElement
+	 */
+	public function getFields(){
+		return $this->_fields;
+	}
+
+	/**
 	 * Automatically population field value from context
 	 * @return \Smally\Form
 	 */
