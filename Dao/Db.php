@@ -309,6 +309,8 @@ class Db implements InterfaceDao {
 				$vo->onStoreSuccess();
 			}
 		}else{
+			$this->log('Error in : '.$sql,\Smally\Logger::LVL_ERROR);
+			$this->log($this->getConnector()->errno.' : '.$this->getConnector()->error,\Smally\Logger::LVL_ERROR);
 			if(method_exists($vo, 'onStoreFail')){
 				$vo->onStoreFail();
 			}
