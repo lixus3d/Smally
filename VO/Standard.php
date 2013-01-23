@@ -249,6 +249,48 @@ class Standard extends \stdClass {
 		return date('d/m/Y',$this->{$fieldName});
 	}
 
+	/**
+	 * Generic setter for tag field
+	 * @param  string $fieldName The field name
+	 * @param  string $tags      The list of tag names you want to set
+	 * @param  string $voName    The vo name of the tag
+	 * @param  string $nameField The name field in the tag vo
+	 * @return \Smally\VO\Standard
+	 */
+	protected function _genericSetTag($fieldName, $tags, $voName, $nameField='name'){
+
+		$this->{$fieldName} = array();
+		$tags = explode(',',$tags);
+		foreach($tags as $k => $tag){
+			$tag = trim($tag);
+			if($tag=='') unset($tags[$k]);
+		}
+
+		$dao = $this->getFactory()->getDao($voName);
+		$criteria = $dao->getCriteria();
+		$criteria ->setFilter(array($nameField=>array('value'=>$tags,'operator'=>'IN')));
+
+		$existingTags = array();
+		if($tagList = $dao->fetchAll($criteria)){
+			foreach($tagList as $tagVo){
+				$existingTags[$tagVo->getId()] = $tagVo->getName();
+			}
+		}
+
+		foreach($tags as $tag){
+			if(in_array($tag, $existingTags)){
+				$this->{$fieldName}[] = array_search($tag, $existingTags);
+			}else{
+				$vo = new $voName();
+				$vo->name = $tag;
+				if($dao->store($vo)){
+					$this->{$fieldName}[] = $vo->getId();
+				}
+			}
+		}
+
+		return $this;
+	}
 
 	/**
 	 * Generic storer for joint between two VO (many to many relation)
