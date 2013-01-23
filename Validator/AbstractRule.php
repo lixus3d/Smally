@@ -4,6 +4,8 @@ namespace Smally\Validator;
 
 abstract class AbstractRule implements InterfaceRule {
 
+	protected $_fieldName = null;
+
 	protected $_errors = array();
 
 	protected $_labelAdd = null;
@@ -12,9 +14,20 @@ abstract class AbstractRule implements InterfaceRule {
 	/**
 	 * Add an error to the current rule
 	 * @param string $error Error text
+	 * @return  \Smally\Validator\AbstractRule
 	 */
 	public function addError($error=''){
 		$this->_errors[] = $error;
+		return $this;
+	}
+
+	/**
+	 * Define the field name the rule will be on
+	 * @param string $fieldName The field name
+	 * @return  \Smally\Validator\AbstractRule
+	 */
+	public function setFieldName($fieldName){
+		$this->_fieldName = $fieldName;
 		return $this;
 	}
 
@@ -40,6 +53,15 @@ abstract class AbstractRule implements InterfaceRule {
 	 */
 	public function getHelpAdd(){
 		return $this->_helpAdd;
+	}
+
+
+	/**
+	 * Get the fieldname associated with the rule
+	 * @return string
+	 */
+	public function getFieldName(){
+		return $this->_fieldName;
 	}
 
 

@@ -54,6 +54,7 @@ class Validator {
 	public function addRule($field,\Smally\Validator\InterfaceRule $ruleObject){
 		if(!isset($this->_rules[$field])) $this->_rules[$field] = array();
 		$this->_rules[$field][] = $ruleObject;
+		$ruleObject->setFieldName($field);
 		return $this;
 	}
 
