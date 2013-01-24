@@ -45,8 +45,7 @@ Todo
 	- Mail spool system
 - Form :
 	- Add others type of field :
-		- color 
-		- other value object and objects  
+		- color 		
 - Validator :
 	- Add others type of validator :
 		- numeric
@@ -55,9 +54,8 @@ Todo
 		- file type 
 		- file number
 - Thumbnails : 
-	- Add others type of resizing
-- Dao :
-	- Add array values store and fetch possibility 
+	- Add others type of file preview
+- Dao :	
 	- Add gestion of join in Criteria
 - Metas :
 	- A metas "config" file 
