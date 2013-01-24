@@ -266,25 +266,27 @@ class Standard extends \stdClass {
 			if($tag=='') unset($tags[$k]);
 		}
 
-		$dao = $this->getFactory()->getDao($voName);
-		$criteria = $dao->getCriteria();
-		$criteria ->setFilter(array($nameField=>array('value'=>$tags,'operator'=>'IN')));
+		if($tags){
+			$dao = $this->getFactory()->getDao($voName);
+			$criteria = $dao->getCriteria();
+			$criteria ->setFilter(array($nameField=>array('value'=>$tags,'operator'=>'IN')));
 
-		$existingTags = array();
-		if($tagList = $dao->fetchAll($criteria)){
-			foreach($tagList as $tagVo){
-				$existingTags[$tagVo->getId()] = $tagVo->getName();
+			$existingTags = array();
+			if($tagList = $dao->fetchAll($criteria)){
+				foreach($tagList as $tagVo){
+					$existingTags[$tagVo->getId()] = $tagVo->getName();
+				}
 			}
-		}
 
-		foreach($tags as $tag){
-			if(in_array($tag, $existingTags)){
-				$this->{$fieldName}[] = array_search($tag, $existingTags);
-			}else{
-				$vo = new $voName();
-				$vo->name = $tag;
-				if($dao->store($vo)){
-					$this->{$fieldName}[] = $vo->getId();
+			foreach($tags as $tag){
+				if(in_array($tag, $existingTags)){
+					$this->{$fieldName}[] = array_search($tag, $existingTags);
+				}else{
+					$vo = new $voName();
+					$vo->name = $tag;
+					if($dao->store($vo)){
+						$this->{$fieldName}[] = $vo->getId();
+					}
 				}
 			}
 		}
