@@ -51,6 +51,11 @@ class Unique extends AbstractRule {
 							$this->getFieldName() => array('value'=>$valueToTest)
 						))
 						;
+			if( ($this->getValidator() instanceof \Smally\Validator) && ($actualId = $this->getValidator()->getActualVoId()) ){
+				$criteria->setFilter(array(
+						$dao->getPrimaryKey() => array('value'=>$actualId, 'operator' => '!='),
+					));
+			}
 
 			if($found = $dao->fetch($criteria)){
 				$this->addError($this->_errorTxt);

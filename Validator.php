@@ -12,6 +12,8 @@ class Validator {
 	protected $_rules = array();
 	protected $_errors = array();
 
+	protected $_actualVoId = null;
+
 	/**
 	 * You can pass directly the values to test to the constructor
 	 * @param array $testValues [description]
@@ -46,6 +48,16 @@ class Validator {
 	}
 
 	/**
+	 * Define the id of the actual object edited
+	 * @param int $actualVoId The id
+	 * @return  \Smally\Validator
+	 */
+	public function setActualVoId($actualVoId){
+		$this->_actualVoId = $actualVoId;
+		return $this;
+	}
+
+	/**
 	 * Add a validator rule to the field $field
 	 * @param string                          $field      The name of the field to test
 	 * @param \Smally\Validator\InterfaceRule $ruleObject The rule object to apply to the field
@@ -55,6 +67,7 @@ class Validator {
 		if(!isset($this->_rules[$field])) $this->_rules[$field] = array();
 		$this->_rules[$field][] = $ruleObject;
 		$ruleObject->setFieldName($field);
+		$ruleObject->setValidator($this);
 		return $this;
 	}
 
@@ -102,6 +115,14 @@ class Validator {
 	 */
 	public function getFieldRules($fieldName){
 		return isset($this->_rules[$fieldName]) ? $this->_rules[$fieldName] : null;
+	}
+
+	/**
+	 * Get the actual vo id of the object currently edited
+	 * @return int
+	 */
+	public function getActualVoId(){
+		return $this->_actualVoId;
 	}
 
 	/**
