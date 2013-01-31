@@ -57,7 +57,7 @@ class Standard extends \stdClass {
 				$this->{$method}($value);
 			}else if(property_exists($this, $name)){
 				$this->{$name} = $value;
-			}else{
+			}elseif($name !== 'submitter'){
 				\Smally\Logger::getInstance()->log('Trying to set a non declared propery of '.$this->getVoName().' : '.((string)$name),\Smally\Logger::LVL_WARNING);
 			}
 		}
