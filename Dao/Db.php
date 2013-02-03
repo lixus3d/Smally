@@ -435,8 +435,8 @@ class Db implements InterfaceDao {
 					if(isset($params['fields'])&&$params['fields']) $searchFields = $params['fields'];
 					else throw new \Smally\Exception('operator \'search\' in the criteria but no \'fields\' key in the params !');
 				}
-				if($searchFields){
-					$where[] = $this->toLike($value, $searchFields,$params);
+				if($searchFields && $likeTest = $this->toLike($value, $searchFields,$params) ){
+					$where[] = $likeTest;
 				}
 				continue;
 			}
@@ -492,6 +492,8 @@ class Db implements InterfaceDao {
 	 */
 	public function toLike($value,$fields,$options=array()){
 
+		$finalTest = '1=0';
+
 		$patterns = array();
 
 		$value = (string) trim($value,' ,');
@@ -517,17 +519,21 @@ class Db implements InterfaceDao {
 		$parts = array();
 		$crossParts = array();
 
-		foreach($fields as $fieldName){
-			$like = array();
-			foreach($patterns as $pattern){
-				$test = $fieldName.' LIKE \'%'. $this->getConnector()->real_escape_string($pattern) .'%\'';
-				$like[] = $test;
+		if($patterns){
+			foreach($fields as $fieldName){
+				$like = array();
+				foreach($patterns as $pattern){
+					$test = $fieldName.' LIKE \'%'. $this->getConnector()->real_escape_string($pattern) .'%\'';
+					$like[] = $test;
+				}
+				$parts[] 		= '(' . implode(' AND ',$like) . ')' ;
+				$crossParts[] 	= '(' . implode(' OR ', $like) . ')' ;
 			}
-			$parts[] 		= '(' . implode(' AND ',$like) . ')' ;
-			$crossParts[] 	= '(' . implode(' OR ', $like) . ')' ;
 		}
 
-		$finalTest = '( ('.implode(' OR ',$parts).') OR ('.implode(' AND ',$crossParts).') )';
+		if($parts && $crossParts){
+			$finalTest = '( ('.implode(' OR ',$parts).') OR ('.implode(' AND ',$crossParts).') )';
+		}
 
 		return $finalTest;
 
