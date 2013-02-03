@@ -74,7 +74,10 @@ abstract class Controller {
 	 */
 	public function setViewTemplatePath($templatePath){
 		$this->_view = new View($this->getApplication());
-		$this->_view->setTemplatePath( $templatePath );
+		$this->_view
+					->setController($this)
+					->setTemplatePath( $templatePath )
+					;
 		return $this;
 	}
 
