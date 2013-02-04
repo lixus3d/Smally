@@ -7,12 +7,17 @@ class Rooter {
 	protected $_application = null;
 	protected $_controller;
 
+	protected $_defaultController 	= 'Index';
+	protected $_defaultAction 		= 'index';
+
 	protected $_baseUrl = null;
 	protected $_uri = '';
 	protected $_uriQuery = '';
 	protected $_actualUrl = '';
 	protected $_controllerPath = null;
 	protected $_action = null;
+
+	protected $_clonePrefix = '';
 
 	protected $_logLevel = null;
 	protected $_logger = null;
@@ -46,6 +51,36 @@ class Rooter {
 	 */
 	public function setBaseUrl($url){
 		$this->_baseUrl = $url;
+		return $this;
+	}
+
+	/**
+	 * Define the clone prefix to use to prefix the uri
+	 * @param string $clonePrefix The string to use to prefix uri part
+	 * @return \Smally\Rooter
+	 */
+	public function setClonePrefix($clonePrefix){
+		$this->_clonePrefix = $clonePrefix;
+		return $this;
+	}
+
+	/**
+	 * Define the default controller to use when not present in uri
+	 * @param string $defaultController The default controller name
+	 * @return \Smally\Rooter
+	 */
+	public function setDefaultController($defaultController){
+		$this->_defaultController = $defaultController;
+		return $this;
+	}
+
+	/**
+	 * Define the default action to use when not present in uri
+	 * @param string $defaultAction The default action name
+	 * @return \Smally\Rooter
+	 */
+	public function setDefaultAction($defaultAction){
+		$this->_defaultAction = $defaultAction;
 		return $this;
 	}
 
@@ -184,7 +219,7 @@ class Rooter {
 			}
 
 			if($baseElems){
-				$this->_baseUrl .= implode('/',array_reverse($baseElems)).'/';
+				$this->_baseUrl .= implode('/',array_reverse($baseElems)).'/'. $this->_clonePrefix ;
 			}
 			if($uriElems){
 				$this->_uri = implode('/',array_reverse($uriElems));
@@ -274,9 +309,9 @@ class Rooter {
 
 		switch(count($controllerPath)){
 			case 0;
-				$controllerPath[] = 'index';
+				$controllerPath[] = $this->_defaultAction; // index
 			case 1:
-				array_unshift($controllerPath,'Index');
+				array_unshift($controllerPath, $this->_defaultController); // Index
 			break;
 		}
 

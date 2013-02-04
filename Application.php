@@ -13,6 +13,7 @@ class Application {
 	protected $_environnement 		= self::ENV_DEVELOPMENT;
 	protected $_logger				= null;
 
+	protected $_init				= null;
 	protected $_bootstrap			= null;
 	protected $_factory				= null;
 
@@ -85,6 +86,26 @@ class Application {
 	public function setNavigation( \Smally\Navigation $navigation){
 		$this->_navigation = $navigation;
 		$this->_navigation->setApplication($this);
+		return $this;
+	}
+
+	/**
+	 * Define the application bootstrap object
+	 * @param \Smally\AbstractBootstrap $bootstrap A valid abstract bootstrap object
+	 * @return  \Smally\Application
+	 */
+	public function setBootstrap( \Smally\AbstractBootstrap $bootstrap){
+		$this->_bootstrap = $bootstrap;
+		return $this;
+	}
+
+	/**
+	 * Define the application urlRewriting object
+	 * @param \Smally\AbstractUrlRewriting $urlRewriting A valid abstract url rewriting object
+	 * @return  \Smally\Application
+	 */
+	public function setUrlRewriting( \Smally\AbstractUrlRewriting $urlRewriting){
+		$this->_urlRewriting = $urlRewriting;
 		return $this;
 	}
 
@@ -249,6 +270,17 @@ class Application {
 	}
 
 	/**
+	 * Get a Init class if one exist in the project, return null otherwise
+	 * @return \Init
+	 */
+	public function getInit(){
+		if(is_null($this->_init)&&class_exists('Init')){
+			$this->_init = new \Init($this);
+		}
+		return $this->_init;
+	}
+
+	/**
 	 * Get a Bootstrap class if one exist in the project, return null otherwise
 	 * @return \Bootstrap
 	 */
@@ -292,7 +324,9 @@ class Application {
 		switch($type){
 			case 'www': break;
 			case $this->isDev(): // If we are in developpement context, then we always use the standard base url but we prefix with type directory
-				$path = $type.'/'.$path;
+				if( isset($this->getConfig()->smally->paths->{$type.'Prefix'}) ) $pathPrefix = $this->getConfig()->smally->paths->{$type.'Prefix'};
+				else $pathPrefix = '';
+				$path = $pathPrefix.$type.'/'.$path;
 			break;
 			case 'data':
 				if( !$this->getConfig()->smally->paths->data->isEmpty() && $dataPaths = $this->getConfig()->smally->paths->data->toArray()){
@@ -374,6 +408,8 @@ class Application {
 	 * @return \Smally\Application
 	 */
 	public function x(){
+
+		if($this->getInit()) $this->getInit()->x();
 
 		// Execute the rooter logic : Parse URL, define controller path and controller action
 		$this->getRooter()->x();
