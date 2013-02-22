@@ -42,6 +42,7 @@ class Mailer {
 		if(is_null($this->_mailerClass)){
 			$mail = new \Smally\Mailer\PHPMailer(true);
 			$mail->IsSMTP(); // telling the class to use SMTP
+			$mail->CharSet    = 'UTF-8';               // Force UTF-8
 			$mail->SMTPDebug  = 1;                     // enables SMTP debug information (for testing), 1 = errors and messages, 2 = messages only
 			$mail->Host       = (string)$this->getApplication()->getConfig()->smally->mailer->host?:'smtp.domain.com'; // SMTP server
 			$mail->Port       = (string)$this->getApplication()->getConfig()->smally->mailer->port?:25;                    // set the SMTP port for the GMAIL server
