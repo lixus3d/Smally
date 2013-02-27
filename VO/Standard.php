@@ -320,7 +320,11 @@ class Standard extends \stdClass {
 			);
 		}
 
-		$modelIdList = $this->{$fieldName};
+		$getterName = 'get'.ucfirst($fieldName);
+		if(method_exists($this, $getterName)){
+			$modelIdList = $this->{$getterName}();
+		}else $modelIdList = $this->{$fieldName};
+
 		$inBaseIdList = $this->_genericGetJointModelId($fieldName,$jVoName,$jointVars);
 
 		// We update/insert joints
