@@ -25,8 +25,8 @@ class Label extends AbstractDecorator{
 				}
 			}
 			$html .= '<div class="inputLabel">';
-			$html = $this->getForm()->getDecorator('comment',$this->_element)->render($html);
 			$html .= '<label for="'.$this->getElement()->getName().'">'.$label.$labelAdd.'</label>';
+			$html = $this->getForm()->getDecorator('comment',$this->_element)->render($html);
 			$html .= '</div>';
 		}
 
