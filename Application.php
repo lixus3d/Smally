@@ -404,6 +404,17 @@ class Application {
 	}
 
 	/**
+	 * Return a full controller url with base url
+	 * @param  string $controllerPath The controller path
+	 * @param  array  $params         Url parameters to add
+	 * @param  boolean $htmlspecialchars Does we convert the string to be href compliant
+	 * @return string
+	 */
+	public function getControllerUrl($controllerPath,$params=array(),$htmlspecialchars=true){
+		return $this->getBaseUrl($this->makeControllerUrl($controllerPath,$params),'www',$htmlspecialchars);
+	}
+
+	/**
 	 * Execute the application logic
 	 * @return \Smally\Application
 	 */
