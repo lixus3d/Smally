@@ -280,11 +280,11 @@ class Form {
 	 * @param string $fieldLabel The label to use for the field
 	 * @param string $fieldValue The actual value of the field
 	 */
-	public function addField($fieldType,$fieldName=null,$fieldLabel=null,$fieldValue=null){
+	public function addField($fieldType,$fieldName=null,$fieldLabel=null,$fieldValue=null,$options=array()){
 		if( $fieldType instanceof \Smally\Form\Element\AbstractElement ){
 			return $this->addFieldObject($fieldType);
 		}else if( $fieldType && $fieldName ){
-			$field = $this->newField($fieldType,$fieldName,$fieldLabel,$fieldValue);
+			$field = $this->newField($fieldType,$fieldName,$fieldLabel,$fieldValue,$options);
 			return $this->addFieldObject($field);
 		}else{
 			throw new \Smally\Exception('Invalid parameters given to Form->addField method !');
@@ -310,9 +310,10 @@ class Form {
 	 * @param string $fieldValue The actual value of the field
 	 * @return \Smally\Form\Element\Inter
 	 */
-	public function newField($fieldType,$fieldName,$fieldLabel=null,$fieldValue=null){
+	public function newField($fieldType,$fieldName,$fieldLabel=null,$fieldValue=null,$options=array()){
 		$className = '\\Smally\\Form\\Element\\'.ucfirst($fieldType);
-		$fieldObject = new $className(array('name'=>$fieldName,'value'=>$fieldValue,'label'=>$fieldLabel));
+		$options = array_merge($options,array('name'=>$fieldName,'value'=>$fieldValue,'label'=>$fieldLabel));
+		$fieldObject = new $className($options);
 		return $fieldObject;
 	}
 
