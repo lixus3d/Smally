@@ -27,7 +27,8 @@ class Radio extends AbstractDecorator {
 
 		foreach($values as $value => $label){
 			$attributes = array(
-				'name' => $this->getElement()->getName().'[]',
+				// 'name' => $this->getElement()->getName().'[]',
+				'name' => $this->getElement()->getName(),
 				'type' => $type,
 				'value' => $value,
 			);
