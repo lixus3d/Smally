@@ -154,7 +154,6 @@ class Uploader {
 			list($names,$types,$tmp_names,$errors,$sizes) = array_values($files);
 			foreach($names as $field => $name){
 				$upload = $this->getNewVo();
-				$upload->namespace = $voName.'\\'.$field;
 				$upload->setName($name);
 				$upload->filePath = $tmp_names[$field];
 				$upload->mimetype = $types[$field];

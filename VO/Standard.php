@@ -366,7 +366,7 @@ class Standard extends \stdClass {
 	 * @return \Smally\VO\Standard
 	 */
 	protected function _genericStoreUploadId($fieldName){
-		return $this->_genericStoreJointModelId($fieldName,'\\Smally\\VO\\jUpload',array('voName' => $this->getVoName(true),'voId' => $this->getId()),'uploadId');
+		return $this->_genericStoreJointModelId($fieldName,'\\Smally\\VO\\jUpload',array('voName' => $this->getVoName(true),'voId' => $this->getId(),'voField'=>$fieldName),'uploadId');
 	}
 
 	/**
@@ -426,7 +426,8 @@ class Standard extends \stdClass {
 	protected function _genericGetUploadId($fieldName){
 		$filter = array(
 							'voName' => $this->getVoName(true),
-							'voId' => $this->getId()
+							'voId' => $this->getId(),
+							'voField' => $fieldName,
 						);
 		$order = array(array('ord','ASC'));
 		return $this->_genericGetJointModelId($fieldName, '\\Smally\\VO\\jUpload', $filter, $order, 'uploadId');

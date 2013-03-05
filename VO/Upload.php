@@ -8,7 +8,6 @@ class Upload extends \Smally\VO\Standard {
 	protected $_thumbnailGenerator = null;
 
 	public $uploadId = null;
-	public $namespace = null;
 	public $name = null;
 	public $mimetype = null;
 	public $size = null;
