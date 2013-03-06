@@ -28,10 +28,15 @@ class Radio extends AbstractDecorator {
 		foreach($values as $value => $label){
 			$attributes = array(
 				// 'name' => $this->getElement()->getName().'[]',
-				'name' => $this->getElement()->getName(),
+				//'name' => $this->getElement()->getName(),
 				'type' => $type,
 				'value' => $value,
 			);
+			if($type == 'radio'){
+				$attributes['name'] = $this->getElement()->getName();
+			}else{
+				$attributes['name'] = $this->getElement()->getName().'[]';
+			}
 			if(in_array($value,$this->getElement()->getChecked())){
 				$attributes['checked'] = 'checked';
 			}
