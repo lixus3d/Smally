@@ -152,7 +152,7 @@ class Upload extends \Smally\VO\Standard {
 	 * TODO : Must be greatly improve
 	 * @return string
 	 */
-	public function getMimeType(){
+	public function getMimeTypeThumbnail(){
 		$extension = $this->getExtension();
 		switch($extension){
 			case 'jpg':
@@ -161,6 +161,11 @@ class Upload extends \Smally\VO\Standard {
 			case 'png':
 			case 'gif':
 				return 'image/'.$extension;
+			case 'pdf':
+			case 'doc':
+			case 'docx':
+			case 'odt':
+				return 'image/png';
 			default:
 				return 'image/image';
 		}
@@ -314,7 +319,7 @@ class Upload extends \Smally\VO\Standard {
 	 */
 	public function readThumbnail($thumbnailPath,$withHeaders=true){
 		if($withHeaders){
-			header('Content-Type: '.$this->getMimeType());
+			header('Content-Type: '.$this->getMimeTypeThumbnail());
 		}
 		echo file_get_contents($thumbnailPath);
 		return $this;

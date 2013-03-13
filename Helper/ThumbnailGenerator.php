@@ -193,6 +193,8 @@ class ThumbnailGenerator {
 		}
 
 		list($width,$height,$type,$attr) = getimagesize($this->_filePath);
+		if(is_null($width)) $width = 256;
+		if(is_null($height)) $height = 256;
 
 		$params = &$this->_params;
 		$destWidth = isset($params['x'])?$params['x']:400;
@@ -223,6 +225,7 @@ class ThumbnailGenerator {
 
 	/**
 	 * Get the GD image instance of the current file
+	 * TODO : set default icon path in config
 	 * @return int
 	 */
 	public function getGdImage(){
@@ -238,8 +241,14 @@ class ThumbnailGenerator {
 			case 'gif':
 				$function = 'imagecreatefrom'.$extension;
 				break;
+			case 'pdf':
+				return imagecreatefrompng(ROOT_PATH.'public/assets/img/default-icon-pdf.png');
+			case 'doc':
+			case 'docx':
+			case 'odt':
+				return imagecreatefrompng(ROOT_PATH.'public/assets/img/default-icon-word.png');
 			default:
-				throw new Exception('Invalid file extension for thumbnail.');
+				return imagecreatefrompng(ROOT_PATH.'public/assets/img/default-icon-file.png');
 		}
 
 		// Create the original image in GD from the type
@@ -434,8 +443,14 @@ class ThumbnailGenerator {
 			case 'png':
 				imagepng($img, $filename);
 				break;
+			case 'pdf':
+			case 'doc':
+			case 'docx':
+			case 'odt':
 			default:
-				throw new Exception('Invalid file extension for thumbnail.');
+				imagepng($img, $filename);
+				break;
+
 		}
 
 		chmod($filename,0777);
