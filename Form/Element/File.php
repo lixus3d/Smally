@@ -11,21 +11,31 @@ class File extends AbstractElement{
 			'class' => array('jsFileSelector')
 		);
 
+	protected $_application = null;
+
 	protected $_uploaderOptions = array();
 	protected $_itemTemplatePath = null;
 	protected $_itemTemplate = null;
+	protected $_nameUpdate = false;
 
 	public function __construct(array $options=array()){
 		parent::__construct($options);
-		if($app = \Smally\Application::getInstance()){
+		if($app = $this->getApplication()){
 			$app
 				->setJs('js/jquery.min.js')
 				->setJs('js/jquery-ui.min.js')
 				->setJs('js/smally/jquery.fileupload.js')
 				->setJs('js/smally/form/FileSelector.js')
-				->setJs('js/smally/form/FileNameUpdater.js')
 				;
 		}
+	}
+
+	public function setNameUpdate($value){
+		$this->_nameUpdate = (boolean) $value;
+		if($this->_nameUpdate && $app = $this->getApplication()){
+			$app->setJs('js/smally/form/FileNameUpdater.js');
+		}
+		return $this;
 	}
 
 	public function setUploaderOption($optionName,$optionValue){
@@ -41,6 +51,17 @@ class File extends AbstractElement{
 	public function setItemTemplate($template){
 		$this->_itemTemplate = $template;
 		return $this;
+	}
+
+	/**
+	 * Get the current Smally Application
+	 * @return \Smally\Application
+	 */
+	public function getApplication(){
+		if(is_null($this->_application)){
+			$this->_application = \Smally\Application::getInstance();
+		}
+		return $this->_application;
 	}
 
 	public function getItemTemplate($upload=null){
@@ -79,8 +100,14 @@ class File extends AbstractElement{
 				$template = '
 					<div class="file-preview'.(is_null($upload)?' jsFileTemplate':'').'" style="display:'.(is_null($upload)?'none':'block').'">
 						<i class="icon-move floatRight jsSortableHandle"></i>
-						<input class="id" '.\Smally\HtmlUtil::toAttributes($attributes).' value="'.$uploadObject->getId().'" />
-						<h3 class="name"><input type="text" value="'._h($uploadObject->name).'" name="uploadName" class="jsUpdateName" data-smally-updatename-url="'._h($uploadObject->getUploadUrl('updatename')).'" /></h3>
+						<input class="id" '.\Smally\HtmlUtil::toAttributes($attributes).' value="'.$uploadObject->getId().'" />';
+				if($this->_nameUpdate){
+					$template .= '<h3><input type="text" value="'._h($uploadObject->name).'" name="uploadName" class="jsFileNameUpdate name" data-smally-updatename-url="'._h($uploadObject->getUploadUrl('updatename')).'" /></h3>';
+				}else{
+					$template .= '<h3 class="name">'._h($uploadObject->name).'</h3>';
+				}
+				$template .='
+
 						<div class="preview"><span class="enclose"><img src="'._h($uploadObject->getUploadUrl('thumbnail')).'" alt="upload" class="img100"/></span></div>
 						<span class="size">'._h($uploadObject->getReadableSize()).'</span>
 						<a href="'._h($uploadObject->getUploadUrl('delete')).'" class="delete btn'.(is_null($upload)?'':' jsDeleteVo').'" data-smally-delete-parentselector=".file-preview" data-smally-delete-url="'._h($uploadObject->getUploadUrl('delete')).'"><i class="icon-remove"></i></a>
