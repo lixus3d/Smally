@@ -23,6 +23,7 @@ class File extends AbstractElement{
 				->setJs('js/jquery-ui.min.js')
 				->setJs('js/smally/jquery.fileupload.js')
 				->setJs('js/smally/form/FileSelector.js')
+				->setJs('js/smally/form/FileNameUpdater.js')
 				;
 		}
 	}
@@ -77,11 +78,11 @@ class File extends AbstractElement{
 
 				$template = '
 					<div class="file-preview'.(is_null($upload)?' jsFileTemplate':'').'" style="display:'.(is_null($upload)?'none':'block').'">
-						<i class="icon-move floatRight"></i>
+						<i class="icon-move floatRight jsSortableHandle"></i>
 						<input class="id" '.\Smally\HtmlUtil::toAttributes($attributes).' value="'.$uploadObject->getId().'" />
-						<h3 class="name">'._h($uploadObject->name).'</h3>
+						<h3 class="name"><input type="text" value="'._h($uploadObject->name).'" name="uploadName" class="jsUpdateName" data-smally-updatename-url="'._h($uploadObject->getUploadUrl('updatename')).'" /></h3>
 						<div class="preview"><span class="enclose"><img src="'._h($uploadObject->getUploadUrl('thumbnail')).'" alt="upload" class="img100"/></span></div>
-						<span class="size">'._h($uploadObject->size).'</span>
+						<span class="size">'._h($uploadObject->getReadableSize()).'</span>
 						<a href="'._h($uploadObject->getUploadUrl('delete')).'" class="delete btn'.(is_null($upload)?'':' jsDeleteVo').'" data-smally-delete-parentselector=".file-preview" data-smally-delete-url="'._h($uploadObject->getUploadUrl('delete')).'"><i class="icon-remove"></i></a>
 						<a href="'._h($uploadObject->getUploadUrl()).'" class="url btn" target="_blank"><i class="icon-zoom-in"></i></a>
 					</div>

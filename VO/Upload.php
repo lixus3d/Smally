@@ -140,6 +140,9 @@ class Upload extends \Smally\VO\Standard {
 			case 'delete':
 				$url = $application->getBaseUrl($application->makeControllerUrl('Upload\\delete',array('id'=>$this->getId())));
 			break;
+			case 'updatename':
+				$url = $application->getBaseUrl($application->makeControllerUrl('Upload\\updatename',array('id'=>$this->getId())));
+			break;
 			default:
 				$url = $application->urlData(str_replace('\\', '/', $this->filePath));
 			break;
