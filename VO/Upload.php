@@ -130,7 +130,7 @@ class Upload extends \Smally\VO\Standard {
 		switch($type){
 			case 'thumbnail':
 				if($this->filePath){
-					$relative = str_replace(DIRECTORY_SEPARATOR,'/',$this->cutUid($this->getUid()));
+					$relative = str_replace('\\','/',$this->cutUid($this->getUid()));
 					$relative .= '/thumbnail/';
 					$relative .= $this->getThumbnailGenerator()->constructParamsString($params);
 					$relative .= '/'.$this->name;
@@ -141,7 +141,7 @@ class Upload extends \Smally\VO\Standard {
 				$url = $application->getBaseUrl($application->makeControllerUrl('Upload\\delete',array('id'=>$this->getId())));
 			break;
 			default:
-				$url = $application->urlData(str_replace(DIRECTORY_SEPARATOR, '/', $this->filePath));
+				$url = $application->urlData(str_replace('\\', '/', $this->filePath));
 			break;
 		}
 		return $url;
