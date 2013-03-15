@@ -97,11 +97,11 @@ class Upload extends \Smally\VO\Standard {
 	}
 
 	/**
-	 * Return the upload file extension ( from name )
+	 * Return the upload file extension ( from filepath )
 	 * @return string
 	 */
 	public function getExtension(){
-		return strtolower(substr(strrchr($this->name,'.'),1));
+		return strtolower(substr(strrchr($this->filePath,'.'),1));
 	}
 
 	/**
@@ -133,7 +133,7 @@ class Upload extends \Smally\VO\Standard {
 					$relative = str_replace('\\','/',$this->cutUid($this->getUid()));
 					$relative .= '/thumbnail/';
 					$relative .= $this->getThumbnailGenerator()->constructParamsString($params);
-					$relative .= '/'.$this->name;
+					$relative .= '/'.substr(strrchr($this->filePath,'\\'),1);
 					$url = $application->urlData($relative);
 				}
 			break;
