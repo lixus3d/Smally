@@ -198,7 +198,7 @@ class Standard extends \stdClass {
 		if(!$replace){
 			$defaultParams = array(
 					'id' => $this->getId(),
-					'name' => $this->getName(),
+					'name' => isset($this->{$this->_nameKey})?$this->getName():'',
 				);
 			$params = array_merge($defaultParams,$params);
 		}
@@ -243,10 +243,10 @@ class Standard extends \stdClass {
 	/**
 	 * Generic getter for uts field
 	 * @param  string $fieldName the field name
-	 * @return string Date in dd/mm/YYYY format
+	 * @return string Date in dd/mm/YYYY format by default
 	 */
-	protected function _genericGetUts($fieldName){
-		return date('d/m/Y',$this->{$fieldName});
+	protected function _genericGetUts($fieldName,$format='d/m/Y'){
+		return $this->{$fieldName} >= 1 ? date($format,$this->{$fieldName}) : null ;
 	}
 
 	/**
@@ -492,13 +492,19 @@ class Standard extends \stdClass {
 		return $uploadVoList;
 	}
 
+	/**
+	 * Generic method to set submodel values for the given $fieldName of the current model
+	 * @param  string $fieldName The fieldName to set the values for
+	 * @param  array $values    Array of lines, each lines containing values
+	 * @return array
+	 */
 	protected function _genericSetSubmodel($fieldName,$values){
 		$return = array();
 		if(is_array($values)){
 			foreach($values as $k => $value){
 				$ok = false;
 				foreach($value as $field => $v){
-					if($v !== ''){
+					if( $v !== '' && $v !== '0:0' ){ // 0:0 for select / radio default choice
 						$ok = true;
 						break;
 					}
@@ -515,13 +521,22 @@ class Standard extends \stdClass {
 	 * Generic method to get submodel VO for the given field
 	 * @param  string $fieldName The fieldName to get the Vo
 	 * @param  string $voName    The vo of the submodel
+	 * @param  boolean $shared   Is the submodel table shared for multiple parent vo
 	 * @return array
 	 */
-	protected function _genericGetSubmodel($fieldName,$voName){
+	protected function _genericGetSubmodel($fieldName,$voName,$shared=false){
 		$results = array();
 		if($this->getId()){
 			$dao = $this->getFactory()->getDao($voName);
-			$criteria = $dao->getCriteria()->setFilter(array($this->getPrimaryKey()=>array('value'=>$this->getId())));
+			$criteria = $dao->getCriteria();
+			if($shared){
+				$criteria->setFilter(array(
+						'voName' => array('value'=>$this->getVoName(true)),
+						'voId' => array('value'=>$this->getId()),
+					));
+			}else{
+				$criteria->setFilter(array($this->getPrimaryKey()=>array('value'=>$this->getId())));
+			}
 			if($list = $dao->fetchAll($criteria)){
 				foreach($list as $submodel){
 					$results[] = $submodel->toArray();
@@ -535,9 +550,10 @@ class Standard extends \stdClass {
 	 * Generic method to store a submodel for a given field
 	 * @param  string $fieldName The fieldName to store the Vo from
 	 * @param  string $voName    The vo of the submodel
+	 * @param  boolean $shared   Is the submodel table shared for multiple parent vo
 	 * @return null
 	 */
-	protected function _genericStoreSubmodel($fieldName,$voName){
+	protected function _genericStoreSubmodel($fieldName,$voName,$shared=false){
 
 		$getterName = 'get'.ucfirst($fieldName);
 		if(method_exists($this, $getterName)){
@@ -546,7 +562,12 @@ class Standard extends \stdClass {
 
 		foreach($values as $k => $vars){
 			$vo = new $voName($vars);
-			$vo->{$this->getPrimaryKey()} = $this->getId();
+			if($shared){
+				$vo->voName = $this->getVoName(true);
+				$vo->voId = $this->getId();
+			}else{
+				$vo->{$this->getPrimaryKey()} = $this->getId();
+			}
 			$vo->getDao()->store($vo);
 		}
 
