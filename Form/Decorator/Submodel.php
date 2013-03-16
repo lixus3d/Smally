@@ -39,8 +39,10 @@ class Submodel extends AbstractDecorator {
 			$form->setNamePrefix($this->getElement()->getName().'['.$k.']');
 			// We populate each line with correct values if actual $vo
 			if($k < count($value)-1){
+				$form->resetValue();
 				$form->populateValue($valueVo->toArray());
 			}else{
+				$form->resetValue();
 				$form->populateValue($valueVo);
 			}
 
@@ -57,7 +59,7 @@ class Submodel extends AbstractDecorator {
 			$line .= '<a href="#"
 			class="btn btn-danger btn-small jsDeleteVo"
 			data-smally-delete-parentselector=".submodel-line"
-			data-smally-delete-url="'.$valueVo->getUrl('Administration\\GenericRpc\\delete',array('voName'=>'Cucina\\VO\\Date')).'"
+			data-smally-delete-url="'.$valueVo->getUrl('Administration\\GenericRpc\\delete',array('voName'=>$voName)).'"
 			>
 			<i class="icon-remove icon-white"></i>
 		</a>';

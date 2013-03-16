@@ -18,6 +18,15 @@ class Radio extends AbstractElement{
 	}
 
 	/**
+	 * Reset the field state
+	 * @return \Smally\Form\Element\Radio
+	 */
+	public function resetValue(){
+		$this->_checked = array();
+		return $this; //parent::resetValue();
+	}
+
+	/**
 	 * We overwrite the default populate to select/check the good option
 	 * @param  mixed $values the value of the option checked/selected
 	 * @return \Smally\Form\Element\AbstractElement

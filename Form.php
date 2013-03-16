@@ -273,6 +273,12 @@ class Form {
 		return $this;
 	}
 
+	public function resetValue(){
+		foreach($this->_fields as $fieldElement){
+			$fieldElement->resetValue();
+		}
+	}
+
 	/**
 	 * Standard way to add a field to the form
 	 * @param mixed $fieldType  The field type : text, password, select, etc ... or directly a fieldObject

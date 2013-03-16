@@ -88,6 +88,15 @@ class Submodel extends AbstractElement{
 		return $return;
 	}
 
+	/**
+	 * Reset the field state
+	 * @return \Smally\Form\Element\Submodel
+	 */
+	public function resetValue(){
+		$this->_checked = array();
+		return $this ; //parent::resetValue();
+	}
+
 	public function populateValue($values){
 		if($values instanceof \Smally\ContextStdClass) $values = $values->toArray();
 		if(!is_array($values)) $values = array($values);
@@ -95,7 +104,7 @@ class Submodel extends AbstractElement{
 			// don't populate with empty value values (:))
 			$ok = false;
 			foreach($value as $key => $v){
-				if($v!==''){
+				if($v!==''&&$v!=='0:0'){
 					$ok = true;
 					break;
 				}

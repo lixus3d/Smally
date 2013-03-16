@@ -282,6 +282,15 @@ abstract class AbstractElement implements InterfaceElement {
 	}
 
 	/**
+	 * Reset value of the element
+	 * @return \Smally\Form\Element\AbstractElement
+	 */
+	public function resetValue(){
+		$this->_value = null;
+		return $this;
+	}
+
+	/**
 	 * Return the rendered version of the field
 	 * @return string
 	 */

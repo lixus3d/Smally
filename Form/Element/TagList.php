@@ -53,6 +53,15 @@ class TagList extends Radio{
 		return $return;
 	}
 
+	/**
+	 * Reset the field state
+	 * @return \Smally\Form\Element\TagList
+	 */
+	public function resetValue(){
+		$this->_checked = array();
+		return $this; // parent::resetValue();
+	}
+
 	public function populateValue($values){
 		if($values instanceof \Smally\ContextStdClass) $values = $values->toArray();
 		if(!is_array($values)) $values = array($values);
