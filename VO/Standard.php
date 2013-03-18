@@ -223,7 +223,7 @@ class Standard extends \stdClass {
 	 * @return string
 	 */
 	public function getName(){
-		return $this->{$this->_nameKey};
+		return (string) $this->{$this->_nameKey};
 	}
 
 	/**
