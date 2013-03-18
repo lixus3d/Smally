@@ -29,7 +29,8 @@ class Submodel extends AbstractDecorator {
 
 		$html = '<div class="input submodel jsSubmodel">';
 
-		$html .= '<a href="#" class="submodel-add">'.$this->getElement()->getAddLabel().'</a>';
+		$html .= '<a href="#" class="submodel-add btn btn-small"><i class="icon-plus"></i></a>';
+		// $html .= '<a href="#" class="submodel-add">'.$this->getElement()->getAddLabel().'</a>';
 
 		$value = $this->getElement()->getValue();
 		$value[] = new $voName();
