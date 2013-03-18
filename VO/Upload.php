@@ -141,7 +141,8 @@ class Upload extends \Smally\VO\Standard {
 					$relative = str_replace('\\','/',$this->cutUid($this->getUid()));
 					$relative .= '/thumbnail/';
 					$relative .= $this->getThumbnailGenerator()->constructParamsString($params);
-					$relative .= '/'.substr(strrchr($this->filePath,'\\'),1);
+					$cleanFilePath = str_replace('\\','/',$this->filePath);
+					$relative .= '/'.substr(strrchr($cleanFilePath,'/'),1);
 					$url = $application->urlData($relative);
 				}
 			break;
