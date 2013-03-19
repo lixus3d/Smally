@@ -103,7 +103,7 @@ class Upload extends \Smally\VO\Standard {
 	public function getExtension(){
 		// try to get it from filePath, if tmp, get it from name
 		$ext = strtolower(substr(strrchr($this->filePath,'.'),1));
-		if($ext == 'tmp'){
+		if($ext == '' || $ext == 'tmp'){
 			$extName = strtolower(substr(strrchr($this->name,'.'),1));
 			if($extName !== 'tmp' && preg_match('#^[0-9a-z.-]+$#', $extName)){
 				$ext = $extName;
