@@ -24,6 +24,7 @@ class File extends AbstractElement{
 			$app
 				->setJs('js/jquery.min.js')
 				->setJs('js/jquery-ui.min.js')
+				->setJs('js/smally/jquery.iframe-transport.js')
 				->setJs('js/smally/jquery.fileupload.js')
 				->setJs('js/smally/form/FileSelector.js')
 				;
