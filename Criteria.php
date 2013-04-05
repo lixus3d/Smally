@@ -155,9 +155,9 @@ class Criteria {
 
 		foreach($array as $key => $value){
 			if($value instanceof \Smally\ContextStdClass && !$value->isEmpty()) $value = $value->toArray();
-			else $value = (string) $value;
+			elseif( !is_array($value) ) $value = (string) $value;
 
-			if($value === '' || $value==='0:0' || $value===array('0:0') ) continue; // we don't filter on empty value , carefull 0 is a correct value
+			if( ( is_array($value) && !$value ) || $value === '' || $value==='0:0' || $value===array('0:0') ) continue; // we don't filter on empty value , carefull 0 is a correct value
 			if($key != 'search' && !is_null($vo)){
 				if( ( is_null($dao) || !method_exists($dao, 'filter'.$key)) && (!property_exists($vo,$key)) ) continue;
 			}
