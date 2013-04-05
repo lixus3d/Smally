@@ -2,15 +2,15 @@
 
 namespace Smally;
 
-class AbstractLogic {
+class AbstractBusiness {
 
 	protected $_application = null;
 
 	/**
-	 * Must be define with module name for optimum functionnality
+	 * Must be define with vo name relative to business for optimum functionnality
 	 * @var string
 	 */
-	protected $_module = null;
+	protected $_voName = null;
 
 	/**
 	 * Construct the global $context object
@@ -26,10 +26,20 @@ class AbstractLogic {
 	/**
 	 * Set the application reverse reference
 	 * @param \Smally\Application $application Current application linked to this object
-	 * @return \Smally\AbstractLogic
+	 * @return \Smally\AbstractBusiness
 	 */
 	public function setApplication(\Smally\Application $application){
 		$this->_application = $application;
+		return $this;
+	}
+
+	/**
+	 * Define the voName name for use in business logic
+	 * @param string $class The value object class name
+	 * @return  \Smally\AbstractBusiness
+	 */
+	public function setVoName($class){
+		$this->_voName = $class;
 		return $this;
 	}
 
@@ -39,6 +49,14 @@ class AbstractLogic {
 	 */
 	public function getApplication(){
 		return $this->_application;
+	}
+
+	/**
+	 * Get the value object class name
+	 * @return string
+	 */
+	public function getVoName(){
+		return $this->_voName;
 	}
 
 	/**
@@ -54,6 +72,7 @@ class AbstractLogic {
 	 * @return \Smally\Criteria
 	 */
 	public function getCriteria($voName=null){
+		if(is_null($voName)) $voName = $this->getVoName();
 		return $this->getFactory()->getCriteria($voName);
 	}
 
@@ -63,16 +82,30 @@ class AbstractLogic {
 	 * @return \Smally\Dao\InterfaceDao
 	 */
 	public function getDao($voName=null){
+		if(is_null($voName)) $voName = $this->getVoName();
 		return $this->getFactory()->getDao($voName);
 	}
 
 	/**
-	 * Return the Business for the given $voName vo
-	 * @param  string $voName A specific voName that you want the business
-	 * @return \Smally\AbstactBusiness
+	 * Return specific elements (vos) from the $criteria
+	 * @param  \Smally\Criteria $addCriteria         An additionnal criteria to filter the data
+	 * @return array
 	 */
-	public function getBusiness($voName=null){
-		return $this->getFactory()->getBusiness($voName);
+	public function fetchAll(\Smally\Criteria $addCriteria = null){
+		$criteria = $this->getCriteria($voName)->setLimit(10);
+		if($addCriteria) $criteria->import($addCriteria);
+		return $this->getDao()->fetchAll($criteria);
+	}
+
+	/**
+	 * Return a specific element (vo) from the $criteria
+	 * @param  \Smally\Criteria $addCriteria         An additionnal criteria to filter the data
+	 * @return \stdClass
+	 */
+	public function fetch(\Smally\Criteria $addCriteria = null){
+		$criteria = $this->getCriteria($voName)->setLimit(10);
+		if($addCriteria) $criteria->import($addCriteria);
+		return $this->getDao()->fetch($criteria);
 	}
 
 }

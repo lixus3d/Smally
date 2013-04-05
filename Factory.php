@@ -35,6 +35,12 @@ class Factory {
 	protected $_validator = array();
 
 	/**
+	 * Store every business object for reuse, not really a Singleton but close
+	 * @var array
+	 */
+	protected $_business = array();
+
+	/**
 	 * Construct the factory object
 	 * @param \Smally\Application $application reverse reference to the application
 	 */
@@ -77,6 +83,7 @@ class Factory {
 			case 'Logic':
 				$fullName = $moduleName.'\\'.ucfirst($objectType);
 				break;
+			case 'Business':
 			case 'Validator':
 			case 'Form':
 			case 'Dao':
@@ -146,6 +153,25 @@ class Factory {
 			}
 		}
 		return $this->getDefaultCriteria();
+	}
+
+	/**
+	 * Return a business object for a the given vo $voName
+	 * @param  string $voName The vo name of the business object you want
+	 * @return \Smally\AbstractBusiness
+	 */
+	public function getBusiness($voName=null){
+		if(is_null($voName)) return null;
+		if(!isset($this->_business[$voName])){
+			if($path = $this->getObjectPath($voName,'Business')){
+				if(class_exists($path)){
+					$this->_business[$voName] = new $path($this->getApplication());
+				}else{
+					$this->_business[$voName] = new \Smally\AbstractBusiness($this->getApplication()->setVoName($voName)); // Generic empty validator
+				}
+			}
+		}
+		return $this->_business[$voName];
 	}
 
 	/**
