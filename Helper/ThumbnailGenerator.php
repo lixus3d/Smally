@@ -204,6 +204,7 @@ class ThumbnailGenerator {
 		// There is no need to create a thumbnail, just copy the original to the destination
 		if($destWidth>$width && $destHeight>$height && $destType=='fit'){
 			copy($this->_filePath,$this->getThumbnailPath(true));
+			chmod($this->getThumbnailPath(true),0777);
 			return $this;
 		}
 
