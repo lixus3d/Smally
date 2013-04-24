@@ -384,7 +384,7 @@ class ThumbnailGenerator {
 		}elseif($ratio < $destRatio) { // initial image is tighter than the destination
 			$multi = $width / $destWidth ;
 		}else{
-			$multi=1;
+			$multi = $width / $destWidth ; // initial image is homothetic with the destination
 		}
 
 		$xcenter = ($x + $width) / 2;
