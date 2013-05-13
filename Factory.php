@@ -163,12 +163,12 @@ class Factory {
 	public function getBusiness($voName=null){
 		if(is_null($voName)) return null;
 		if(!isset($this->_business[$voName])){
-			if($path = $this->getObjectPath($voName,'Business')){
-				if(class_exists($path)){
-					$this->_business[$voName] = new $path($this->getApplication());
-				}else{
-					$this->_business[$voName] = new \Smally\AbstractBusiness($this->getApplication()->setVoName($voName)); // Generic empty validator
-				}
+			$path = $this->getObjectPath($voName,'Business');
+			if(class_exists($path)){
+				$this->_business[$voName] = new $path($this->getApplication());
+			}else{
+				$this->_business[$voName] = new \Smally\AbstractBusiness($this->getApplication());
+				$this->_business[$voName]->setVoName($voName); // Generic empty validator
 			}
 		}
 		return $this->_business[$voName];

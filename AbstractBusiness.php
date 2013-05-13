@@ -92,7 +92,7 @@ class AbstractBusiness {
 	 * @return array
 	 */
 	public function fetchAll(\Smally\Criteria $addCriteria = null){
-		$criteria = $this->getCriteria($voName)->setLimit(10);
+		$criteria = $this->getCriteria()->setLimit(10);
 		if($addCriteria) $criteria->import($addCriteria);
 		return $this->getDao()->fetchAll($criteria);
 	}
@@ -103,7 +103,7 @@ class AbstractBusiness {
 	 * @return \stdClass
 	 */
 	public function fetch(\Smally\Criteria $addCriteria = null){
-		$criteria = $this->getCriteria($voName)->setLimit(10);
+		$criteria = $this->getCriteria()->setLimit(10);
 		if($addCriteria) $criteria->import($addCriteria);
 		return $this->getDao()->fetch($criteria);
 	}
