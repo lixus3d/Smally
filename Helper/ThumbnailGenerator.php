@@ -9,6 +9,7 @@ class ThumbnailGenerator {
 	protected $_params = array();
 
 	protected $_filePath = null;
+	protected $_extension = null;
 	protected $_thumbnailPath = null;
 
 	public function __construct($filePath=null){
@@ -32,6 +33,15 @@ class ThumbnailGenerator {
 		return $this;
 	}
 
+	/**
+	 * Set the file extension, usefull when we can't get it from path
+	 * @param string $extension The extension of the file
+	 * @return  \Smally\Helper\ThumbnailGenerator
+	 */
+	public function setExtension($extension){
+		$this->_extension = $extension;
+		return $this;
+	}
 
 	/**
 	 * Set the params of the thumbnail
@@ -64,11 +74,14 @@ class ThumbnailGenerator {
 	}
 
 	/**
-	 * Return the file extension ( from _filePath )
+	 * Return the file extension ( from _filePath if not set )
 	 * @return string
 	 */
 	public function getFileExtension(){
-		return strtolower(substr(strrchr($this->_filePath,'.'),1));
+		if(is_null($this->_extension)){
+			$this->_extension = strtolower(substr(strrchr($this->_filePath,'.'),1));
+		}
+		return $this->_extension;
 	}
 
 	/**

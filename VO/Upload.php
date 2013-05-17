@@ -9,7 +9,9 @@ class Upload extends \Smally\VO\Standard {
 
 	public $uploadId = null;
 	public $name = null;
+	public $alt = null;
 	public $mimetype = null;
+	public $extension = null;
 	public $size = null;
 	public $uid = null;
 	public $filePath = null;
@@ -27,6 +29,33 @@ class Upload extends \Smally\VO\Standard {
 	public function setName($name){
 		$this->name = $this->filterName($name);
 		return $this;
+	}
+
+	/**
+	 * Change the name of the upload in both name and path
+	 * @param  string $name The name you want to set for the file, it will be filtered
+	 * @return boolean
+	 */
+	public function changeName($name){
+
+		// we get old infos
+		$oldName = $this->name;
+		$oldPath = $this->getCompletePath();
+
+		// we set new info
+		$this->name = $this->filterName($name);
+		$newPath = $this->getCompletePath(false,true); // false for no making path, true to force regenerate
+
+		if(rename($oldPath,$newPath)){
+			chmod($newPath,0777);
+			$this->filePath = $this->getRelativePath();
+			$this->getDao()->store($this);
+			return true;
+		}else{
+			$this->name = $oldName;
+			$this->getCompletePath(false,true);
+			return false;
+		}
 	}
 
 	/**
@@ -97,10 +126,13 @@ class Upload extends \Smally\VO\Standard {
 	}
 
 	/**
-	 * Return the upload file extension ( from filepath )
+	 * Return the upload file extension ( direct or from filepath )
 	 * @return string
 	 */
 	public function getExtension(){
+
+		if($this->extension) return $this->extension;
+
 		// try to get it from filePath, if tmp, get it from name
 		$ext = strtolower(substr(strrchr($this->filePath,'.'),1));
 		if($ext == '' || $ext == 'tmp'){
@@ -152,6 +184,9 @@ class Upload extends \Smally\VO\Standard {
 			case 'updatename':
 				$url = $application->getBaseUrl($application->makeControllerUrl('Upload\\updatename',array('id'=>$this->getId())));
 			break;
+			case 'updatealt':
+				$url = $application->getBaseUrl($application->makeControllerUrl('Upload\\updatealt',array('id'=>$this->getId())));
+			break;
 			default:
 				$url = $application->urlData(str_replace('\\', '/', $this->filePath));
 			break;
@@ -169,7 +204,7 @@ class Upload extends \Smally\VO\Standard {
 		switch($extension){
 			case 'jpg':
 			case 'jpeg':
-				return 'image/jpg';
+				return 'image/jpeg';
 			case 'png':
 			case 'gif':
 				return 'image/'.$extension;
@@ -188,8 +223,8 @@ class Upload extends \Smally\VO\Standard {
 	 * @param  boolean $mkdir Weither to create the path or not
 	 * @return string
 	 */
-	public function getRelativePath($mkdir=false){
-		if(is_null($this->_relativePath)){
+	public function getRelativePath($mkdir=false,$force=false){
+		if(is_null($this->_relativePath) || $force){
 			$basePath = $this->cutUid($this->getUid());
 			if($mkdir){
 				$this->makePath($basePath);
@@ -204,9 +239,9 @@ class Upload extends \Smally\VO\Standard {
 	 * @param  boolean $mkdir Weither to create the path or not
 	 * @return string
 	 */
-	public function getCompletePath($mkdir=false){
-		if(is_null($this->_filePath)){
-			$this->_filePath = $this->getDataFolder().$this->getRelativePath($mkdir);
+	public function getCompletePath($mkdir=false,$force=false){
+		if(is_null($this->_filePath) || $force ){
+			$this->_filePath = $this->getDataFolder().$this->getRelativePath($mkdir,$force);
 		}
 		return $this->_filePath;
 	}
@@ -301,6 +336,7 @@ class Upload extends \Smally\VO\Standard {
 		if(is_null($this->_thumbnailGenerator)){
 			$this->_thumbnailGenerator = new \Smally\Helper\ThumbnailGenerator();
 			$this->_thumbnailGenerator->setFilePath($this->getCompletePath());
+			$this->_thumbnailGenerator->setExtension($this->getExtension());
 		}
 		return $this->_thumbnailGenerator;
 	}

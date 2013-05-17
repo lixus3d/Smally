@@ -16,7 +16,9 @@ class File extends AbstractElement{
 	protected $_uploaderOptions = array();
 	protected $_itemTemplatePath = null;
 	protected $_itemTemplate = null;
+
 	protected $_nameUpdate = false;
+	protected $_altUpdate = false;
 
 	public function __construct(array $options=array()){
 		parent::__construct($options);
@@ -31,10 +33,28 @@ class File extends AbstractElement{
 		}
 	}
 
+	/**
+	 * Define weither name modification is available or not
+	 * @param boolean $value Set to true to enable modification
+	 * @return  \Smally\Form\Element\File
+	 */
 	public function setNameUpdate($value){
 		$this->_nameUpdate = (boolean) $value;
 		if($this->_nameUpdate && $app = $this->getApplication()){
 			$app->setJs('js/smally/form/FileNameUpdater.js');
+		}
+		return $this;
+	}
+
+	/**
+	 * Define weither alt modification is available or not
+	 * @param boolean $value Set to true to enable modification
+	 * @return  \Smally\Form\Element\File
+	 */
+	public function setAltUpdate($value){
+		$this->_altUpdate = (boolean) $value;
+		if($this->_altUpdate && $app = $this->getApplication()){
+			$app->setJs('js/smally/form/FileAltUpdater.js');
 		}
 		return $this;
 	}
@@ -103,9 +123,12 @@ class File extends AbstractElement{
 						<i class="icon-move floatRight jsSortableHandle"></i>
 						<input class="id" '.\Smally\HtmlUtil::toAttributes($attributes).' value="'.$uploadObject->getId().'" />';
 				if($this->_nameUpdate){
-					$template .= '<h3><input type="text" value="'._h($uploadObject->name).'" name="uploadName" class="jsFileNameUpdate name" data-smally-updatename-url="'._h($uploadObject->getUploadUrl('updatename')).'" /></h3>';
+					$template .= '<h3><span class="labelname">Nom :</span><input type="text" value="'._h($uploadObject->name).'" name="uploadName" class="jsFileNameUpdate name" data-smally-updatename-url="'._h($uploadObject->getUploadUrl('updatename')).'" /></h3>';
 				}else{
 					$template .= '<h3 class="name">'._h($uploadObject->name).'</h3>';
+				}
+				if($this->_altUpdate){
+					$template .= '<h3><span class="labelname">Alt :</span><input type="text" value="'._h($uploadObject->alt).'" name="uploadAlt" class="jsFileAltUpdate alt" data-smally-updatealt-url="'._h($uploadObject->getUploadUrl('updatealt')).'" /></h3>';
 				}
 				$template .='
 
