@@ -379,8 +379,10 @@ class Db implements InterfaceDao {
 
 		if(!is_array($fields)||count($fields)==0) $fields = array($fields?:'*');
 		foreach($fields as &$field){
-			if($field === '*' OR strpos($field,'COUNT')===0 ){
+			if($field === '*'){
 				if($field === '*') $field = '`'.$this->getTable().'`.*';
+				continue;
+			}elseif(preg_match('#^(COUNT|SUM)#',$field)){
 				continue;
 			}
 			$field = '`'.$field.'`';
