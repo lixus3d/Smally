@@ -60,6 +60,15 @@ class AbstractBusiness {
 	}
 
 	/**
+	 * Return a new empty vo
+	 * @return object
+	 */
+	public function getNew(){
+		$className = $this->_voName;
+		return new $className();
+	}
+
+	/**
 	 * Return the factory of the smally app
 	 * @return \Smally\Factory
 	 */
