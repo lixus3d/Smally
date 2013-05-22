@@ -207,6 +207,14 @@ class Standard extends \stdClass {
 	}
 
 	/**
+	 * Quick access to dao store method
+	 * @return boolean true if store succeded
+	 */
+	public function store(){
+		return $this->getDao()->store($this);
+	}
+
+	/**
 	 * GENERIC GETTER AND SETTER FOR USUAL PROPERTY FORMAT
 	 */
 
