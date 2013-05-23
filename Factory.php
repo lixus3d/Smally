@@ -40,6 +40,8 @@ class Factory {
 	 */
 	protected $_business = array();
 
+	protected $_criteriaPath = array();
+
 	/**
 	 * Construct the factory object
 	 * @param \Smally\Application $application reverse reference to the application
@@ -147,12 +149,15 @@ class Factory {
 	 * @return \Smally\Criteria
 	 */
 	public function getCriteria($voName=null){
-		if( !is_null($voName) && $path = $this->getObjectPath($voName,'Criteria')){
-			if(class_exists($path)){
-				return new $path();
+		if(!isset($this->_criteriaPath[$voName])){
+			$path = $this->getObjectPath($voName,'Criteria');
+			if(!class_exists($path)){
+				$path = '\\Smally\\Criteria';
 			}
+			$this->_criteriaPath[$voName] = $path;
 		}
-		return $this->getDefaultCriteria();
+		$path = $this->_criteriaPath[$voName];
+		return new $path();
 	}
 
 	/**
