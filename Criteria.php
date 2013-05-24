@@ -30,6 +30,17 @@ class Criteria {
 	}
 
 	/**
+	 * Reset a Criteria to default state
+	 * @return \Smally\Criteria
+	 */
+	public function reset(){
+		$this->_where = array();
+		$this->_order = array();
+		$this->_limit = null;
+		return $this;
+	}
+
+	/**
 	 * Return a string representation of the current criteria
 	 * @return string
 	 */
