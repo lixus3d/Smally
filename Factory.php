@@ -149,6 +149,7 @@ class Factory {
 	 * @return \Smally\Criteria
 	 */
 	public function getCriteria($voName=null){
+		if(is_null($voName)) return $this->getDefaultCriteria();
 		if(!isset($this->_criteriaPath[$voName])){
 			$path = $this->getObjectPath($voName,'Criteria');
 			if(!class_exists($path)){
