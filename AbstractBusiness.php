@@ -100,9 +100,10 @@ class AbstractBusiness {
 	 * @param  \Smally\Criteria $addCriteria         An additionnal criteria to filter the data
 	 * @return array
 	 */
-	public function fetchAll(\Smally\Criteria $addCriteria = null){
-		$criteria = $this->getCriteria()->setLimit(10);
-		if($addCriteria) $criteria->import($addCriteria);
+	public function fetchAll(\Smally\Criteria $criteria = null){
+		if(is_null($criteria->getLimit())){
+			$criteria->setLimit(10);
+		}
 		return $this->getDao()->fetchAll($criteria);
 	}
 
@@ -111,9 +112,7 @@ class AbstractBusiness {
 	 * @param  \Smally\Criteria $addCriteria         An additionnal criteria to filter the data
 	 * @return \stdClass
 	 */
-	public function fetch(\Smally\Criteria $addCriteria = null){
-		$criteria = $this->getCriteria()->setLimit(10);
-		if($addCriteria) $criteria->import($addCriteria);
+	public function fetch(\Smally\Criteria $criteria = null){
 		return $this->getDao()->fetch($criteria);
 	}
 
