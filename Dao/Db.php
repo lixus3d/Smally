@@ -13,6 +13,7 @@ class Db implements InterfaceDao {
 	protected $_connector = null;
 
 	protected $_getByIdCache = array();
+	protected $_filterMethodCache = array();
 
 	protected $_logLevel = null;
 	protected $_logger = null;
@@ -399,7 +400,7 @@ class Db implements InterfaceDao {
 		if($order)
 			$sql .= ' ORDER BY '.implode(', ',$order);
 		if($limit)
-			$sql .= ' LIMIT '.implode(',',$limit);
+			$sql .= ' LIMIT '.$limit[0].','.$limit[1];
 
 		return $sql;
 	}
@@ -448,9 +449,12 @@ class Db implements InterfaceDao {
 			else{
 
 				// Special Filter must be defined in a dao extends
-				if(method_exists($this, 'filter'.$field)){
+				if( (isset($this->_filterMethodCache['filter'.$field]) && $this->_filterMethodCache['filter'.$field]) || (!isset($this->_filterMethodCache['filter'.$field]) && method_exists($this, 'filter'.$field)) ){
+					$this->_filterMethodCache['filter'.$field] = true;
 					$this->{'filter'.$field}($value,$operator,$params,$filter,$where,$join,$continue);
 					if(!$continue) continue;
+				}else{
+					$this->_filterMethodCache['filter'.$field] = false;
 				}
 
 				switch($operator){
