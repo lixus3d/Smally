@@ -160,10 +160,11 @@ class Standard extends \stdClass {
 	 * Convert the class to an array representation ( recursive )
 	 * @return array
 	 */
-	public function toArray($withGetter=true){
+	public function toArray($withGetter=true,$withPrimaryKey=true){
 		$array = array();
 		foreach($this as $key => $value){
 			if(strpos($key,'_')===0) continue; // we did not export _protected values
+			if(!$withPrimary&&$key==$this->getPrimaryKey()) continue;
 			$method = 'get'.ucfirst($key);
 			if($withGetter && method_exists($this, $method)){
 				$array[$key] = $this->{$method}();
