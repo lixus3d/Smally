@@ -174,7 +174,6 @@ class Db implements InterfaceDao {
 	 * @return \Smally\VO\Standard
 	 */
 	public function exists(array $values){
-		$primaryKey = $this->getPrimaryKey();
 		$criteria = $this->getCriteria();
 		foreach($values as $key => $value){
 			$criteria->setFilter(array($key=>array('value'=>$value)));
