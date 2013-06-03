@@ -164,7 +164,7 @@ class Standard extends \stdClass {
 		$array = array();
 		foreach($this as $key => $value){
 			if(strpos($key,'_')===0) continue; // we did not export _protected values
-			if(!$withPrimary&&$key==$this->getPrimaryKey()) continue;
+			if(!$withPrimaryKey&&$key==$this->getPrimaryKey()) continue;
 			$method = 'get'.ucfirst($key);
 			if($withGetter && method_exists($this, $method)){
 				$array[$key] = $this->{$method}();
