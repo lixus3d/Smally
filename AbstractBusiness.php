@@ -101,7 +101,7 @@ class AbstractBusiness {
 	 * @return array
 	 */
 	public function fetchAll(\Smally\Criteria $criteria = null){
-		if(is_null($criteria->getLimit())){
+		if(!is_null($criteria) && is_null($criteria->getLimit())){
 			$criteria->setLimit(10);
 		}
 		return $this->getDao()->fetchAll($criteria);
