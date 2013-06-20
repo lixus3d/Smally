@@ -144,7 +144,7 @@ class ThumbnailGenerator {
 						}
 						break;
 					case 'b':
-						if(preg_match('#^[0-9]{6}$#i',$value)){
+						if(preg_match('#^[A-F0-9]{6}$#i',$value)){
 							$params[$key] = strtolower($value);
 						}
 						break;
