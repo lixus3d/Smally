@@ -105,6 +105,7 @@ class ThumbnailGenerator {
 	 * @return null
 	 */
 	public function makePath($path){
+		$path = str_replace(array('/','\\'),DIRECTORY_SEPARATOR,$path);
 		$pathParts = explode(DIRECTORY_SEPARATOR,$path);
 		$path = '';
 		foreach($pathParts as $part){
