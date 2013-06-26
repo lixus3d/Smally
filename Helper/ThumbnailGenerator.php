@@ -104,15 +104,18 @@ class ThumbnailGenerator {
 	 * @param  string $path     The path you want to create
 	 * @return null
 	 */
-	public function makePath($path){
-		$path = str_replace(array('/','\\'),DIRECTORY_SEPARATOR,$path);
+	public function makePath($originPath){
+		$path = str_replace(array('/','\\'),DIRECTORY_SEPARATOR,$originPath);
 		$pathParts = explode(DIRECTORY_SEPARATOR,$path);
 		$path = '';
 		foreach($pathParts as $part){
 			$path .= $part;
 			if(!is_dir($path)){
-				mkdir($path);
-				chmod($path,0777);
+				if(@mkdir($path)){
+					chmod($path,0777);
+				}else{
+					$this->getApplication()->getLogger()->log('Error in makePath : '.$originPath.' , '.$path);
+				}
 			}
 			$path .= DIRECTORY_SEPARATOR;
 		}
