@@ -110,11 +110,13 @@ class ThumbnailGenerator {
 		$path = '';
 		foreach($pathParts as $part){
 			$path .= $part;
-			if(!is_dir($path)){
-				if(@mkdir($path)){
-					chmod($path,0777);
-				}else{
-					$this->getApplication()->getLogger()->log('Error in makePath : '.$originPath.' , '.$path);
+			if($path != ''){
+				if(!is_dir($path)){
+					if(@mkdir($path)){
+						@chmod($path,0777);
+					}else{
+						$this->getApplication()->getLogger()->log('Error in makePath : '.$originPath.' , '.$path);
+					}
 				}
 			}
 			$path .= DIRECTORY_SEPARATOR;
