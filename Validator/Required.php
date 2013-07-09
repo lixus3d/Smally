@@ -13,7 +13,7 @@ class Required extends AbstractRule {
 	 */
 	public function x($valueToTest){
 		if(!($test = $valueToTest?true:false)){
-			$this->addError('Ce champs est obligatoire');
+			$this->addError('Ce champ est obligatoire');
 		}
 		return $test;
 	}
