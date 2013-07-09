@@ -199,7 +199,7 @@ class Standard extends \stdClass {
 		if(!$replace){
 			$defaultParams = array(
 					'id' => $this->getId(),
-					'name' => isset($this->{$this->_nameKey})?$this->getName():'',
+					'name' => $this->getName(),
 				);
 			$params = array_merge($defaultParams,$params);
 		}
@@ -232,7 +232,15 @@ class Standard extends \stdClass {
 	 * @return string
 	 */
 	public function getName(){
-		return (string) $this->{$this->_nameKey};
+		if(is_array($this->_nameKey)){
+			$name = array();
+			foreach($this->_nameKey as $partKey){
+				$name[] = (string) $this->{$partKey};
+			}
+			return implode(' ',$name);
+		}elseif(isset($this->{$this->_nameKey})){
+			return (string) $this->{$this->_nameKey};
+		}else return '';
 	}
 
 	/**
