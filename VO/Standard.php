@@ -8,6 +8,8 @@ namespace Smally\VO;
 
 class Standard extends \stdClass {
 
+	protected $_voExtend = null;
+
 	protected $_voName = null;
 	protected $_table = null;
 	protected $_primaryKey = null;
@@ -20,13 +22,16 @@ class Standard extends \stdClass {
 
 	protected $_logger = null;
 
+
 	/**
 	 * Init a value object with $vars
 	 * @param array $vars array of $property => $value of the value object
 	 */
 	public function __construct($vars=array()){
+		$this->loadExtend();
 		$this->initVars($vars);
 	}
+
 
 	/**
 	 * Generic toString do a getName()
@@ -43,6 +48,31 @@ class Standard extends \stdClass {
 			$export[] = $propertyName;
 		}
 		return $export;
+	}
+
+	/**
+	 * Tricky way to add functions to a vo class, usefull to regenerate base skeleton without erasing some vo specific methods
+	 * @return \Smally\VO\Standard
+	 */
+	public function loadExtend(){
+		$className = $this->getVoName(true);
+		$className = str_replace('\\VO\\','\\VOExtend\\',$className);
+		if(class_exists($className)){
+			$this->_voExtend = new $className($this);
+		}
+		return $this;
+	}
+
+	/**
+	 * Automatically call extender method if present, exception otherwise
+	 * @return mixed
+	 */
+	public function __call($name,$args){
+		if(!is_null($this->_voExtend) && method_exists($this->_voExtend, $name)){
+			return call_user_func_array(array($this->_voExtend,$name),$args);
+		}else{
+			throw new \Exception('Method '.$name.' doesn\'t exist in current vo.');
+		}
 	}
 
 	/**
