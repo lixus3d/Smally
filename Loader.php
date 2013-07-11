@@ -16,32 +16,13 @@ class Loader {
 	 */
 	static public function load($className){
 
-		if($parts = explode('_',$className)){
+		$className = preg_replace('#^(\\\\)?Controller#','$1controller',$className); // Tricky fix to controller path
+		$path = str_replace('\\',DIRECTORY_SEPARATOR,$className).'.php';
+		$found = stream_resolve_include_path($path);
+		if($found !== false){
+			include_once($path);
+		}
 
-			$classItself = array_pop($parts);
-			$classItself = str_replace('\\','/',$classItself); // Change path issue
-			$classItself = preg_replace('#^(\\\\)?Controller#','$1controller',$classItself);
-
-			// Paths where we search
-			$possibleBasePath = self::getBasePath();
-
-			foreach($possibleBasePath as $base){
-
-				$path = '';
-				foreach($parts as $key => $part){
-					$path .= $part;
-					if(!is_dir($base.$path)){
-						continue(2); // if folder is not good, try another basePath
-					}
-					$path .= '/';
-				}
-				if(file_exists($base.$path.$classItself.'.php')){
-					require_once($base.$path.$classItself.'.php');
-					return true;
-				}
-			}
-
-		}else throw new Exception('Invalid classname');
 	}
 
 	/**
