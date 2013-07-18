@@ -9,6 +9,7 @@ namespace Smally\VO;
 class Standard extends \stdClass {
 
 	protected $_voExtend = null;
+	protected $_noVoExtend = false;
 
 	protected $_voName = null;
 	protected $_table = null;
@@ -59,8 +60,17 @@ class Standard extends \stdClass {
 		$className = str_replace('\\VO\\','\\VOExtend\\',$className);
 		if(class_exists($className)){
 			$this->_voExtend = new $className($this);
+		}else{
+			$this->_noVoExtend = true;
 		}
 		return $this;
+	}
+
+	public function getVoExtend(){
+		if(is_null($this->_voExtend)&&$this->_noVoExtend!==true){
+			$this->loadExtend();
+		}
+		return $this->_voExtend;
 	}
 
 	/**
@@ -68,11 +78,12 @@ class Standard extends \stdClass {
 	 * @return mixed
 	 */
 	public function __call($name,$args){
-		if(!is_null($this->_voExtend) && method_exists($this->_voExtend, $name)){
-			return call_user_func_array(array($this->_voExtend,$name),$args);
-		}else{
-			throw new \Exception('Method '.$name.' doesn\'t exist in current vo.');
+		if($this->getVoExtend() instanceof Extender){
+			if(method_exists($this->_voExtend, $name)){
+				return call_user_func_array(array($this->_voExtend,$name),$args);
+			}
 		}
+		throw new \Exception('Method '.$name.' doesn\'t exist in current vo.');
 	}
 
 	/**

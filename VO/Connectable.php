@@ -56,14 +56,16 @@ class Connectable extends Standard implements \Smally\InterfaceAclRole {
 	public function __call($name,$args){
 		if(method_exists($this->getConnectable(), $name)){
 			return call_user_func_array(array($this->getConnectable(),$name), $args);
-		}else throw new \Smally\Exception('Call to undefined method : '.$name);
-		return null;
+		}else{
+			return parent::__call($name,$args);
+		} //throw new \Smally\Exception('Call to undefined method : '.$name);
 	}
 	static public function __callStatic($name,$args){
 		if(method_exists(static::getConnectable(), $name)){
 			return call_user_func_array(array(static::getConnectable(),$name), $args);
-		}else throw new \Smally\Exception('Call to undefined method : '.$name);
-		return null;
+		}else{
+			return parent::__call($name,$args);
+		} //throw new \Smally\Exception('Call to undefined method : '.$name);
 	}
 
 	/**
