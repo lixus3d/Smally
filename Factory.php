@@ -273,6 +273,7 @@ class Factory {
 			$infos = array_merge($defaultInfos,$this->getApplication()->getConfig()->smally->db->toArray());
 
 			$this->_dbConnector['default'] = new \Smally\Mysql($infos['host'],$infos['username'],$infos['password'],$infos['database'],$infos['port']);
+			$this->_dbConnector['default']->set_charset("utf8");
 
 		}
 		return $this->_dbConnector['default'];
