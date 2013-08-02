@@ -20,6 +20,7 @@ class Standard extends \stdClass {
 	protected $_application = null;
 	protected $_factory = null;
 	protected $_dao = null;
+	protected $_business = null;
 
 	protected $_logger = null;
 
@@ -125,6 +126,17 @@ class Standard extends \stdClass {
 			$this->_dao = $this->getFactory()->getDao(get_called_class());
 		}
 		return $this->_dao;
+	}
+
+	/**
+	 * Return the appropriate business for the current value object , default business otherwise
+	 * @return \Smally\AbstractBusiness
+	 */
+	public function getBusiness(){
+		if(is_null($this->_business)){
+			$this->_business = $this->getFactory()->getBusiness(get_called_class());
+		}
+		return $this->_business;
 	}
 
 	/**
