@@ -157,8 +157,8 @@ class Db implements InterfaceDao {
 	 * @param  int $id               The id of the value object you want
 	 * @return \stdClass
 	 */
-	public function getById($id){
-		if(!isset($this->_getByIdCache[$id])){
+	public function getById($id,$force=false){
+		if( !isset($this->_getByIdCache[$id]) || $force ){
 			$primaryKey = $this->getPrimaryKey();
 			$criteria = $this->getCriteria()
 								->setFilter(array($primaryKey=>array('value'=>$id)))
@@ -166,6 +166,10 @@ class Db implements InterfaceDao {
 			$this->_getByIdCache[$id] = $this->fetch($criteria);
 		}
 		return $this->_getByIdCache[$id];
+	}
+
+	public function getByIdCache($id){
+		return isset($this->_getByIdCache[$id])?$this->_getByIdCache[$id]:null;
 	}
 
 	/**
@@ -179,6 +183,11 @@ class Db implements InterfaceDao {
 			$criteria->setFilter(array($key=>array('value'=>$value)));
 		}							;
 		return $this->fetch($criteria);
+	}
+
+	public function query($sql){
+		$this->log($sql);
+		return $this->getConnector()->query($sql);
 	}
 
 	/**

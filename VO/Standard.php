@@ -521,13 +521,21 @@ class Standard extends \stdClass {
 		$voList = array();
 		if($idList){
 			$voDao = $this->getApplication()->getFactory()->getDao($voName);
-			// $criteria = $voDao->getCriteria();
-			// $criteria->setFilter(array($fieldName => array('value' => $idList)));
-			// $voList = $voDao->fetchAll($criteria);
-			// TODO : Fetch all with id IN (X,Y,Z)
+			$idToLoad = array();
 			foreach($idList as $id){
-				if($vo = $voDao->getById($id)){
+				if($vo = $voDao->getByIdCache($id)){
 					$voList[] = $vo;
+				}else{
+					$idToLoad[] = $id;
+				}
+			}
+			if($idToLoad){
+				$criteria = $voDao->getCriteria();	
+				$criteria->setFilter(array($fieldName => array('value' => $idToLoad)));
+				if($voLoad = $voDao->fetchAll($criteria)){
+					foreach($voLoad as $vo){
+						$voList[] = $vo;
+					}
 				}
 			}
 		}
