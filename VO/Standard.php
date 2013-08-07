@@ -269,6 +269,14 @@ class Standard extends \stdClass {
 	}
 
 	/**
+	 * Quick access to dao delete method
+	 * @return boolean true if delete succeded
+	 */
+	public function delete(){
+		return $this->getDao()->delete($this);
+	}
+
+	/**
 	 * GENERIC GETTER AND SETTER FOR USUAL PROPERTY FORMAT
 	 */
 
@@ -530,7 +538,7 @@ class Standard extends \stdClass {
 				}
 			}
 			if($idToLoad){
-				$criteria = $voDao->getCriteria();	
+				$criteria = $voDao->getCriteria();
 				$criteria->setFilter(array($fieldName => array('value' => $idToLoad)));
 				if($voLoad = $voDao->fetchAll($criteria)){
 					foreach($voLoad as $vo){

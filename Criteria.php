@@ -68,6 +68,19 @@ class Criteria {
 	}
 
 	/**
+	 * Quick add a filter on a particular key with a particular value
+	 * @param string $field    the name of the field to filter on
+	 * @param mixed $value    the value to filter with
+	 * @param string $operator optional operator
+	 * @return \Smally\Criteria
+	 */
+	public function setFilterKey($field,$value,$operator='='){
+		if($operator==='=' && is_array($value) ) $operator = 'IN';
+		$this->_where[$field] = array('value'=>$value,'operator'=>$operator);
+		return $this;
+	}
+
+	/**
 	 * Set the order of the criteria
 	 * @param string $order The order to add
 	 * @param boolean $replace Does this order must replace any existing order
