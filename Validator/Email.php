@@ -17,7 +17,7 @@ class Email extends AbstractRule {
 
 		if(preg_match($regex, $valueToTest)){
 			return true;
-		}else $this->addError('Ceci n\'est pas une adresse email valide.');
+		}else $this->addError(__('VALIDATOR_EMAIL_ERROR_FORMAT'));
 
 		return false;
 	}

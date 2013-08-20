@@ -48,25 +48,25 @@ class Date extends AbstractRule {
 				$regex = '#^(0[1-9]|[12][0-9]|3[01])([/.])(0[1-9]|1[0-2])\\2([0-9]{2}|[0-9]{4})$#';
 				if(preg_match($regex,$valueToTest,$matches)){
 					return true;
-				}else $this->addError('Le format de date JJ/MM/AAAA n\'est pas respecté');
+				}else $this->addError(__('VALIDATOR_DATE_ERROR_FORMAT_FR'));
 			break;
 			case 'en':
 				$regex = '#^(0[1-9]|1[0-2])([/.])(0[1-9]|[12][0-9]|3[01])\\2([0-9]{2}|[0-9]{4})$#';
 				if(preg_match($regex,$valueToTest,$matches)){
 					return true;
-				}else $this->addError('Le format de date MM/JJ/AAAA n\'est pas respecté');
+				}else $this->addError(__('VALIDATOR_DATE_ERROR_FORMAT_EN'));
 			break;
 			case 'int':
 				$regex = '#^([0-9]{2}|[0-9]{4})([/.])(0[1-9]|1[0-2])\\2(0[1-9]|[12][0-9]|3[01])$#';
 				if(preg_match($regex,$valueToTest,$matches)){
 					return true;
-				}else $this->addError('Le format de date AAAA/MM/JJ n\'est pas respecté');
+				}else $this->addError(__('VALIDATOR_DATE_ERROR_FORMAT_INT'));
 			break;
 			case 'unix':
 				$regex = '#^([0-9]{1,})$#';
 				if(preg_match($regex,$valueToTest,$matches)){
 					return true;
-				}else $this->addError('Le format de date XXXXXXXX n\'est pas respecté');
+				}else $this->addError(__('VALIDATOR_DATE_ERROR_FORMAT_UNIX'));
 			break;
 		}
 		return false;

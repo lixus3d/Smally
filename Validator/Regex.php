@@ -36,7 +36,7 @@ class Regex extends AbstractRule {
 
 		if(preg_match($this->_regex, $valueToTest)){
 			return true;
-		}else $this->addError('Le format attendu n\'est pas reconnu dans votre saisie.');
+		}else $this->addError(__('VALIDATOR_REGEX_ERROR_FORMAT'));
 
 		return false;
 	}

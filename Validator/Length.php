@@ -69,7 +69,7 @@ class Length extends AbstractRule {
 					case  $this->_strict && $length<=$this->_min :
 					case !$this->_strict && $length< $this->_min :
 						$test = false;
-						$this->addError('La longueur minimum de '.$this->_min.' caractère(s) n\'est pas atteinte');
+						$this->addError(sprintf(__('VALIDATOR_LENGTH_ERROR_MIN'),$this->_min));
 				}
 			}
 
@@ -79,7 +79,7 @@ class Length extends AbstractRule {
 					case  $this->_strict && $length>=$this->_max :
 					case !$this->_strict && $length> $this->_max :
 						$test = false;
-						$this->addError('La longueur maximum de '.$this->_max.' caractère(s) est dépassée');
+						$this->addError(sprintf(__('VALIDATOR_LENGTH_ERROR_MAX'),$this->_max));
 				}
 			}
 		}

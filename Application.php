@@ -10,6 +10,8 @@ class Application {
 
 	static protected $_singleton 	= null;
 
+	protected $_language 			= 'fr';
+
 	protected $_environnement 		= self::ENV_DEVELOPMENT;
 	protected $_logger				= null;
 
@@ -22,6 +24,7 @@ class Application {
 	protected $_rooter 				= null;
 	protected $_view				= null;
 	protected $_response 			= null;
+	protected $_translate 			= null;
 
 	protected $_meta				= null;
 	protected $_urlRewriting		= null;
@@ -65,6 +68,16 @@ class Application {
 	 */
 	public function setEnvironnement($environnement){
 		$this->_environnement = $environnement;
+		return $this;
+	}
+
+	/**
+	 * Define the language to use for text and errors
+	 * @param string $language A language in 2 char format
+	 * @return \Smally\Application
+	 */
+	public function setLanguage($language){
+		$this->_language = $language;
 		return $this;
 	}
 
@@ -175,6 +188,14 @@ class Application {
 	}
 
 	/**
+	 * Return the defined language
+	 * @return string
+	 */
+	public function getLanguage(){
+		return $this->_language;
+	}
+
+	/**
 	 * Return the application logger
 	 * @return \Smally\Logger
 	 */
@@ -193,6 +214,15 @@ class Application {
 	public function getConfig(){
 		if(is_null($this->_config)) $this->_config = new Config();
 		return $this->_config;
+	}
+
+	/**
+	 * Get the translate object or create a new empty one for compatibility
+	 * @return \Smally\Translate
+	 */
+	public function getTranslate(){
+		if(is_null($this->_translate)) $this->_translate = new Translate($this);
+		return $this->_translate;
 	}
 
 	/**
@@ -461,7 +491,14 @@ namespace {
 	 * Future translate function
 	 * @return string
 	 */
-	function __(){
+	function __($key){
 
+		global $globalTranslate;
+
+		if(isset($globalTranslate[$key])){
+			return $globalTranslate[$key];
+		}else{
+			return \Smally\Application::getInstance()->getTranslate()->translate($key);
+		}
 	}
 }

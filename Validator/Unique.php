@@ -13,7 +13,8 @@ class Unique extends AbstractRule {
 	 * @param int  $max    null to not test the max length
 	 * @param boolean $strict true to have the length not equal to boundaries $min and $max
 	 */
-	public function __construct($voName=null,$errorTxt='Il existe déjà cet élément dans la base de données.'){
+	public function __construct($voName=null,$errorTxt=null){
+		if(is_null($errorTxt)) $errorTxt = __('VALIDATOR_UNIQUE_ERROR_DEFAULT');
 		$this->setVoName($voName);
 		$this->_errorTxt = $errorTxt;
 	}
