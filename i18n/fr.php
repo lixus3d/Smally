@@ -23,4 +23,6 @@ $translate = array(
 
 	'VALIDATOR_UNIQUE_ERROR_DEFAULT' => 'Il existe déjà cet élément dans la base de données.',
 
+	'VALIDATOR_INTEGER_ERROR' => 'Cette valeur n\'est pas un nombre entier',
+
 );

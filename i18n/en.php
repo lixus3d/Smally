@@ -23,4 +23,6 @@ $translate = array(
 
 	'VALIDATOR_UNIQUE_ERROR_DEFAULT' => 'This value is already in the database.',
 
+	'VALIDATOR_INTEGER_ERROR' => 'This value is not an integer.',
+
 );
