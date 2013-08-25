@@ -44,29 +44,31 @@ class Unique extends AbstractRule {
 	 */
 	public function x($valueToTest){
 
-		if($app = \Smally\Application::getInstance()){
-			$voName = $this->getVoName();
-			$dao = $app->getFactory()->getDao($voName);
-			$criteria = $dao->getCriteria();
-			$criteria ->setFilter(array(
-							$this->getFieldName() => array('value'=>$valueToTest)
-						))
-						;
-			if( ($this->getValidator() instanceof \Smally\Validator) && ($actualId = $this->getValidator()->getActualVoId()) ){
-				$criteria->setFilter(array(
-						$dao->getPrimaryKey() => array('value'=>$actualId, 'operator' => '!='),
-					));
-			}
+		if($valueToTest){
+			if($app = \Smally\Application::getInstance()){
+				$voName = $this->getVoName();
+				$dao = $app->getFactory()->getDao($voName);
+				$criteria = $dao->getCriteria();
+				$criteria ->setFilter(array(
+								$this->getFieldName() => array('value'=>$valueToTest)
+							))
+							;
+				if( ($this->getValidator() instanceof \Smally\Validator) && ($actualId = $this->getValidator()->getActualVoId()) ){
+					$criteria->setFilter(array(
+							$dao->getPrimaryKey() => array('value'=>$actualId, 'operator' => '!='),
+						));
+				}
 
-			if($found = $dao->fetch($criteria)){
-				$this->addError($this->_errorTxt);
-				return false;
-			}else{
-				return true;
-			}
+				if($found = $dao->fetch($criteria)){
+					$this->addError($this->_errorTxt);
+					return false;
+				}else{
+					return true;
+				}
 
-		}else $this->addError('No valid Smally app found !');
-
+			}else $this->addError('No valid Smally app found !');
+		}else return true;
+		
 		return false;
 	}
 
