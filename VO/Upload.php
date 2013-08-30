@@ -59,6 +59,38 @@ class Upload extends \Smally\VO\Standard {
 	}
 
 	/**
+	 * Regenerate a new path for the upload, update the uid , update the filePath and update the file on disk
+	 * @return boolean
+	 */
+	public function newPath(){
+
+		$actualCompletePath = $this->getCompletePath();
+		if(file_exists($actualCompletePath)){
+
+			// update $uid
+			$this->getUid(true); // force the creation of a new uid
+
+			// change filePath
+			$filename = basename($this->filePath);
+			$basePath = $this->cutUid($this->getUid());
+			$this->makePath($basePath);
+			$newPath = str_replace(array('/','\\'),DIRECTORY_SEPARATOR,$basePath.DIRECTORY_SEPARATOR.$this->name);
+
+			$this->filePath = $newPath;
+
+			// change path on disk
+			$newCompletePath = $this->getDataFolder().$newPath;
+			if(rename($actualCompletePath,$newCompletePath)){
+				$this->store();
+				return true;
+			}
+			return false;
+		}
+
+		return null;
+	}
+
+	/**
 	 * Filter a name to keep only acceptable character
 	 * @param  string $name The name to filter
 	 * @return string the filtered name
@@ -117,10 +149,12 @@ class Upload extends \Smally\VO\Standard {
 	 * Get upload uid , generate it if not yet created
 	 * @return string
 	 */
-	public function getUid(){
-		if(!$this->uid){
+	public function getUid($new=false){
+		if(!$this->uid||$new){
 			$this->uid = uniqid();
-			$this->getDao()->store($this);
+			if(!$new){
+				$this->getDao()->store($this);
+			}
 		}
 		return $this->uid;
 	}
@@ -174,7 +208,7 @@ class Upload extends \Smally\VO\Standard {
 					$relative .= '/thumbnail/';
 					$relative .= $this->getThumbnailGenerator()->constructParamsString($params);
 					$cleanFilePath = str_replace('\\','/',$this->filePath);
-					$relative .= '/'.substr(strrchr($cleanFilePath,'/'),1);
+					$relative .= '/'.substr(strrchr($cleanFilePath,'/'),1); // basename ???
 					$url = $application->urlData($relative);
 				}
 			break;
