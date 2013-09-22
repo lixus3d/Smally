@@ -4,6 +4,7 @@ namespace Smally;
 
 class Criteria {
 
+	protected $_fields = array();
 	protected $_where = array();
 	protected $_order = array();
 	protected $_limit = null;
@@ -122,6 +123,21 @@ class Criteria {
 	}
 
 	/**
+	 * Define the fields requested by the request 
+	 * @param array  $fields  Array of fields name
+	 * @param boolean $replace Do we have to replace the actuel fields list 
+	 * @return \Smally\Criteria
+	 */
+	public function setFields($fields,$replace=false){
+		if(!is_array($fields)) $fields = array($fields);
+		if($replace) $this->_fields = array();	
+		foreach($fields as $field){
+			$this->_fields[] = $field;
+		}
+		return $this;
+	}
+
+	/**
 	 * Return the where conditions of the criteria
 	 * @return array
 	 */
@@ -143,6 +159,14 @@ class Criteria {
 	 */
 	public function getLimit(){
 		return $this->_limit;
+	}
+
+	/**
+	 * Return the fields of the criteria , most likely an empty array by default 
+	 * @return array
+	 */
+	public function getFields(){
+		return $this->_fields;
 	}
 
 	/**

@@ -87,7 +87,7 @@ class AbstractBusiness {
 
 	/**
 	 * Return the Dao of the current module or a standard db dao if specific module dao doesn't exists
-	 * @param  string $daoName A specific Dao name if you want
+	 * @param  string $voName The voName of the dao you want 
 	 * @return \Smally\Dao\InterfaceDao
 	 */
 	public function getDao($voName=null){
@@ -96,15 +96,25 @@ class AbstractBusiness {
 	}
 
 	/**
+	 * Return another business  
+	 * @param  string $voName The voName of the business you want 
+	 * @return \Smally\AbstractBusiness
+	 */
+	public function getBusiness($voName){
+		if(is_null($voName)) throw new \Smally\Exception('You must request another Business');
+		return $this->getFactory()->getBusiness($voName);
+	}
+
+	/**
 	 * Return specific elements (vos) from the $criteria
 	 * @param  \Smally\Criteria $addCriteria         An additionnal criteria to filter the data
 	 * @return array
 	 */
-	public function fetchAll(\Smally\Criteria $criteria = null){
+	public function fetchAll(\Smally\Criteria $criteria = null, $fetchVoName=null){
 		if(!is_null($criteria) && is_null($criteria->getLimit())){
 			$criteria->setLimit(10);
 		}
-		return $this->getDao()->fetchAll($criteria);
+		return $this->getDao()->fetchAll($criteria, $fetchVoName);
 	}
 
 	/**
@@ -112,8 +122,8 @@ class AbstractBusiness {
 	 * @param  \Smally\Criteria $addCriteria         An additionnal criteria to filter the data
 	 * @return \stdClass
 	 */
-	public function fetch(\Smally\Criteria $criteria = null){
-		return $this->getDao()->fetch($criteria);
+	public function fetch(\Smally\Criteria $criteria = null, $fetchVoName=null){
+		return $this->getDao()->fetch($criteria, $fetchVoName);
 	}
 
 }

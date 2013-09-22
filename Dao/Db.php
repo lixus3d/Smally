@@ -195,7 +195,7 @@ class Db implements InterfaceDao {
 	 * @param  \Smally\Criteria $criteria         The criteria to filter the data
 	 * @return \stdClass
 	 */
-	public function fetch(\Smally\Criteria $criteria){
+	public function fetch(\Smally\Criteria $criteria, $fetchVoName=null){
 
 		$sql = $this->criteriaToSelect($criteria);
 
@@ -203,7 +203,8 @@ class Db implements InterfaceDao {
 
 		if($result = $this->getConnector()->query($sql)){
 			if($result->num_rows==1){
-				$object = $this->fetchValueObject($result,$this->getVoName());
+				if(is_null($fetchVoName)) $fetchVoName = $this->getVoName();
+				$object = $this->fetchValueObject($result,$fetchVoName);
 				$result->free();
 				return $object;
 			}elseif($result->num_rows>1) throw new \Smally\Exception('Fetch return more than one entry : '.$result->num_rows);
@@ -217,7 +218,7 @@ class Db implements InterfaceDao {
 	 * @param  \Smally\Criteria $criteria         The criteria to filter the data
 	 * @return array
 	 */
-	public function fetchAll(\Smally\Criteria $criteria=null){
+	public function fetchAll(\Smally\Criteria $criteria=null, $fetchVoName=null){
 		$return = array();
 
 		if(is_null($criteria)) $criteria = $this->getCriteria();
@@ -229,7 +230,8 @@ class Db implements InterfaceDao {
 
 		if($result = $this->getConnector()->query($sql)){
 			if($result->num_rows>=1){
-				while($object = $this->fetchValueObject($result,$this->getVoName())){
+				if(is_null($fetchVoName)) $fetchVoName = $this->getVoName();
+				while($object = $this->fetchValueObject($result,$fetchVoName)){
 					$this->_getByIdCache[$object->getId()] = $object;
 					$return[] = $object;
 				}
@@ -388,8 +390,11 @@ class Db implements InterfaceDao {
 
 		if(!is_array($fields)||count($fields)==0) $fields = array($fields?:'*');
 		foreach($fields as &$field){
-			if($field === '*'){
+			if(strpos($field, '*')!==false){
 				if($field === '*') $field = '`'.$this->getTable().'`.*';
+				continue;
+			}elseif(strpos($field, '.')===false){
+				$field = '`'.$this->getTable().'`.`'.$field.'`';			
 				continue;
 			}elseif(preg_match('#^(COUNT|SUM)#',$field)){
 				continue;
@@ -427,6 +432,8 @@ class Db implements InterfaceDao {
 		$limit = array();
 		$values = array();
 		$groupby = array();
+
+		$fields = $criteria->getFields();
 
 		$filter = $criteria->getFilter();
 		foreach($filter as $field => $params){
