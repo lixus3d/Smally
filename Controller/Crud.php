@@ -6,6 +6,9 @@ class Crud extends \Smally\Controller {
 
 	protected $_json = '';
 	protected $_method = null;
+	protected $_requestData = null;
+
+	// protected $_error = array();
 
 	public function __construct(\Smally\Application $application){
 		parent::__construct($application);
@@ -21,7 +24,8 @@ class Crud extends \Smally\Controller {
 		$this->getResponse()->setHeader('Content-type: application/json');
 		$this->getResponse()->setHeader('Access-Control-Allow-Origin: *');
 
-		switch(strtolower($_SERVER['REQUEST_METHOD'])){			
+		// GET THE METHOD OF CRUD WANTED
+		switch(strtolower($_SERVER['REQUEST_METHOD'])){
 			case 'post':
 				$this->_method = 'create';
 			break;
@@ -36,10 +40,50 @@ class Crud extends \Smally\Controller {
 			break;
 		}
 
+		// RETRIEVE THE REQUEST CONTENT
+		if($data = file_get_contents('php://input')){
+			$this->_requestData = (array) @json_decode($data);
+		}
+
 	}
 
 	/**
-	 * Execute the crud logic called 
+	 * Return the response in json automatically
+	 * @return string Json
+	 */
+	public function __toString() {
+		return $this->getJson();
+	}
+
+	/**
+	 * Define the data to return , automatically encoded in json
+	 * @param mixed $data The data you want to return
+	 * @return \Smally\Controller\Crud
+	 */
+	public function setJson($data){
+		$this->_json = json_encode($data);
+		return $this;
+	}
+
+	/**
+	 * Add errors to the response error
+	 * @param mixed $error Array or string of error
+	 * @return  \Smally\Controller\Rpc
+	 */
+	public function setError($error){
+		if(is_array($error)){
+			foreach($error as $errorStr){
+				$this->setError($errorStr);
+			}
+		}else{
+			if(!isset($this->_error)) $this->_error = array();
+			$this->_error[] = $error;
+		}
+		return $this;
+	}
+
+	/**
+	 * Execute the crud logic called
 	 * @return mixed
 	 */
 	public function xCrud(){
@@ -54,26 +98,15 @@ class Crud extends \Smally\Controller {
 	 * @return null
 	 */
 	public function onViewX(){
-		$this->getView()->content = $this->__toString();
+		if(isset($this->_error)){
+			$this->getResponse()->setHeader('HTTP/1.1 500 Internal Server Error');
+			echo implode(', ', $this->_error);
+			$this->getView()->content = null;
+		}else{
+			$this->getView()->content = $this->__toString();
+		}
 	}
 
-	/**
-	 * Return the response in json automatically
-	 * @return string Json
-	 */
-	public function __toString() {
-		return $this->getJson();
-	}
-
-	/**
-	 * Define the data to return , automatically encoded in json 
-	 * @param mixed $data The data you want to return 
-	 * @return \Smally\Controller\Crud
-	 */
-	public function setJson($data){
-		$this->_json = json_encode($data);
-		return $this;
-	}
 
 	/**
 	 * Return the response in json
