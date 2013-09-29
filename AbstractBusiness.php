@@ -126,4 +126,13 @@ class AbstractBusiness {
 		return $this->getDao()->fetch($criteria, $fetchVoName);
 	}
 
+	/**
+	 * Return a ValueObject by it's primary id, wrapper to dao
+	 * @param  int $id               The id of the value object you want
+	 * @return \stdClass
+	 */
+	public function getById($id){
+		return $this->getDao()->getById($id);
+	}
+
 }
