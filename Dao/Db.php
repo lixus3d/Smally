@@ -280,7 +280,7 @@ class Db implements InterfaceDao {
 
 		// pseudo event system
 		if(method_exists($vo, 'onStore')){
-			$vo->onStore();
+			$vo->onStore($statement);
 		}
 
 		// get the primary key
@@ -317,13 +317,13 @@ class Db implements InterfaceDao {
 		// pseudo event system
 		if($return){
 			if(method_exists($vo, 'onStoreSuccess')){
-				$vo->onStoreSuccess();
+				$vo->onStoreSuccess($statement);
 			}
 		}else{
 			$this->log('Error in : '.$sql,\Smally\Logger::LVL_ERROR);
 			$this->log($this->getConnector()->errno.' : '.$this->getConnector()->error,\Smally\Logger::LVL_ERROR);
 			if(method_exists($vo, 'onStoreFail')){
-				$vo->onStoreFail();
+				$vo->onStoreFail($statement);
 			}
 		}
 
