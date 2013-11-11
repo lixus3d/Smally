@@ -396,7 +396,7 @@ class Db implements InterfaceDao {
 			}elseif(strpos($field, '.')===false){
 				$field = '`'.$this->getTable().'`.`'.$field.'`';			
 				continue;
-			}elseif(preg_match('#^(COUNT|SUM)#',$field)){
+			}elseif( (preg_match('#^(COUNT|SUM)#',$field)) || (strpos($field, '.')!==false) ){
 				continue;
 			}
 			$field = '`'.$field.'`';
