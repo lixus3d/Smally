@@ -403,7 +403,7 @@ class Standard extends \stdClass {
 			$modelIdList = $this->{$getterName}();
 		}else $modelIdList = $this->{$fieldName};
 
-		$inBaseIdList = $this->_genericGetJointModelId($fieldName,$jVoName,$jointVars);
+		$inBaseIdList = $this->_genericGetJointModelId($fieldName,$jVoName,$jointVars,null,$destinationFieldName);
 
 		// We update/insert joints
 		foreach($modelIdList as $ord => $modelId){
@@ -563,7 +563,7 @@ class Standard extends \stdClass {
 		}else $idList = $this->_genericGetUploadId($fieldName);
 
 		$uploadVoList = array();
-		if($idList){
+		if(is_array($idList) && $idList){
 			$uploadVoName = '\\Smally\\VO\\Upload';
 			$uploadDao = $this->getApplication()->getFactory()->getDao($uploadVoName);
 			// $criteria = $uploadDao->getCriteria();
