@@ -179,6 +179,9 @@ class Uploader {
 			if(isset($this->_options)){
 				foreach($this->_options as $optionKey => $params){
 					switch($optionKey){
+						case 'forcename':
+							$upload->name = $params.'.'.$upload->getExtension();
+						break;
 						case 'accept':
 							if(!in_array($upload->getExtension(),$params)){
 								$this->setError('Ce type de fichier n\'est pas autorisé : '.$upload->getExtension());
