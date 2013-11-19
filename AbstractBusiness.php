@@ -87,7 +87,7 @@ class AbstractBusiness {
 
 	/**
 	 * Return the Dao of the current module or a standard db dao if specific module dao doesn't exists
-	 * @param  string $voName The voName of the dao you want 
+	 * @param  string $voName The voName of the dao you want
 	 * @return \Smally\Dao\InterfaceDao
 	 */
 	public function getDao($voName=null){
@@ -96,8 +96,8 @@ class AbstractBusiness {
 	}
 
 	/**
-	 * Return another business  
-	 * @param  string $voName The voName of the business you want 
+	 * Return another business
+	 * @param  string $voName The voName of the business you want
 	 * @return \Smally\AbstractBusiness
 	 */
 	public function getBusiness($voName){
