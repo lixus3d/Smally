@@ -59,7 +59,7 @@ class Length extends AbstractRule {
 		$test = true;
 
 		$valueToTest = (string) $valueToTest;
-		$length = mb_strlen($valueToTest);
+		$length = mb_strlen($valueToTest,'UTF-8');
 
 		// You must do a required test if empty is not valid
 		if($length>=1){
