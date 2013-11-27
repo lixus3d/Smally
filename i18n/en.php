@@ -25,4 +25,6 @@ $translate = array(
 
 	'VALIDATOR_INTEGER_ERROR' => 'This value is not an integer.',
 
+	'VALIDATOR_BOOLEAN_ERROR' => 'This value is not a boolean.',
+
 );

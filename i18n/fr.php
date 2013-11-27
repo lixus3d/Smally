@@ -25,4 +25,6 @@ $translate = array(
 
 	'VALIDATOR_INTEGER_ERROR' => 'Cette valeur n\'est pas un nombre entier',
 
+	'VALIDATOR_BOOLEAN_ERROR' => 'Cette valeur n\'est pas un booléen',
+
 );
