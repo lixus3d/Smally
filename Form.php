@@ -317,7 +317,11 @@ class Form {
 	 * @return \Smally\Form\Element\Inter
 	 */
 	public function newField($fieldType,$fieldName,$fieldLabel=null,$fieldValue=null,$options=array()){
-		$className = '\\Smally\\Form\\Element\\'.ucfirst($fieldType);
+
+		if(!class_exists($fieldType)){
+			$className = '\\Smally\\Form\\Element\\'.ucfirst($fieldType);
+		}else $className = $fieldType;
+
 		$options = array_merge($options,array('name'=>$fieldName,'value'=>$fieldValue,'label'=>$fieldLabel));
 		$fieldObject = new $className($options);
 		return $fieldObject;
