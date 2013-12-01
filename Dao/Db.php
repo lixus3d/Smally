@@ -472,6 +472,10 @@ class Db implements InterfaceDao {
 					$this->_filterMethodCache['filter'.$field] = false;
 				}
 
+				if(strpos($field, '.')===false){
+					$field = '`'.$this->getTable().'`.`'.$field.'`';
+				}
+
 				switch($operator){
 					case '=':
 					case '>':
@@ -481,14 +485,14 @@ class Db implements InterfaceDao {
 					case '!=':
 					case 'LIKE':
 					case 'NOT LIKE':
-						$where[$field] = '`'.$this->getTable().'`.`'.$field.'` '.$operator.' \''.$this->getConnector()->real_escape_string($value).'\'';
+						$where[$field] = $field.' '.$operator.' \''.$this->getConnector()->real_escape_string($value).'\'';
 						break;
 					case 'IN':
 					case 'NOT IN':
 						foreach($value as &$val){
 							$val = '\''.$this->getConnector()->real_escape_string($val).'\'';
 						}
-						$where[$field] = '`'.$this->getTable().'`.`'.$field.'` '.$operator.' ('.implode(',',$value).')';
+						$where[$field] = $field.' '.$operator.' ('.implode(',',$value).')';
 						break;
 				}
 			}
