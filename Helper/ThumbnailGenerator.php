@@ -111,7 +111,7 @@ class ThumbnailGenerator {
 		foreach($pathParts as $part){
 			$path .= $part;
 			if($path != ''){
-				if(!is_dir($path)){
+				if(!@is_dir($path)){
 					if(@mkdir($path)){
 						@chmod($path,0777);
 					}else{
