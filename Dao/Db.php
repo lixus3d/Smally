@@ -337,6 +337,12 @@ class Db implements InterfaceDao {
 	 * @return boolean true if delete succeded
 	 */
 	public function delete($vo,$forceDelete=false){
+
+		// pseudo event system
+		if(method_exists($vo, 'onDelete')){
+			$vo->onDelete($forceDelete);
+		}
+
 		$primaryKey = $this->getPrimaryKey();
 
 		if($this->hasUtsDelete($vo)&&!$forceDelete){
@@ -347,7 +353,14 @@ class Db implements InterfaceDao {
 
 		$this->log($sql);
 
-		return $this->getConnector()->query($sql);
+		$return = $this->getConnector()->query($sql);
+
+		// pseudo event system
+		if(method_exists($vo, 'onDeleteSuccess')){
+			$vo->onDeleteSuccess();
+		}
+
+		return $return;
 	}
 
 
