@@ -349,7 +349,7 @@ class Upload extends \Smally\VO\Standard {
 	 * Convert the upload to an array format, usually for ajax return
 	 * @return array
 	 */
-	public function toArray(){
+	public function toArray($withGetter=true,$withPrimaryKey=true){
 		return array(
 				'id' => $this->getId(),
 				'name' => $this->name,
