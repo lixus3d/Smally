@@ -11,7 +11,8 @@ class Form {
 	protected $_application = null;
 	protected $_validator = null;
 
-	protected $_decoratorNamespace = '\\Smally\\Form\\Decorator\\';
+	protected $_decoratorNamespace = null;
+	protected $_elementNamespace = null;
 
 	protected $_action 		= '';
 	protected $_method 		= self::METHOD_GET;
@@ -28,6 +29,10 @@ class Form {
 	 * @param array $options An associative array where key = property name
 	 */
 	public function __construct(array $options=array()){
+
+		$this->setDecoratorNamespace( (string)$this->getApplication()->getConfig()->smally->form->namespace->decorator?:'\\Smally\\Form\\Decorator\\' );
+		$this->setElementNamespace( (string)$this->getApplication()->getConfig()->smally->form->namespace->element?:'\\Smally\\Form\\Element\\' );
+
 		if($options){
 			foreach($options as $key => $option){
 				if(method_exists($this, 'set'.ucfirst($key))){
@@ -100,6 +105,15 @@ class Form {
 	 */
 	public function setDecoratorNamespace($ns){
 		$this->_decoratorNamespace = $ns;
+		return $this;
+	}
+
+	/**
+	 * Define the element namespace to use for the form
+	 * @param string $ns namespace
+	 */
+	public function setElementNamespace($ns){
+		$this->_elementNamespace = $ns;
 		return $this;
 	}
 
@@ -318,12 +332,20 @@ class Form {
 	 */
 	public function newField($fieldType,$fieldName,$fieldLabel=null,$fieldValue=null,$options=array()){
 
-		if(!class_exists($fieldType)){
-			$className = '\\Smally\\Form\\Element\\'.ucfirst($fieldType);
-		}else $className = $fieldType;
+		$name = $fieldType;
+
+		if(!class_exists($name)){
+			$name = $this->_elementNamespace.ucfirst($fieldType);
+		}
+		if(!class_exists($name)){
+			$name = '\\Smally\\Form\\Element\\'.ucfirst($fieldType);
+		}
+		if(!class_exists($name)){
+			throw new Exception('Element type unavailable : '.$fieldType);
+		}
 
 		$options = array_merge($options,array('name'=>$fieldName,'value'=>$fieldValue,'label'=>$fieldLabel));
-		$fieldObject = new $className($options);
+		$fieldObject = new $name($options);
 		return $fieldObject;
 	}
 
