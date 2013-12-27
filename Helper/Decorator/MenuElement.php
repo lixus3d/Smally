@@ -139,6 +139,9 @@ class MenuElement extends AbstractDecorator {
 				$children = $this->renderChildren();
 				$html  = '<li'.\Smally\HtmlUtil::toAttributes($this->getAttributes()).'>';
 				$html .= '<a href="'.$this->getElement()->getUrl().'" '.\Smally\HtmlUtil::toAttributes($this->_attributesA).'>';
+				if($icon = $this->getElement()->getIcon()){
+					$html .= $icon;
+				}
 				$html .= '<span>';
 				$html .= '<span>';
 				$html .= $this->getInnerHtml();

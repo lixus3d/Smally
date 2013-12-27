@@ -54,8 +54,20 @@ class NavigationTree extends Tree{
 		return isset($this->name)&&$this->name?$this->name:'';
 	}
 
+	/**
+	 * Return the type of a tree element
+	 * @return string
+	 */
 	public function getType(){
 		return isset($this->type)&&$this->type?$this->type:'page';
+	}
+
+	/**
+	 * Return the icon of a tree element
+	 * @return string
+	 */
+	public function getIcon(){
+		return isset($this->icon)&&$this->icon?$this->icon:null;
 	}
 
 	/**
