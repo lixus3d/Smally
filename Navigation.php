@@ -9,6 +9,8 @@ class Navigation {
 
 	protected $_application = null;
 
+	protected $_namespace = '\\Smally\\';
+
 	protected $_trees = array();
 	protected $_knownControllerPath = array();
 
@@ -40,7 +42,7 @@ class Navigation {
 	 */
 	public function initNavigation($trees){
 		foreach($trees as $treeName => $tree){
-			$this->_trees[$treeName] = new NavigationTree(array('children'=>$tree),null,$this);
+			$this->_trees[$treeName] = $this->getNewTree(array('children'=>$tree),null,$this);
 		}
 		return $this;
 	}
@@ -72,6 +74,22 @@ class Navigation {
 	public function getTree($treeName){
 		if(isset($this->_trees[$treeName])) return $this->_trees[$treeName];
 		return null;
+	}
+
+	/**
+	 * Get a new tree element , use namespace or fallback default namespace ( use NavigationTree default constructor params)
+	 * @return \Smally\NavigationTree;
+	 */
+	public function getNewTree($options,$parent,$navigation){
+
+		$className = $this->_namespace.'NavigationTree'; // Try the defined namespace
+		if(!class_exists($className)){
+			$className = '\\Smally\\NavigationTree'; // try the form default namespace
+		}
+		if(!class_exists($className)){
+			throw new Exception('Tree type unavailable : NavigationTree');
+		}
+		return new $className($options,$parent,$navigation);
 	}
 
 	/**

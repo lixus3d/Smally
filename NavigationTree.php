@@ -27,10 +27,9 @@ class NavigationTree extends Tree{
 	 * @param string $path The controller path we now know
 	 * @return \Smally\NavigationTree
 	 */
-	public function setControllerPath($path){
-		$this->controllerPath = $path;
+	public function onSetControllerPath(){
 		if($this->getNavigation()){
-			$this->getNavigation()->addPath($path,$this);
+			$this->getNavigation()->addPath($this->controllerPath,$this);
 		}
 		return $this;
 	}
@@ -76,9 +75,14 @@ class NavigationTree extends Tree{
 	 */
 	public function getUrl(){
 		if(!isset($this->url)){ // if url is not directly set or not yet compiled
-			// Test against url rewriting if existing
-			$relativeUrl = $this->getNavigation()->getApplication()->makeControllerUrl($this->getActionPath());
+			if(isset($this->urlRewrite)){
+				// Test against url rewriting if existing
+				$relativeUrl = $this->urlRewrite;
+			}else{
+				$relativeUrl = $this->getNavigation()->getApplication()->makeControllerUrl($this->getActionPath());
+			}
 			$this->url = $this->getNavigation()->getApplication()->getBaseUrl($relativeUrl);
+
 		}
 		return $this->url;
 	}
