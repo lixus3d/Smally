@@ -69,6 +69,13 @@ class NavigationTree extends Tree{
 		return isset($this->icon)&&$this->icon?$this->icon:null;
 	}
 
+	public function isShortcut(){
+		if(isset($this->shortcut)){
+			return (boolean) $this->shortcut;
+		}
+		return false;
+	}
+
 	/**
 	 * Return the url of a tree element
 	 * @return string
