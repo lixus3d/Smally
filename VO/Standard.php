@@ -646,15 +646,27 @@ class Standard extends \stdClass {
 			$values = $this->{$getterName}();
 		}else $values = $this->{$fieldName};
 
+		$voBusiness = $this->getFactory()->getBusiness($voName);
+		$voDao = $voBusiness->getDao();
+
 		foreach($values as $k => $vars){
-			$vo = new $voName($vars);
-			if($shared){
-				$vo->voName = $this->getVoName(true);
-				$vo->voId = $this->getId();
+			// $vo = new $voName($vars); // Why not get it from the bdd if possible ?
+			if(isset($vars[$voDao->getPrimaryKey()]) && $vars[$voDao->getPrimaryKey()] ){
+				$vo = $voDao->getById($vars[$voDao->getPrimaryKey()]);
+				$vo->initVars($vars);
 			}else{
-				$vo->{$this->getPrimaryKey()} = $this->getId();
+				$vo = new $voName($vars);
 			}
-			$vo->getDao()->store($vo);
+
+			if($vo){
+				if($shared){
+					$vo->voName = $this->getVoName(true);
+					$vo->voId = $this->getId();
+				}else{
+					$vo->{$this->getPrimaryKey()} = $this->getId();
+				}
+				$vo->getDao()->store($vo);
+			}
 		}
 
 		return $this;
