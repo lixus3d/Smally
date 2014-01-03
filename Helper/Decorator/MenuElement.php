@@ -70,15 +70,26 @@ class MenuElement extends AbstractDecorator {
 		// TODO : Do a x logic function
 		// Add the active automatically
 		if($application = \Smally\Application::getInstance()){
-			$actualUrl = $application->getRooter()->getActionPath();
-			if($this->getElement()->getActionPath() == $actualUrl){
+
+			// try the url approach
+			$actualUrl = $application->getRooter()->getActualUrl();
+			if($this->getElement()->getUrl() == $actualUrl && !$this->getElement()->isShortcut() ){
 				$attributes['class'][] = $this->_classActive;
 				// Add the active class to the parent of the current menu
 				if($parent = $this->getMenu()->getParent()){
 					$parent->setAttribute('class',$this->_classActive);
 				}
-
 			}
+
+			// $actualUrl = $application->getRooter()->getActionPath();
+			// if($this->getElement()->getActionPath() == $actualUrl){
+			// 	$attributes['class'][] = $this->_classActive;
+			// 	// Add the active class to the parent of the current menu
+			// 	if($parent = $this->getMenu()->getParent()){
+			// 		$parent->setAttribute('class',$this->_classActive);
+			// 	}
+
+			// }
 		}
 
 		// Add alpha and omega automatically
