@@ -5,6 +5,8 @@ $translate = array(
 	// FORM
 	'FORM_DECORATOR_FILE_HELPER' => 'Drag and drop your files here',
 
+	'FORM_DECORATOR_MAP_PLACEHOLDER' => 'Search an address',
+	'FORM_DECORATOR_MAP_HELP' => 'You can search an address or move the marker with your mouse.',
 
 	// VALIDATOR
 	'VALIDATOR_DATE_ERROR_FORMAT_FR' => 'The expected format DD/MM/YYYY is not respected',

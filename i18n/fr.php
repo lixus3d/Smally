@@ -5,6 +5,9 @@ $translate = array(
 	// FORM
 	'FORM_DECORATOR_FILE_HELPER' => 'Glisser-déposer vos fichiers ici',
 
+	'FORM_DECORATOR_MAP_PLACEHOLDER' => 'Rechercher une adresse',
+	'FORM_DECORATOR_MAP_HELP' => 'Vous pouvez rechercher une adresse, ou déplacer le marqueur avec votre souris à l\'endroit désiré.',
+
 
 	// VALIDATOR
 	'VALIDATOR_DATE_ERROR_FORMAT_FR' => 'Le format de date JJ/MM/AAAA n\'est pas respecté',
