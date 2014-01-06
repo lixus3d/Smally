@@ -18,6 +18,10 @@ class Radio extends AbstractDecorator {
 
 		$html = '<div class="input">';
 
+		if($type == 'checkbox'){
+			$html.= '<input type="hidden" name="'.$this->getElement()->getName().'" value="" />';
+		}
+
 		$html  = $this->getForm()->getDecorator('error',$this->_element)->render($html);
 
 		$html .= '<ul>';

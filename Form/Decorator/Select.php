@@ -15,6 +15,10 @@ class Select extends AbstractDecorator {
 
 		$html = '<div class="input">';
 
+		if($type == 'multiselect'){
+			$html.= '<input type="hidden" name="'.$this->getElement()->getName().'" value="" />';
+		}
+
 		$html  = $this->getForm()->getDecorator('error',$this->_element)->render($html);
 
 		$attributes = array(
