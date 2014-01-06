@@ -112,7 +112,7 @@ class AbstractBusiness {
 	 */
 	public function fetchAll(\Smally\Criteria $criteria = null, $fetchVoName=null){
 		if(!is_null($criteria) && is_null($criteria->getLimit())){
-			$criteria->setLimit(10);
+			$criteria->setLimit((int)(string)$this->getApplication()->getConfig()->smally->default->business->limit?:10);
 		}
 		return $this->getDao()->fetchAll($criteria, $fetchVoName);
 	}
