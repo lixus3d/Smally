@@ -69,7 +69,7 @@ class MenuElement extends AbstractDecorator {
 
 		// TODO : Do a x logic function
 		// Add the active automatically
-		if($application = \Smally\Application::getInstance()){
+		if( ($this->getElement()->getType()!='separator') && $application = \Smally\Application::getInstance() ){
 
 			// try the url approach
 			$actualUrl = $application->getRooter()->getActualUrl();
