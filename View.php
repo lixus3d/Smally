@@ -188,6 +188,25 @@ class View {
 	}
 
 	/**
+	 * Convert a template name (relative) to a complete file path
+	 * @param  string $template The template name you want to have the full path
+	 * @return string
+	 */
+	public function getTemplateFullPath($template){
+		$template = str_replace('\\','/',$template);
+		return 'template'.DIRECTORY_SEPARATOR.$template.'.php';
+	}
+
+	/**
+	 * Check if a template exist
+	 * @param  string $template The template you want to test ( relative path )
+	 * @return boolean
+	 */
+	public function templateExist($template){
+		return file_exists(ROOT_PATH.$this->getTemplateFullPath($template));
+	}
+
+	/**
 	 * Execute another controller and get the generated content
 	 * @param  string $controllerPath Path to the controller
 	 * @param  string $action         Action to execute
@@ -220,10 +239,10 @@ class View {
 	 * @return string
 	 */
 	public function render($template,$params=array()){
-		$template = str_replace('\\','/',$template);
-		$templatePath = 'template'.DIRECTORY_SEPARATOR.$template.'.php';
 		ob_start();
-		if(!include(ROOT_PATH.$templatePath)){
+		if($this->templateExist($template)){
+			include($this->getTemplateFullPath($template));
+		}else{
 			throw new Exception('Template not found : '.$template);
 		}
 		return ob_get_clean();
