@@ -11,8 +11,7 @@ class Wysiwyg extends Textarea{
 			'class' => array('jsWysiwyg'),
 		);
 
-	public function __construct(array $options=array()){
-		parent::__construct($options);
+	public function init(){
 		if($app = \Smally\Application::getInstance()){
 			$app
 				->setJs('js/jquery.min.js')
