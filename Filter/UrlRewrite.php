@@ -21,7 +21,9 @@ class UrlRewrite extends AbstractRule {
 			// convert space, comma, tabulation, etc to '-'
 			$value = preg_replace('#[\s,.\n]+#','-',$value);
 			// keep only alphanumeric, - , \ and #
-			return preg_replace('#[^a-z0-9/\#-]#','',$value);
+			$value = preg_replace('#[^a-z0-9/\#-]#','',$value);
+			// trim trailing -, #, /
+			$value = trim($value,'#-/');
 		}
 
 		return $value;
