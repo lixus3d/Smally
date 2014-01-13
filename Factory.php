@@ -35,6 +35,12 @@ class Factory {
 	protected $_validator = array();
 
 	/**
+	 * Store every filter object for reuse, not really a Singleton but close
+	 * @var array
+	 */
+	protected $_filter = array();
+
+	/**
 	 * Store every business object for reuse, not really a Singleton but close
 	 * @var array
 	 */
@@ -85,6 +91,7 @@ class Factory {
 			case 'Logic':
 				$fullName = $moduleName.'\\'.ucfirst($objectType);
 				break;
+			case 'Filter':
 			case 'Business':
 			case 'Validator':
 			case 'Form':
@@ -208,6 +215,24 @@ class Factory {
 			}
 		}
 		return $this->_validator[$voName];
+	}
+
+	/**
+	 * Return the default filter of the given vo
+	 * @param  string $voName The vo name of the filter object you want
+	 * @return \Smally\Filter
+	 */
+	public function getFilter($voName,$filterMode=\Smally\Filter::MODE_NEW){
+		if(is_null($voName)) return null;
+		if(!isset($this->_filter[$voName])){
+			$path = $this->getObjectPath($voName,'Filter');
+			if(class_exists($path)){
+				$this->_filter[$voName] = new $path(array(),$filterMode);
+			}else{
+				$this->_filter[$voName] = new \Smally\Filter(array(),$filterMode); // Generic empty validator
+			}
+		}
+		return $this->_filter[$voName];
 	}
 
 	/**
