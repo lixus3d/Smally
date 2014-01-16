@@ -13,7 +13,7 @@ class Email extends AbstractRule {
 
 		$valueToTest = (string) $valueToTest;
 
-		$regex = '#^[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+([A-Z]{2,4}|museum)$#i';
+		$regex = '#^[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+([A-Z]{2,})$#i';
 
 		if(preg_match($regex, $valueToTest)){
 			return true;
