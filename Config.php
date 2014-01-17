@@ -11,9 +11,12 @@ class Config {
 	 * @param mixed $path Path to a config file in php array format
 	 */
 	public function __construct($path=null){
-		if($path && is_file($path)){
-			require($path);
-			if(isset($config) && is_array($config)) $this->setConfig($config);
+		if(!is_array($path)) $path = array($path);
+		foreach($path as $filepath){
+			if($filepath && is_file($filepath)){
+				require($filepath);
+				if(isset($config) && is_array($config)) $this->setConfig($config);
+			}
 		}
 	}
 
