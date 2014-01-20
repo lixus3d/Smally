@@ -314,6 +314,8 @@ class Standard extends \stdClass {
 		if(strpos($date, '/') !== false){
 			list($day,$month,$year) = explode('/',$date);
 			$this->{$fieldName} = mktime(0,0,0,$month,$day,$year);
+		}else{
+			$this->{$fieldName} = 0;
 		}
 		return $this;
 	}
