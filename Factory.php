@@ -192,10 +192,10 @@ class Factory {
 	 * @param  string $voName The vo name of the form object you want
 	 * @return \Smally\Form
 	 */
-	public function getForm($voName){
+	public function getForm($voName,$options=array()){
 		$path = $this->getObjectPath($voName,'Form');
 		if(class_exists($path)){
-			return new $path();
+			return new $path($options);
 		}else throw new Exception('Form doesn\'t exists : '.$path);
 	}
 
