@@ -11,13 +11,15 @@ class Email extends AbstractRule {
 	 */
 	public function x($valueToTest){
 
-		$valueToTest = (string) $valueToTest;
+		if($valueToTest){
+			$valueToTest = (string) $valueToTest;
 
-		$regex = '#^[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+([A-Z]{2,})$#i';
+			$regex = '#^[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+([A-Z]{2,})$#i';
 
-		if(preg_match($regex, $valueToTest)){
-			return true;
-		}else $this->addError(__('VALIDATOR_EMAIL_ERROR_FORMAT'));
+			if(preg_match($regex, $valueToTest)){
+				return true;
+			}else $this->addError(__('VALIDATOR_EMAIL_ERROR_FORMAT'));
+		}else return true;
 
 		return false;
 	}
