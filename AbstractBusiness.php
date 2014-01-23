@@ -127,6 +127,15 @@ class AbstractBusiness {
 	}
 
 	/**
+	 * Return a specific element from an array key => values
+	 * @param  array $array An array of key => values
+	 * @return \stdClass
+	 */
+	public function exists($array){
+		return $this->getDao()->exists($array);
+	}
+
+	/**
 	 * Return a ValueObject by it's primary id, wrapper to dao
 	 * @param  int $id               The id of the value object you want
 	 * @return \stdClass
