@@ -49,7 +49,7 @@ abstract class AbstractUrlRewriting {
 	 * @return \Smally\AbstractUrlRewriting
 	 */
 	public function addRedirectRule($oldUrl, $newUrl, $httpStatus=301){
-		if($oldUrl && $newUrl && $oldUrl != $newUrl){
+		if($oldUrl && $oldUrl != $newUrl){
 			$this->_redirectRules[$oldUrl] = array('url'=>$newUrl,'httpStatus'=>$httpStatus);
 		}
 		return $this;
