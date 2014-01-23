@@ -281,6 +281,11 @@ class Rooter {
 			// Apply UrlRewriting Rules
 			if($urlRewriting = $this->_application->getUrlRewriting()){ // Do we have a valid Url Rewriting element
 
+				// If we found a orl url redirect, then we redirect to this new url to avoid SEO problem
+				if( $redirectRule = $urlRewriting->hasRedirectRule($queryPath) ){
+					$this->redirect($redirectRule['url'],$redirectRule['httpStatus']);
+				}
+
 				// If we found a url rewriting for the controller path given in $queryPath, then we redirect to this specific url to avoid SEO duplicate content
 				if( $urlRewriting->hasControllerRewriting( str_replace($urlSep,'\\',$queryPath) ) ){
 					$url = $urlRewriting->getControllerRewriting( str_replace($urlSep,'\\',$queryPath), $this->getApplication()->getContext()->toArray() );

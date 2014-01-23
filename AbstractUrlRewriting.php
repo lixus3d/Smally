@@ -6,6 +6,7 @@ abstract class AbstractUrlRewriting {
 
 	protected $_urlRewriting = array();
 	protected $_controllerRewriting = array();
+	protected $_redirectRules = array();
 
 	protected $_replaceParams = null;
 
@@ -38,6 +39,19 @@ abstract class AbstractUrlRewriting {
 			}
 		}
 
+		return $this;
+	}
+
+	/**
+	 * Add a redirect rules to map a ancient site url to a the new one
+	 * @param string $oldUrl Url on the ancient site
+	 * @param string $newUrl Url on the new (current) site
+	 * @return \Smally\AbstractUrlRewriting
+	 */
+	public function addRedirectRule($oldUrl, $newUrl, $httpStatus=301){
+		if($oldUrl && $newUrl && $oldUrl != $newUrl){
+			$this->_redirectRules[$oldUrl] = array('url'=>$newUrl,'httpStatus'=>$httpStatus);
+		}
 		return $this;
 	}
 
@@ -82,6 +96,19 @@ abstract class AbstractUrlRewriting {
 		$value = preg_replace('#[\s,.\n]+#','-',$value);
 		return preg_replace('#[^a-z0-9-]#','',$value);
 	}
+
+	/**
+	 * Return the redirect array if a $url is found in redirect rules
+	 * @param string $url The url you want to test on redirect rule s
+	 * @return mixed
+	 */
+	public function hasRedirectRule($url){
+		if(array_key_exists($url, $this->_redirectRules)){
+			return $this->_redirectRules[$url];
+		}
+		return false;
+	}
+
 
 	/**
 	 * Return the url rewriting if specific or false if no specific rule found
