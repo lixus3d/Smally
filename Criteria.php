@@ -89,10 +89,10 @@ class Criteria {
 	 */
 	public function setOrder($order,$replace=false){
 		if(is_array($order)){
+			if($replace) $this->_order = array();
 			foreach($order as $key => $field){
 				if(is_array($field)){
-					if($replace) $this->_order = array($field);
-					else $this->_order[] = $field;
+					$this->_order[] = $field;
 				}
 			}
 		}elseif($order){
@@ -123,14 +123,14 @@ class Criteria {
 	}
 
 	/**
-	 * Define the fields requested by the request 
+	 * Define the fields requested by the request
 	 * @param array  $fields  Array of fields name
-	 * @param boolean $replace Do we have to replace the actuel fields list 
+	 * @param boolean $replace Do we have to replace the actuel fields list
 	 * @return \Smally\Criteria
 	 */
 	public function setFields($fields,$replace=false){
 		if(!is_array($fields)) $fields = array($fields);
-		if($replace) $this->_fields = array();	
+		if($replace) $this->_fields = array();
 		foreach($fields as $field){
 			$this->_fields[] = $field;
 		}
@@ -162,7 +162,7 @@ class Criteria {
 	}
 
 	/**
-	 * Return the fields of the criteria , most likely an empty array by default 
+	 * Return the fields of the criteria , most likely an empty array by default
 	 * @return array
 	 */
 	public function getFields(){
