@@ -47,10 +47,10 @@ class Menu extends AbstractDecorator {
 		foreach($items as $key => $item){
 			// item that are invisible influence parent attributes but don't need to be rendered
 			if(isset($item->visible) && $item->visible === false){
-				$this->getElement()
-							->getDecorator('menuElement',$item)
-								->setMenu($this->getElement())
-								->getAttributes(); // TODO : Change to a x function
+				$decorator = $this->getElement()->getDecorator('menuElement',$item)
+															->setMenu($this->getElement())
+															;
+				$decorator->render();
 				continue;
 			}
 			$toRender[] = $item;

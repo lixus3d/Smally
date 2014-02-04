@@ -86,7 +86,7 @@ class Menu {
 	 * @param mixed $value the value
 	 * @return \Smally\Helper\Menu
 	 */
-	public function setAttribute($attribute,$value,$type='_attributes'){
+	public function setAttribute($attribute,$value,$type='_attributes',$propagation=false){
 		switch($attribute){
 			case 'class':
 				if(!isset($this->{$type}[$attribute])) $this->{$type}[$attribute] = array();
@@ -94,7 +94,11 @@ class Menu {
 			break;
 			default:
 				$this->{$type}[$attribute] = $value;
+
 			break;
+		}
+		if($propagation && $parent = $this->getParent()){
+			$parent->setAttribute($attribute,$value,$type,$propagation);
 		}
 		return $this;
 	}

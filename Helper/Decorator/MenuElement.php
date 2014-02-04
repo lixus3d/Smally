@@ -77,7 +77,7 @@ class MenuElement extends AbstractDecorator {
 				$attributes['class'][] = $this->_classActive;
 				// Add the active class to the parent of the current menu
 				if($parent = $this->getMenu()->getParent()){
-					$parent->setAttribute('class',$this->_classActive);
+					$parent->setAttribute('class',$this->_classActive,'_attributes',true); // propagation
 				}
 			}
 
@@ -86,7 +86,7 @@ class MenuElement extends AbstractDecorator {
 				$attributes['class'][] = $this->_classActive;
 				// Add the active class to the parent of the current menu
 				if($parent = $this->getMenu()->getParent()){
-					$parent->setAttribute('class',$this->_classActive);
+					$parent->setAttribute('class',$this->_classActive,'_attributes',true); // propagation
 				}
 
 			}
