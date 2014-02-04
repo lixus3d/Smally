@@ -249,6 +249,13 @@ class Standard extends \stdClass {
 	 * @return string The absolute url of the controller action wanted
 	 */
 	public function getUrl($controllerPath,$params=array(),$replace=false){
+
+		if($this->getVoExtend() instanceof Extender){
+			if(method_exists($this->_voExtend, 'getUrl')){
+				return call_user_func_array(array($this->_voExtend,'getUrl'),array('controllerPath'=>$controllerPath,'params'=>$params,'replace'=>$replace));
+			}
+		}
+
 		if(!$replace){
 			$defaultParams = array(
 					'id' => $this->getId(),
