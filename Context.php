@@ -67,7 +67,7 @@ class Context {
 
 	/**
 	 * Return an array representation of the context
-	 * @return [type] [description]
+	 * @return array
 	 */
 	public function toArray(){
 		return $this->_vars->toArray();
