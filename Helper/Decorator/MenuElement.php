@@ -81,15 +81,15 @@ class MenuElement extends AbstractDecorator {
 				}
 			}
 
-			// $actualUrl = $application->getRooter()->getActionPath();
-			// if($this->getElement()->getActionPath() == $actualUrl){
-			// 	$attributes['class'][] = $this->_classActive;
-			// 	// Add the active class to the parent of the current menu
-			// 	if($parent = $this->getMenu()->getParent()){
-			// 		$parent->setAttribute('class',$this->_classActive);
-			// 	}
+			$actualUrl = $application->getRooter()->getActionPath();
+			if($this->getElement()->getActionPath() == $actualUrl){
+				$attributes['class'][] = $this->_classActive;
+				// Add the active class to the parent of the current menu
+				if($parent = $this->getMenu()->getParent()){
+					$parent->setAttribute('class',$this->_classActive);
+				}
 
-			// }
+			}
 		}
 
 		// Add alpha and omega automatically
