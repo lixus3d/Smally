@@ -49,6 +49,15 @@ abstract class Controller {
 	}
 
 	/**
+	 * Try to get a logic with the controller name
+	 * @return \Smally\AbstractLogic
+	 */
+	public function getLogic(){
+		$className = str_replace('Controller\\','',get_class($this));
+		return $this->getFactory()->getLogic($className);
+	}
+
+	/**
 	 * Define the called action of the controller
 	 * @param string $action The name of the action to call
 	 * @return \Smally\Controller
@@ -86,7 +95,10 @@ abstract class Controller {
 	 * Return the called action of the controller
 	 * @return string
 	 */
-	public function getAction(){
+	public function getAction($full=false){
+		if($full){
+			return str_replace('Controller\\','',get_class($this)) . DIRECTORY_SEPARATOR . $this->_action;
+		}
 		return $this->_action;
 	}
 
@@ -96,11 +108,7 @@ abstract class Controller {
 	 */
 	public function getView(){
 		if(is_null($this->_view)){
-			$this->_view = new View($this->getApplication());
-			$this->_view
-						->setController($this)
-						->setTemplatePath( str_replace('Controller\\','',get_class($this)) . DIRECTORY_SEPARATOR . $this->getAction() )
-						;
+			$this->setViewTemplatePath($this->getAction(true));
 		}
 		return $this->_view;
 	}
