@@ -293,13 +293,23 @@ class Upload extends \Smally\VO\Standard {
 
 		if(SMALLY_PLATFORM=='windows') $destinationFilePath = utf8_decode($destinationFilePath); // File will be stored in ISO on windows
 
-		if(@move_uploaded_file($this->filePath, $destinationFilePath)){
-			chmod($destinationFilePath,0777);
-			$this->filePath = $this->getRelativePath();
-			$this->getDao()->store($this);
-			return true;
+		if(is_uploaded_file($this->filePath)){
+			if(@move_uploaded_file($this->filePath, $destinationFilePath)){
+				chmod($destinationFilePath,0777);
+				$this->filePath = $this->getRelativePath();
+				$this->getDao()->store($this);
+				return true;
+			}
+		}elseif( file_exists($this->filePath) ){
+			if(@rename($this->filePath, $destinationFilePath)){
+				chmod($destinationFilePath,0777);
+				$this->filePath = $this->getRelativePath();
+				$this->getDao()->store($this);
+				return true;
+			}
 		}
 		return false;
+
 	}
 
 	/**
