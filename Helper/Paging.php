@@ -144,6 +144,16 @@ class Paging {
 	}
 
 	/**
+	 * Set an url suffix to use after each url ( usually an anchor )
+	 * @param string $url The suffix part
+	 * @return \Smally\Helper\Paging
+	 */
+	public function setUrlSuffix($urlSuffix){
+		$this->_urlSuffix = $urlSuffix;
+		return $this;
+	}
+
+	/**
 	 * Return the limit per page of the current paging
 	 * @return int
 	 */
@@ -219,7 +229,7 @@ class Paging {
 	 * Return the base url to use for each page number element
 	 * @return string
 	 */
-	public function getUrl($pageNumber=1){
+	public function getUrl($pageNumber=1,$withSuffix=true){
 
 		if(is_null($this->_urlInfos)){
 			$this->_urlInfos = parse_url($this->_url);
@@ -230,7 +240,7 @@ class Paging {
 
 		$params[$this->_urlParam] = $pageNumber;
 
-		return 'http://'.$this->_urlInfos['host'].$this->_urlInfos['path'].'?'.http_build_query($params);
+		return 'http://'.$this->_urlInfos['host'].$this->_urlInfos['path'].'?'.http_build_query($params).($withSuffix?$this->_urlSuffix:'');
 	}
 
 	/**
