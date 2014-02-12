@@ -93,7 +93,7 @@ abstract class AbstractUrlRewriting {
 		// lower case the string
 		$value = strtolower($value);
 		// convert space, comma, tabulation, etc to '-'
-		$value = preg_replace('#[\s,.\n]+#','-',$value);
+		$value = preg_replace('#[\s,.\\\\/\n]+#','-',$value);
 		return preg_replace('#[^a-z0-9-]#','',$value);
 	}
 
