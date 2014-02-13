@@ -15,6 +15,7 @@ class Paging {
 
 	protected $_url = null;
 	protected $_urlInfos = null;
+	protected $_urlSuffix = null;
 
 	protected $_attributes  = array();
 	protected $_attributesElement = array();
