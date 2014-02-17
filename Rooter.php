@@ -281,7 +281,7 @@ class Rooter {
 			// Apply UrlRewriting Rules
 			if($urlRewriting = $this->_application->getUrlRewriting()){ // Do we have a valid Url Rewriting element
 
-				// If we found a orl url redirect, then we redirect to this new url to avoid SEO problem
+				// If we found an old url redirect, then we redirect to this new url to avoid SEO problem
 				if( $redirectRule = $urlRewriting->hasRedirectRule($queryPath) ){
 					$this->redirect($redirectRule['url'],$redirectRule['httpStatus']);
 				}
