@@ -63,7 +63,7 @@ class Config {
 	 * @return \Smally\Config Empty config object
 	 */
 	public function __get($key){
-		return new self();
+		return $this->{$key} = new self();
 	}
 
 	/**
