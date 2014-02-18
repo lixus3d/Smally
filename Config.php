@@ -27,7 +27,9 @@ class Config {
 	public function setConfig(array $config){
 		foreach($config as $key => $value){
 			if(is_array($value)){
-				$this->{$key} = new Config();
+				if( !($this->{$key} instanceof Config) ){
+					$this->{$key} = new Config();
+				}
 				$this->{$key}->setConfig($value);
 			}else{
 				$this->{$key} = $value;
