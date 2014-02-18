@@ -93,11 +93,24 @@ abstract class Controller {
 
 	/**
 	 * Return the called action of the controller
+	 * @param  boolean $full With the controller name or not
 	 * @return string
 	 */
 	public function getAction($full=false){
 		if($full){
 			return str_replace('Controller\\','',get_class($this)) . DIRECTORY_SEPARATOR . $this->_action;
+		}
+		return $this->_action;
+	}
+
+	/**
+	 * Return the called action normalized ( using "\" separator )
+	 * @param  boolean $full With the controller name or not
+	 * @return string
+	 */
+	public function getActionNormalize($full=false){
+		if($full){
+			return str_replace('Controller\\','',get_class($this)) . '\\' . $this->_action;
 		}
 		return $this->_action;
 	}
@@ -114,10 +127,20 @@ abstract class Controller {
 	}
 
 	/**
+	 * Check the controller action Acl
+	 * @return boolean
+	 */
+	public function checkAcl(){
+		return \Smally\ControllerAcl::getInstance()->check($this->getActionNormalize(true)); // will automatically redirect if not valid
+	}
+
+	/**
 	 * Execute the controller called action and the attached view
 	 * @return \Smally\Controller
 	 */
 	public function x($params=array()){
+
+		$this->checkAcl();
 
 		// pseudo event system
 		if(method_exists($this, 'onX')){
