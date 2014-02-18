@@ -42,9 +42,13 @@ class Menu extends AbstractDecorator {
 		// we get the sub items
 		$items = $this->getElement()->getItems();
 
+		$controllerAcl = \Smally\ControllerAcl::getInstance();
 		// we filter on visible false
 		$toRender = array();
 		foreach($items as $key => $item){
+			if($actionPath = $item->getActionPath()){
+				if( !$controllerAcl->check($actionPath,false) ) continue;
+			}
 			// item that are invisible influence parent attributes but don't need to be rendered
 			if(isset($item->visible) && $item->visible === false){
 				$decorator = $this->getElement()->getDecorator('menuElement',$item)

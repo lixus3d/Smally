@@ -92,7 +92,7 @@ class ControllerAcl {
 	 * @param  string $controllerPath The controller path with action part (But no Controller namespace)
 	 * @return boolean Only return true, if not valid , automatically redirected so no return produced. Be carrefull that Index/index is public of redirect to the public login page if not
 	 */
-	public function check($controllerPath){
+	public function check($controllerPath,$redirect=true){
 
 		if($this->_rules){
 			// find a rule recursively thru controller hierarchy
@@ -108,9 +108,9 @@ class ControllerAcl {
 
 			if( isset($rule) && $rule ){
 				$acl = $this->getAcl();
-				$acl
+				return $acl
 					->setAllowArray($rule['allow'])
-					->check( isset($rule['redirect'])?$rule['redirect']:$this->_defaultRedirect );
+					->check( $redirect ? (isset($rule['redirect'])?$rule['redirect']:$this->_defaultRedirect) : null );
 			}
 		}
 
