@@ -261,6 +261,11 @@ class Standard extends \stdClass {
 					'id' => $this->getId(),
 					'name' => $this->getName(),
 				);
+			if($this->getVoExtend() instanceof Extender){
+				if(method_exists($this->_voExtend, 'getUrlParams')){
+					$defaultParams = array_merge($defaultParams,$this->getUrlParams());
+				}
+			}
 			$params = array_merge($defaultParams,$params);
 		}
 		$url = $this->getApplication()->makeControllerUrl($controllerPath,$params);
