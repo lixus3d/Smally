@@ -29,7 +29,7 @@ abstract class AbstractElement implements InterfaceElement {
 			foreach($options as $key => $option){
 				if(method_exists($this, 'set'.ucfirst($key))){
 					$this->{'set'.ucfirst($key)}($option);
-				}else throw new Exception('invalid element construct option');
+				}else throw new \Exception('invalid element construct option');
 			}
 		}
 		if(method_exists($this, 'init')){
