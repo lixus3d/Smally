@@ -27,7 +27,7 @@ class Acl {
 	 * @param array $array Array of model => rights
 	 */
 	public function setAllowArray($array){
-		if(is_array($allow)){
+		if(is_array($array)){
 			$this->_allow = $array;
 		}
 		return $this;
