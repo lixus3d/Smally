@@ -13,12 +13,18 @@ class Tree {
 
 	protected $_attributes = array();
 
+
+	protected $_helperNamespace = null;
+
 	/**
 	 * Construct the new tree object
 	 * @param array  $options Array of $key => $value set as tree properties, if a 'children' key is given, assume that's it's a sub array of Tree to construct
 	 * @param \Smally\Tree $parent  A Smally\Tree parent object for back reference
 	 */
 	public function __construct($options=array(),\Smally\Tree $parent=null){
+
+		$this->setHelperNamespace( (string)\Smally\Application::getInstance()->getConfig()->smally->tree->namespace->helper?:'\\Smally\\' );
+
 		if(!is_null($parent)){
 			$this->setParent($parent);
 		}
@@ -45,6 +51,16 @@ class Tree {
 				}
 			}
 		}
+		return $this;
+	}
+
+
+	/**
+	 * Define the decorator namespace to use for the form
+	 * @param string $ns namespace
+	 */
+	public function setHelperNamespace($ns){
+		$this->_helperNamespace = $ns;
 		return $this;
 	}
 
@@ -176,7 +192,18 @@ class Tree {
 	 * @return \Smally\Helper\Menu
 	 */
 	public function getMenu(){
-		$menu = new Helper\Menu();
+
+		$type = 'Helper\\Menu';
+
+		$name = $this->_helperNamespace.$type; // Try the form namespace
+		if(!class_exists($name)){
+			$name = '\\Smally\\'.$type; // try the form default namespace
+		}
+		if(!class_exists($name)){
+			throw new Exception('Helper type unavailable : '.$type);
+		}
+
+		$menu = new $name();
 		$menu->setTree($this);
 		return $menu;
 	}
