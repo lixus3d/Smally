@@ -8,12 +8,15 @@ abstract class Controller {
 	protected $_action 		= null;
 	protected $_view 		= null;
 
+	protected $_controllerClassname = null;
+
 	/**
 	 * Construct the controller object
 	 * @param \Smally\Application $application reverse reference to the application
 	 */
 	public function __construct(\Smally\Application $application){
 		$this->setApplication($application);
+		$this->setControllerClassnameForTemplate(str_replace('Controller\\','',get_class($this)));
 		if(method_exists($this, 'init')) $this->init();
 	}
 
@@ -77,6 +80,11 @@ abstract class Controller {
 		return $this;
 	}
 
+	public function setControllerClassnameForTemplate($controllerClassname){
+		$this->_controllerClassname = $controllerClassname;
+		return $this;
+	}
+
 	/**
 	 * Define the view to use by passing only the view $templatePath
 	 * @param string $templatePath the template path
@@ -91,6 +99,10 @@ abstract class Controller {
 		return $this;
 	}
 
+	public function getControllerClassnameForTemplate(){
+		return $this->_controllerClassname;
+	}
+
 	/**
 	 * Return the called action of the controller
 	 * @param  boolean $full With the controller name or not
@@ -98,7 +110,7 @@ abstract class Controller {
 	 */
 	public function getAction($full=false){
 		if($full){
-			return str_replace('Controller\\','',get_class($this)) . DIRECTORY_SEPARATOR . $this->_action;
+			return $this->_controllerClassname . DIRECTORY_SEPARATOR . $this->_action;
 		}
 		return $this->_action;
 	}
@@ -110,7 +122,7 @@ abstract class Controller {
 	 */
 	public function getActionNormalize($full=false){
 		if($full){
-			return str_replace('Controller\\','',get_class($this)) . '\\' . $this->_action;
+			return $this->_controllerClassname . '\\' . $this->_action;
 		}
 		return $this->_action;
 	}
