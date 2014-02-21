@@ -16,7 +16,7 @@ abstract class Controller {
 	 */
 	public function __construct(\Smally\Application $application){
 		$this->setApplication($application);
-		$this->setControllerClassnameForTemplate(str_replace('Controller\\','',get_class($this)));
+		// $this->setControllerClassnameForTemplate(str_replace('Controller\\','',get_class($this)));
 		if(method_exists($this, 'init')) $this->init();
 	}
 
@@ -100,6 +100,9 @@ abstract class Controller {
 	}
 
 	public function getControllerClassnameForTemplate(){
+		if(is_null($this->_controllerClassname)){
+			$this->_controllerClassname = str_replace('Controller\\','',get_class($this));
+		}
 		return $this->_controllerClassname;
 	}
 
@@ -110,7 +113,7 @@ abstract class Controller {
 	 */
 	public function getAction($full=false){
 		if($full){
-			return $this->_controllerClassname . DIRECTORY_SEPARATOR . $this->_action;
+			return $this->getControllerClassnameForTemplate() . DIRECTORY_SEPARATOR . $this->_action;
 		}
 		return $this->_action;
 	}
@@ -122,7 +125,7 @@ abstract class Controller {
 	 */
 	public function getActionNormalize($full=false){
 		if($full){
-			return $this->_controllerClassname . '\\' . $this->_action;
+			return $this->getControllerClassnameForTemplate() . '\\' . $this->_action;
 		}
 		return $this->_action;
 	}
