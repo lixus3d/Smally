@@ -140,7 +140,7 @@ class Upload extends \Smally\VO\Standard {
 	 */
 	public function getDataFolder(){
 		if(is_null($this->_dataFolder)){
-			$this->_dataFolder = (string)$this->getApplication()->getConfig()->smally->upload->path?:ROOT_PATH.'public/data/';
+			$this->_dataFolder = (string)$this->getApplication()->getConfig()->smally->upload->path?:PUBLIC_PATH.'data/';
 		}
 		return $this->_dataFolder;
 	}
