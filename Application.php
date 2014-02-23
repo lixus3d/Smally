@@ -201,7 +201,7 @@ class Application {
 	 */
 	public function getLogger(){
 		if(is_null($this->_logger)){
-			$this->_logger = new Logger($this->getConfig()->smally->logger->path!=''?:ROOT_PATH.'logs/',$this);
+			$this->_logger = new Logger($this->getConfig()->smally->logger->path!=''?:LOG_PATH,$this);
 			$this->_logger->setInstance(); // The application logger is a singleton and by so the default logger
 		}
 		return $this->_logger;
@@ -295,7 +295,7 @@ class Application {
 	 * @return \Smally\Meta
 	 */
 	public function getMeta(){
-		if(is_null($this->_meta)) $this->_meta = new Meta($this,$_REQUEST);
+		if(is_null($this->_meta)) $this->_meta = new Meta($this);
 		return $this->_meta;
 	}
 
