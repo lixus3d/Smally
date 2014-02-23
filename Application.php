@@ -430,7 +430,7 @@ class Application {
 		if($urlRewriting=$this->getUrlRewriting()){
 			return $urlRewriting->getControllerRewriting($controllerPath,$params);
 		}
-		return str_replace('\\','/',$controllerPath);
+		return str_replace('\\','/',$controllerPath); // The url path are with / not \
 	}
 
 	/**

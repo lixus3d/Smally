@@ -102,7 +102,7 @@ class ControllerAcl {
 				}else{
 					if( strpos($controllerPath,'\\') !==false ){
 						$controllerPath = substr($controllerPath,0,strrpos($controllerPath,'\\'));
-					}else break;
+					}else break; // we break if we didn't find any \\ char because we have reach the top
 				}
 			}
 
