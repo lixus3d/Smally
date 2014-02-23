@@ -80,7 +80,7 @@ abstract class AbstractUrlRewriting {
 
 	/**
 	 * Replace in $matches the param key with the value for url
-	 * @example replace '%name' width 'emmanuel-gauthier' from the $this->_replaceParams
+	 * @example replace '%name' with 'emmanuel-gauthier' from the $this->_replaceParams
 	 * @param  array $matches Array of matches from preg_replace_callback
 	 * @return string
 	 */
