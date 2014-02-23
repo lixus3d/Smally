@@ -220,8 +220,7 @@ class View {
 	 * @return string
 	 */
 	public function getTemplateFullPath($template){
-		$template = str_replace('\\','/',$template);
-		return 'template'.DIRECTORY_SEPARATOR.$template.'.php';
+		return ROOT_PATH.'template'.DIRECTORY_SEPARATOR.$template.'.php';
 	}
 
 	/**
@@ -230,7 +229,7 @@ class View {
 	 * @return boolean
 	 */
 	public function templateExist($template){
-		return file_exists(ROOT_PATH.$this->getTemplateFullPath($template));
+		return file_exists($this->getTemplateFullPath($template));
 	}
 
 	/**

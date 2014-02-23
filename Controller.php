@@ -56,7 +56,7 @@ abstract class Controller {
 	 * @return \Smally\AbstractLogic
 	 */
 	public function getLogic(){
-		$className = str_replace(array('Controller\\','Auto'),'',get_class($this));
+		$className = str_replace(array('Controller\\','Auto'),'',get_class($this)); // Auto controller refer to the default logic of their name
 		return $this->getFactory()->getLogic($className);
 	}
 
@@ -113,18 +113,6 @@ abstract class Controller {
 	 */
 	public function getAction($full=false){
 		if($full){
-			return $this->getControllerClassnameForTemplate() . DIRECTORY_SEPARATOR . $this->_action;
-		}
-		return $this->_action;
-	}
-
-	/**
-	 * Return the called action normalized ( using "\" separator )
-	 * @param  boolean $full With the controller name or not
-	 * @return string
-	 */
-	public function getActionNormalize($full=false){
-		if($full){
 			return $this->getControllerClassnameForTemplate() . '\\' . $this->_action;
 		}
 		return $this->_action;
@@ -136,7 +124,11 @@ abstract class Controller {
 	 */
 	public function getView(){
 		if(is_null($this->_view)){
-			$this->setViewTemplatePath($this->getAction(true));
+			$templatPath = $this->getAction(true);
+			if(DIRECTORY_SEPARATOR != '\\'){
+				$templatePath = str_replace('\\',DIRECTORY_SEPARATOR,$templatePath);
+			}
+			$this->setViewTemplatePath($templatPath);
 		}
 		return $this->_view;
 	}
@@ -146,7 +138,7 @@ abstract class Controller {
 	 * @return boolean
 	 */
 	public function checkAcl(){
-		return \Smally\ControllerAcl::getInstance()->check($this->getActionNormalize(true)); // will automatically redirect if not valid
+		return \Smally\ControllerAcl::getInstance()->check($this->getAction(true)); // will automatically redirect if not valid
 	}
 
 	/**

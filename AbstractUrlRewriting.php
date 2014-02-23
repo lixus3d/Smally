@@ -75,7 +75,7 @@ abstract class AbstractUrlRewriting {
 				return $test.$getPart;
 			}
 		}
-		return str_replace('\\','/',$controllerPath).$getPart;
+		return $controllerPath.$getPart;
 	}
 
 	/**
@@ -93,6 +93,7 @@ abstract class AbstractUrlRewriting {
 		$value = strtolower($value);
 		// convert space, comma, tabulation, etc to '-'
 		$value = preg_replace('#[\s,.\\\\/\n]+#','-',$value);
+		$value = preg_replace('#-{2,}#','-',$value);
 		return preg_replace('#[^a-z0-9-]#','',$value);
 	}
 
@@ -116,7 +117,7 @@ abstract class AbstractUrlRewriting {
 	 * @return mixed
 	 */
 	public function hasControllerRewriting($controllerPath){
-		return  $this->getControllerRewriting($controllerPath) === str_replace('\\','/',$controllerPath) ? false : true;
+		return  $this->getControllerRewriting($controllerPath) === $controllerPath ? false : true;
 	}
 
 	/**

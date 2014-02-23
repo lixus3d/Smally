@@ -224,9 +224,7 @@ class Router {
 			if($uriElems){
 				$this->_uri = implode('/',array_reverse($uriElems));
 			}
-/*			var_dump($baseElems);
-			var_dump($uriElems);
-			die();*/
+
 			if(isset($queryArray['query'])){
 				$this->_uriQuery = $queryArray['query'];
 			}
@@ -253,7 +251,7 @@ class Router {
 	 * @return string Inflected action
 	 */
 	public function parseAction($actionName){
-		$actionName = preg_replace('#(-)([a-z])#e',"strtoupper('\\2')",$actionName);
+		$actionName = preg_replace_callback('#-([a-z])#',function($matches){return strtoupper($matches[1]);},$actionName);
 		return $actionName;
 	}
 
@@ -264,9 +262,7 @@ class Router {
 	 */
 	public function x(){
 
-		$urlSep = '/';
 		$controllerPath = array();
-		$action = '';
 
 		$this->parseUri();
 
@@ -276,7 +272,8 @@ class Router {
 			if(strpos($queryPath,'..') !== false) throw new Exception('We don\'t like ".." in the url ...');
 
 			// remove trailing sep
-			$queryPath = trim($queryPath,$urlSep);
+			$queryPath = trim($queryPath,'/');
+			$queryPathControllerStyle =  str_replace('/','\\',$queryPath); // Right the controller way with \ like namespace
 
 			// Apply UrlRewriting Rules
 			if($urlRewriting = $this->_application->getUrlRewriting()){ // Do we have a valid Url Rewriting element
@@ -287,26 +284,25 @@ class Router {
 				}
 
 				// If we found a url rewriting for the controller path given in $queryPath, then we redirect to this specific url to avoid SEO duplicate content
-				if( $urlRewriting->hasControllerRewriting( str_replace($urlSep,'\\',$queryPath) ) ){
-					$url = $urlRewriting->getControllerRewriting( str_replace($urlSep,'\\',$queryPath), $this->getApplication()->getContext()->toArray() );
+				if( $urlRewriting->hasControllerRewriting( $queryPathControllerStyle ) ){
+					$url = $urlRewriting->getControllerRewriting( $queryPathControllerStyle, $this->getApplication()->getContext()->toArray() );
 					$this->redirect($url,301);
 				}
 
 				if($destination = $urlRewriting->getRewrite($queryPath)){
 					if(is_array($destination)){
-						$queryPath = $destination['path'];
+						$queryPathControllerStyle = $destination['path'];
 						if(isset($destination['matches'])){
 							foreach($destination['matches'] as $key => $value){
 								$this->getApplication()->getContext()->{$key} = $value;
 							}
 						}
-					}else $queryPath = $destination;
-					$queryPath = str_replace('\\',$urlSep,$queryPath);
+					}else $queryPathControllerStyle = $destination;
 				}
 			}
 
 			// explode the query in parts
-			$parts = explode($urlSep,$queryPath);
+			$parts = explode('\\',$queryPathControllerStyle);
 			foreach($parts as $part){
 				$controllerPath[] = ucfirst($part);
 			}
@@ -321,10 +317,7 @@ class Router {
 		}
 
 		// Fix first letter of action to lowercase
-		$action = $this->parseAction(array_pop($controllerPath))?:'index';
-		$action[0] = strtolower($action[0]);
-
-		$this->_action = $action;
+		$this->_action = lcfirst($this->parseAction(array_pop($controllerPath)));
 		$this->_controllerPath = implode('\\',$controllerPath);
 
 		$this->log($this->getActionPath());
