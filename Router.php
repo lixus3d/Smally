@@ -7,8 +7,8 @@ class Router {
 	protected $_application = null;
 	protected $_controller;
 
-	protected $_defaultController 	= 'Index';
-	protected $_defaultAction 		= 'index';
+	protected $_defaultController 	= null;
+	protected $_defaultAction 		= null;
 
 	protected $_baseUrl = null;
 	protected $_uri = '';
@@ -32,6 +32,8 @@ class Router {
 			$this->_logger = $logger;
 			$this->_logLevel = $logger->getLogLevel('Router');
 		}
+		$this->setDefaultController((string)$this->getApplication()->getConfig()->project->default->router->controller?:'Index');
+		$this->setDefaultAction((string)$this->getApplication()->getConfig()->project->default->router->action?:'index');
 	}
 
 	/**
