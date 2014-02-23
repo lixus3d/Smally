@@ -8,6 +8,7 @@ class Db implements InterfaceDao {
 	const STATEMENT_UPDATE = 'UPDATE';
 
 	protected $_table = null;
+	protected $_tablePrefix = '';
 	protected $_primaryKey = null;
 	protected $_voName = null;
 	protected $_connector = null;
@@ -66,11 +67,24 @@ class Db implements InterfaceDao {
 	}
 
 	/**
+	 * Define the table prefix for database request
+	 * @param string $tablePrefix A valid table prefix for MySQL
+	 * @return \Smally\Dao\Db
+	 */
+	public function setTablePrefix($tablePrefix){
+		$this->_tablePrefix = $tablePrefix;
+		return $this;
+	}
+
+	/**
 	 * Get the table for request of the dao
 	 * @return string
 	 */
-	public function getTable(){
-		return $this->_table;
+	public function getTable($withPrefix=true){
+		if(is_null($this->_table)){
+			$this->_table = trim(preg_replace('#([A-Z])#e',"strtolower('_\\1')",$this->getVoName()),'_');
+		}
+		return $this->_tablePrefix.$this->_table;
 	}
 
 	/**

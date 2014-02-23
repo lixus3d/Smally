@@ -167,27 +167,12 @@ class Standard extends \stdClass {
 	}
 
 	/**
-	 * Return the table name for the current value object, generic is a lowercase version of vo name with '_' before each uppercase letter
-	 * @example ArticleTag will become article_tag , if you extends the standard value object you can define a specific table just by defining the $_table property
-	 * @return string
-	 */
-	public function getTable(){
-		if(is_null($this->_table)){
-			$this->_table = trim(preg_replace('#([A-Z])#e',"strtolower('_\\1')",$this->getVoName()),'_');
-		}
-		return $this->_table;
-	}
-
-	/**
 	 * Return the primary key of the given value object, default is table name with 'Id' suffix
 	 * @example Article VO will have the primaryKey articleId , if you extends the standard value object you can define a specific primaryKey just by defining the $_primaryKey property
 	 * @return string
 	 */
 	public function getPrimaryKey(){
-		if(is_null($this->_primaryKey)){
-			$this->_primaryKey = $this->getTable().'Id';
-		}
-		return $this->_primaryKey;
+		return $this::primaryKey;
 	}
 
 	/**

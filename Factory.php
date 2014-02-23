@@ -129,20 +129,31 @@ class Factory {
 	 * @return \Smally\Dao\InterfaceDao
 	 */
 	public function getDao($voName){
+		// Return the default Dao if no voName given
 		if(is_null($voName)) return $this->getDefaultDao();
+
+		// Create the dao for this vo only if not present
 		if(!isset($this->_dao[$voName])){
+
 			$path = $this->getObjectPath($voName,'Dao');
+
+			// If a precise Dao defined load it, else we get a default Dao
 			if(class_exists($path)){
 				$this->_dao[$voName] = new $path();
+				// If the construct of the dao didn't define a connector, we place the default one
+				if( is_null($this->_dao[$voName]->getConnector()) ){
+					$this->_dao[$voName]->setConnector($this->getDefaultDbConnector());
+				}
 			}else{
 				$this->_dao[$voName] = $this->getDefaultDao();
 			}
-			$vo = new $voName(); // TODO : Find a better solution for getting table and primary key
+
+			// Define some dao default var
 			$this->_dao[$voName]
 						->setVoName($voName)
-						->setTable($vo->getTable())
-						->setPrimaryKey($vo->getPrimaryKey())
+						->setPrimaryKey($voName::PRIMARY_KEY) // Every VO must define a PRIMARY_KEY constant
 						;
+
 			if($this->_dao[$voName] instanceof \Smally\Dao\InterfaceExtendedDao){
 				$this->_dao[$voName]->init();
 			}
