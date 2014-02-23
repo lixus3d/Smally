@@ -8,7 +8,7 @@ class Db implements InterfaceDao {
 	const STATEMENT_UPDATE = 'UPDATE';
 
 	protected $_table = null;
-	protected $_tablePrefix = '';
+	protected $_tablePrefix = null;
 	protected $_primaryKey = null;
 	protected $_voName = null;
 	protected $_connector = null;
@@ -82,9 +82,23 @@ class Db implements InterfaceDao {
 	 */
 	public function getTable($withPrefix=true){
 		if(is_null($this->_table)){
-			$this->_table = trim(preg_replace('#([A-Z])#e',"strtolower('_\\1')",$this->getVoName()),'_');
+			$this->_table = trim(preg_replace('#([A-Z])#e',"strtolower('_\\1')",$this->getVoName(false)),'_');
 		}
-		return $this->_tablePrefix.$this->_table;
+		if($withPrefix){
+			return $this->getTablePrefix().$this->_table;
+		}
+		return $this->_table;
+	}
+
+	/**
+	 * Get the table for request of the dao
+	 * @return string
+	 */
+	public function getTablePrefix(){
+		if(is_null($this->_tablePrefix)){
+			$this->_tablePrefix = (string)\Smally\Application::getInstance()->getConfig()->smally->db->table->prefix?:'';
+		}
+		return $this->_tablePrefix;
 	}
 
 	/**
@@ -99,7 +113,10 @@ class Db implements InterfaceDao {
 	 * Get the value object class name
 	 * @return string
 	 */
-	public function getVoName(){
+	public function getVoName($complete=true){
+		if(!$complete){
+			return substr(strrchr($this->_voName,'\\'),1);
+		}
 		return $this->_voName;
 	}
 
