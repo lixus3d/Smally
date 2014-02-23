@@ -44,7 +44,7 @@ class ControllerAcl {
 	 * @return \Smally\ControllerAcl
 	 */
 	public function loadFile(){
-		$path = (string) \Smally\Application::getInstance()->getConfig()->controller->aclFilePath ?: ROOT_PATH.'acl.php';
+		$path = (string) \Smally\Application::getInstance()->getConfig()->controller->aclFilePath ?: CONFIG_PATH.'acl.php';
 		if(file_exists($path)){
 			require($path);
 			if(isset($rules)) $this->setRules($rules);
