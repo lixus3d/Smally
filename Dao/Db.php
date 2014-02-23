@@ -251,7 +251,7 @@ class Db implements InterfaceDao {
 				}
 				$result->free();
 			}
-		}else throw new \Smally\Exception('Db fetch error : '.$this->getConnector()->error . NN . 'Query : '.$sql);
+		}else throw new \Smally\Exception('Db fetchAll error : '.$this->getConnector()->error . NN . 'Query : '.$sql);
 
 		return $return;
 	}
