@@ -77,7 +77,8 @@ class AbstractBusiness {
 	}
 
 	/**
-	 * Return a generic Smally\Criteria
+	 * Return a generic Smally\Criteria of the business model or another one if $voName is define
+	 * @param string $voName The voName of the criteria you want
 	 * @return \Smally\Criteria
 	 */
 	public function getCriteria($voName=null){
@@ -86,7 +87,7 @@ class AbstractBusiness {
 	}
 
 	/**
-	 * Return the Dao of the current module or a standard db dao if specific module dao doesn't exists
+	 * Return the Dao of the current business or a standard db dao if specific module dao doesn't exists (optional $voName for other vo Dao)
 	 * @param  string $voName The voName of the dao you want
 	 * @return \Smally\Dao\InterfaceDao
 	 */
