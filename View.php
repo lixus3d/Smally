@@ -9,7 +9,8 @@ class View {
 
 	protected $_templatePath = null;
 
-	protected $_content = '';
+	public $content = ''; // eventually a sub content in the view. Usually for a Global layout
+	protected $_render = '';
 
 	/**
 	 * Construct the View object
@@ -78,6 +79,24 @@ class View {
 	}
 
 	/**
+	 * Define the view content/render
+	 * @param string $content The content of the view
+	 */
+	public function setContent($content){
+		$this->content = $content;
+		return $this;
+	}
+
+	/**
+	 * Define the view content/render
+	 * @param string $content The content of the view
+	 */
+	public function setRender($render){
+		$this->_render = $render;
+		return $this;
+	}
+
+	/**
 	 * Compatibility to avoid notice when a property is not defined
 	 * @param  string $name
 	 * @return null
@@ -111,11 +130,19 @@ class View {
 	}
 
 	/**
-	 * Get the content of the view, default empty
+	 * Get the sub content of the view, default empty
 	 * @return string
 	 */
 	public function getContent(){
-		return $this->_content;
+		return $this->content;
+	}
+
+	/**
+	 * Get the render of the view, default empty
+	 * @return string
+	 */
+	public function getRender(){
+		return $this->_render;
 	}
 
 	/**
@@ -215,7 +242,7 @@ class View {
 	 */
 	public function subController($controllerPath,$action='index',$params=array()){
 		return $this
-				->getRooter()
+				->getRouter()
 				->getControllerObject($controllerPath)
 				->setAction($action)
 				->x($params)
@@ -228,7 +255,7 @@ class View {
 	 * @return \Smally\View
 	 */
 	public function x($params=array()){
-		$this->_content = $this->render($this->getTemplatePath(),$params);
+		$this->setRender($this->render($this->getTemplatePath(),$params));
 		return $this;
 	}
 

@@ -72,7 +72,7 @@ class MenuElement extends AbstractDecorator {
 		if( ($this->getElement()->getType()!='separator') && $application = \Smally\Application::getInstance() ){
 
 			// try the url approach
-			$actualUrl = $application->getRooter()->getActualUrl();
+			$actualUrl = $application->getRouter()->getActualUrl();
 			if($this->getElement()->getUrl() == $actualUrl && !$this->getElement()->isShortcut() ){
 				$attributes['class'][] = $this->_classActive;
 				// Add the active class to the parent of the current menu
@@ -81,7 +81,7 @@ class MenuElement extends AbstractDecorator {
 				}
 			}
 
-			$actualUrl = $application->getRooter()->getActionPath();
+			$actualUrl = $application->getRouter()->getActionPath();
 			if($this->getElement()->getActionPath() == $actualUrl){
 				$attributes['class'][] = $this->_classActive;
 				// Add the active class to the parent of the current menu

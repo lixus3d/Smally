@@ -2,7 +2,7 @@
 
 namespace Smally;
 
-class Rooter {
+class Router {
 
 	protected $_application = null;
 	protected $_controller;
@@ -23,21 +23,21 @@ class Rooter {
 	protected $_logger = null;
 
 	/**
-	 * Construct the Rooter object
+	 * Construct the Router object
 	 * @param \Smally\Application $application reverse reference to the application
 	 */
 	public function __construct(\Smally\Application $application){
 		$this->setApplication($application);
 		if($logger = $application->getLogger()){
 			$this->_logger = $logger;
-			$this->_logLevel = $logger->getLogLevel('rooter');
+			$this->_logLevel = $logger->getLogLevel('Router');
 		}
 	}
 
 	/**
 	 * Set the application reverse reference
 	 * @param \Smally\Application $application Current application linked to this object
-	 * @return \Smally\Rooter
+	 * @return \Smally\Router
 	 */
 	public function setApplication(\Smally\Application $application){
 		$this->_application = $application;
@@ -45,9 +45,9 @@ class Rooter {
 	}
 
 	/**
-	 * Define the base url for the rooter
+	 * Define the base url for the Router
 	 * @param string $url
-	 * @return \Smally\Rooter
+	 * @return \Smally\Router
 	 */
 	public function setBaseUrl($url){
 		$this->_baseUrl = $url;
@@ -57,7 +57,7 @@ class Rooter {
 	/**
 	 * Define the clone prefix to use to prefix the uri
 	 * @param string $clonePrefix The string to use to prefix uri part
-	 * @return \Smally\Rooter
+	 * @return \Smally\Router
 	 */
 	public function setClonePrefix($clonePrefix){
 		$this->_clonePrefix = $clonePrefix;
@@ -67,7 +67,7 @@ class Rooter {
 	/**
 	 * Define the default controller to use when not present in uri
 	 * @param string $defaultController The default controller name
-	 * @return \Smally\Rooter
+	 * @return \Smally\Router
 	 */
 	public function setDefaultController($defaultController){
 		$this->_defaultController = $defaultController;
@@ -77,7 +77,7 @@ class Rooter {
 	/**
 	 * Define the default action to use when not present in uri
 	 * @param string $defaultAction The default action name
-	 * @return \Smally\Rooter
+	 * @return \Smally\Router
 	 */
 	public function setDefaultAction($defaultAction){
 		$this->_defaultAction = $defaultAction;
@@ -185,7 +185,7 @@ class Rooter {
 
 	/**
 	 * Cut the REQUEST_URI in two parts : "controller" part and "base" part
-	 * @return \Smally\Rooter
+	 * @return \Smally\Router
 	 */
 	public function parseUri(){
 		if(!$this->_baseUrl){
@@ -260,7 +260,7 @@ class Rooter {
 	/**
 	 * Parse the request uri, find the base path, the controller and the action to do
 	 * @throws Exception
-	 * @return \Smally\Rooter
+	 * @return \Smally\Router
 	 */
 	public function x(){
 

@@ -11,7 +11,6 @@ abstract class AbstractUrlRewriting {
 	protected $_replaceParams = null;
 
 	public function __construct(){
-		$this->addRule('','Index\index'); // The most default rewrite rule to avoid SEO duplicate content
 		$this->init();
 	}
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Smally {
+namespace Smally;
 
 class Application {
 
@@ -21,7 +21,7 @@ class Application {
 
 	protected $_config 				= null;
 	protected $_context 			= null;
-	protected $_rooter 				= null;
+	protected $_Router 				= null;
 	protected $_view				= null;
 	protected $_response 			= null;
 	protected $_translate 			= null;
@@ -250,12 +250,12 @@ class Application {
 	}
 
 	/**
-	 * Get the rooter object or create it the first time
-	 * @return \Smally\Rooter
+	 * Get the Router object or create it the first time
+	 * @return \Smally\Router
 	 */
-	public function getRooter(){
-		if(is_null($this->_rooter)) $this->_rooter = new Rooter($this);
-		return $this->_rooter;
+	public function getRouter(){
+		if(is_null($this->_Router)) $this->_Router = new Router($this);
+		return $this->_Router;
 	}
 
 	/**
@@ -348,7 +348,7 @@ class Application {
 	public function getBaseUrl($path='',$type='www',$htmlspecialchars=true){
 		static $baseUrl = null;
 		if(is_null($baseUrl)){
-			$baseUrl = $this->getRooter()->getBaseUrl();
+			$baseUrl = $this->getRouter()->getBaseUrl();
 		}
 
 		switch($type){
@@ -452,53 +452,22 @@ class Application {
 
 		if($this->getInit()) $this->getInit()->x();
 
-		// Execute the rooter logic : Parse URL, define controller path and controller action
-		$this->getRooter()->x();
+		// Execute the Router logic : Parse URL, define controller path and controller action
+		$this->getRouter()->x();
 
 		// Execute the bootstrap if present
-		if($this->getBootstrap()) $this->getBootstrap()->x();
+		if($bootstrap = $this->getBootstrap()) $bootstrap->x();
 
 		// Execute the controller and view
-		$this->getRooter()->getController()->x();
+		$controller = $this->getRouter()->getController()->x();
 
-		// Place view content in the view->content property of the layout
-		$this->getView()->content = $this->getRooter()->getController()->getView()->getContent();
-
-		// Execute the application view (layout)
-		$this->getView()->x();
+		// Place the view content in the global layout view and execute layout view
+		$layoutView = $this->getView()->setContent($controller->getView()->getRender())->x();
 
 		// Execute response logic
-		$this->getResponse()->setContent($this->getView()->getContent())->x();
+		$this->getResponse()->setContent($layoutView->getRender())->x();
 
 		return $this;
 	}
 
-}
-
-}
-
-namespace {
-	/**
-	 * A shortcut to htmlentities
-	 * @param  string $string The string you want to htmlentities
-	 * @return string
-	 */
-	function _h($string){
-		return htmlentities($string,ENT_COMPAT,'UTF-8');
-	}
-
-	/**
-	 * Future translate function
-	 * @return string
-	 */
-	function __($key){
-
-		global $globalTranslate;
-
-		if(isset($globalTranslate[$key])){
-			return $globalTranslate[$key];
-		}else{
-			return \Smally\Application::getInstance()->getTranslate()->translate($key);
-		}
-	}
 }

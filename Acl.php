@@ -80,7 +80,7 @@ class Acl {
 			}else throw new Exception('Model '.$modelName.' has no getInstance method ! Acl check fail !');
 		}
 		if(!is_null($redirect)&&!$state){
-			Application::getInstance()->getRooter()->redirect($redirect);
+			Application::getInstance()->getRouter()->redirect($redirect);
 		}
 		return $state;
 	}

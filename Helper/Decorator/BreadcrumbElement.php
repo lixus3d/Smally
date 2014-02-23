@@ -66,7 +66,7 @@ class BreadcrumbElement extends AbstractDecorator {
 
 		// Add the active automatically
 		if($application = \Smally\Application::getInstance()){
-			$actualUrl = $application->getRooter()->getActualUrl();
+			$actualUrl = $application->getRouter()->getActualUrl();
 			if($this->getElement()->getUrl() == $actualUrl){
 				$attributes['class'][] = $this->_classActive;
 			}
