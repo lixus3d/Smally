@@ -17,11 +17,12 @@ class Assets {
 		if(!self::$_singleton instanceof self){
 			$this->setInstance();
 		}
-		$this->load();
+		$this->loadMtime();
+		$this->loadMinify();
 	}
 
 	public function __destruct(){
-		$this->write();
+		$this->writeMtime();
 	}
 
 	/**
@@ -54,6 +55,10 @@ class Assets {
 		return $this->_application;
 	}
 
+	///////////////////
+	// ASSETS MTIME //
+	///////////////////
+
 	/**
 	 * Add the mtime of a given asset
 	 * @param string $path  The path to the asset (relative)
@@ -78,7 +83,7 @@ class Assets {
 	 * Get the config file path
 	 * @return string
 	 */
-	public function getConfigFilePath(){
+	public function getMtimeConfigFilePath(){
 		return (string) $this->getApplication()->getConfig()->project->assets->mtimePath?:CONFIG_PATH.'assets_mtime.php';
 	}
 
@@ -98,7 +103,7 @@ class Assets {
 	 * Reset all assets mtime
 	 * @return \Assets
 	 */
-	public function reset(){
+	public function resetAllMtime(){
 		$this->_assets = array();
 		return $this;
 	}
@@ -107,8 +112,8 @@ class Assets {
 	 * Load all assets mtime from the config file
 	 * @return \Assets
 	 */
-	public function load(){
-		if($path = $this->getConfigFilePath()){
+	public function loadMtime(){
+		if($path = $this->getMtimeConfigFilePath()){
 			if(file_exists($path)){
 				require($path);
 				if(isset($assets)) $this->_assets = $assets;
@@ -121,7 +126,7 @@ class Assets {
 	 * Write all the assets to the config file
 	 * @return \Assets
 	 */
-	public function write(){
+	public function writeMtime(){
 		$export = var_export($this->_assets,true);
 
 		$data = array();
@@ -130,7 +135,32 @@ class Assets {
 		$data[] = $export;
 		$data[] = ';';
 
-		file_put_contents($this->getConfigFilePath(), implode(NN,$data) );
+		file_put_contents($this->getMtimeConfigFilePath(), implode(NN,$data) );
+		return $this;
+	}
+
+	///////////////////
+	// JS MINIFYING //
+	///////////////////
+
+	/**
+	 * Check weither an asset filepath (js for now) is in minify table or not
+	 * @param string $path The path to the asset (relative)
+	 * @return boolean true if in minify array
+	 */
+	public function isMinify($path){
+		return in_array($path, $this->_minify);
+	}
+
+	/**
+	 * Load the minify array from config
+	 * @return \Assets
+	 */
+	public function loadMinify(){
+		$minify = $this->getApplication()->getConfig()->project->minify->js->toArray();
+		if($minify){
+			$this->_minify = $minify;
+		}
 		return $this;
 	}
 

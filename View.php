@@ -179,8 +179,8 @@ class View {
 	public function getCss(){
 
 		$output = array();
-		$cssFiles = $this->getApplication()->getCss();
-		foreach($cssFiles as $file){
+
+		foreach($this->getApplication()->getCss() as $file){
 			if(strpos($file,'http')!==0){
 				if($mtime = \Smally\Assets::getInstance()->getAssetMtime($file) ){
 					$file = substr($file,0,strrpos($file, '.')) . '.' . $mtime . strrchr($file, '.');
@@ -203,12 +203,37 @@ class View {
 	 * @return string
 	 */
 	public function getJs(){
+
+		$addMinify = false;
 		$output = array();
-		$jsFiles = $this->getApplication()->getJs();
-		foreach($jsFiles as $file){
+
+		foreach($this->getApplication()->getJs() as $file){
+			if(\Smally\Assets::getInstance()->isMinify($file)){
+				$addMinify = true;
+				if(!$this->getApplication()->isDev()) {
+					continue;
+				}
+			}
 			$url = strpos($file,'http')===0?$file:$this->urlAssets($file);
 			$output[] = '<script type="text/javascript" src="'.$url.'"></script>';
 		}
+
+		// Do we have to add the minify script
+		if($addMinify){
+			// we retrieve the filename of the minify js
+			$file = (string)$this->getApplication()->getConfig()->project->minifiy->jsfile?:'js/project.minify.js';
+
+			// In developpement we actually load real script and set the minify in a hidden img to regenerate the minify version
+			// TODO find a better solution to generate the minified version
+			if($this->getApplication()->isDev()) {
+				$output[] = '<img src="'.$this->urlAssets($file).'" width="0" height="0" style="display:none"/>';
+			}else{
+				$mtime = \Smally\Assets::getInstance()->getAssetMtime($file);
+				$file = substr($file,0,strrpos($file, '.')) . ($mtime?'.' . $mtime:'') . '.min'. strrchr($file, '.') ;
+				$output[] = '<script type="text/javascript" src="'.$this->urlAssets($file).'"></script>';
+			}
+		}
+
 		return implode(NN.TT,$output);
 	}
 
