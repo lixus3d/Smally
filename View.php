@@ -181,10 +181,18 @@ class View {
 		$output = array();
 		$cssFiles = $this->getApplication()->getCss();
 		foreach($cssFiles as $file){
-			if(strpos($file,'.less') > 0 && !$this->getApplication()->isDev()) {
-				$file .= '.css';
+			if(strpos($file,'http')!==0){
+				if($mtime = \Smally\Assets::getInstance()->getAssetMtime($file) ){
+					$file = substr($file,0,strrpos($file, '.')) . '.' . $mtime . strrchr($file, '.');
+				}
+				if(strpos($file,'.less') > 0 && !$this->getApplication()->isDev()) {
+					$file .= '.css';
+				}
+				$url = $this->urlAssets($file);
+			}else{
+				$url = $file;
 			}
-			$url = strpos($file,'http')===0?$file:$this->urlAssets($file);
+
 			$output[] = '<link rel="stylesheet"  type="text/css"  media="all" href="'.$url.'"/>';
 		}
 		return implode(NN.TT,$output);

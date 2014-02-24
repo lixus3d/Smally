@@ -364,6 +364,8 @@ class Application {
 					$ip = substr(strrchr($this->getContext()->getIp(), '.'),1); // serv always same domain to a particular ip
 					$ip += ord(basename($path)) + strlen($path);
 					$url = $dataPaths[$ip % count($dataPaths)];
+				}else{
+					$path = $type.'/'.$path;
 				}
 			break;
 			case 'assets':
@@ -372,6 +374,8 @@ class Application {
 					$ip = substr(strrchr($this->getContext()->getIp(), '.'),1); // serv always same domain to a particular ip
 					$ip += ord(basename($path)) + strlen($path);
 					$url = $assetsPaths[$ip % count($assetsPaths)];
+				}else{
+					$path = $type.'/'.$path;
 				}
 			break;
 		}
