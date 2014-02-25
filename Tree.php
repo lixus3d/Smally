@@ -45,10 +45,10 @@ class Tree {
 				$this->$method($opt);
 			}else{
 				$this->{$key} = $opt;
-				if(method_exists($this, 'onSet'.ucfirst($key))){
-					$method = 'onSet'.ucfirst($key);
-					$this->$method();
-				}
+			}
+			if(method_exists($this, 'onSet'.ucfirst($key))){
+				$method = 'onSet'.ucfirst($key);
+				$this->$method();
 			}
 		}
 		return $this;
