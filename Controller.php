@@ -91,6 +91,9 @@ abstract class Controller {
 	 * @return \Smally\Controller
 	 */
 	public function setViewTemplatePath($templatePath){
+		if(DIRECTORY_SEPARATOR != '\\'){
+			$templatePath = str_replace('\\',DIRECTORY_SEPARATOR,$templatePath);
+		}
 		$this->_view = new View($this->getApplication());
 		$this->_view
 					->setController($this)
