@@ -279,7 +279,7 @@ class View {
 				->setAction($action)
 				->x($params)
 				->getView()
-				->getContent();
+				->getRender();
 	}
 
 	/**
