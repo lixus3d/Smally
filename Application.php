@@ -322,7 +322,7 @@ class Application {
 	}
 
 	/**
-	 * Get the context object or create it the first time with $_REQUEST
+	 * Get the current navigation instance object or create an empty one if not yet defined
 	 * @return \Smally\Context
 	 */
 	public function getNavigation(){
