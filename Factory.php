@@ -248,9 +248,9 @@ class Factory {
 	}
 
 	/**
-	 * Return the default filter of the given vo
-	 * @param  string $voName The vo name of the filter object you want
-	 * @return \Smally\Filter
+	 * Return the VOMeta object corresponding to a particular voName 
+	 * @param  string $voName The vo name of the VOMeta object you want
+	 * @return \Smally\VOMeta\AbstractVOMeta
 	 */
 	public function getVOMeta($voName){
 		if(is_null($voName)) return null;
