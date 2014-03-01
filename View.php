@@ -224,7 +224,6 @@ class View {
 			$file = (string)$this->getApplication()->getConfig()->project->minifiy->jsfile?:'js/project.minify.js';
 
 			// In developpement we actually load real script and set the minify in a hidden img to regenerate the minify version
-			// TODO find a better solution to generate the minified version
 			if($this->getApplication()->isDev()) {
 				$output[] = '<img src="'.$this->urlAssets($file).'" width="0" height="0" style="display:none"/>';
 			}else{
@@ -262,7 +261,8 @@ class View {
 	 * @return boolean
 	 */
 	public function templateExist($template){
-		return file_exists($this->getTemplateFullPath($template));
+		$template = str_replace(array('/','\\'),DIRECTORY_SEPARATOR,$template);
+		return file_exists($this->getTemplateFullPath($template))?$template:false;
 	}
 
 	/**
@@ -299,7 +299,7 @@ class View {
 	 */
 	public function render($template,$params=array()){
 		ob_start();
-		if($this->templateExist($template)){
+		if($template = $this->templateExist($template)){ // check if exist and fix DIRECTORY_SEPARAOTR issues
 			include($this->getTemplateFullPath($template));
 		}else{
 			throw new Exception('Template not found : '.$template);
