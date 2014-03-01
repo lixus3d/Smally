@@ -4,6 +4,8 @@ namespace Smally\VO;
 
 class Upload extends \Smally\VO\Standard {
 
+	const PRIMARY_KEY = 'uploadId';
+
 	protected $_application = null;
 	protected $_thumbnailGenerator = null;
 

@@ -8,12 +8,10 @@ namespace Smally\VO;
 
 class Standard extends \stdClass {
 
-	protected $_voExtend = null;
-	protected $_noVoExtend = false;
+	const PRIMARY_KEY = 'id';
 
 	protected $_voName = null;
 	protected $_table = null;
-	protected $_primaryKey = null;
 	protected $_nameKey = 'name';
 	protected $_searchFields = null;
 
@@ -30,7 +28,6 @@ class Standard extends \stdClass {
 	 * @param array $vars array of $property => $value of the value object
 	 */
 	public function __construct($vars=array()){
-		$this->loadExtend();
 		$this->initVars($vars);
 	}
 
@@ -52,40 +49,6 @@ class Standard extends \stdClass {
 		return $export;
 	}
 
-	/**
-	 * Tricky way to add functions to a vo class, usefull to regenerate base skeleton without erasing some vo specific methods
-	 * @return \Smally\VO\Standard
-	 */
-	public function loadExtend(){
-		$className = $this->getVoName(true);
-		$className = str_replace('\\VO\\','\\VOExtend\\',$className);
-		if(class_exists($className)){
-			$this->_voExtend = new $className($this);
-		}else{
-			$this->_noVoExtend = true;
-		}
-		return $this;
-	}
-
-	public function getVoExtend(){
-		if(is_null($this->_voExtend)&&$this->_noVoExtend!==true){
-			$this->loadExtend();
-		}
-		return $this->_voExtend;
-	}
-
-	/**
-	 * Automatically call extender method if present, exception otherwise
-	 * @return mixed
-	 */
-	public function __call($name,$args){
-		if($this->getVoExtend() instanceof Extender){
-			if(method_exists($this->_voExtend, $name)){
-				return call_user_func_array(array($this->_voExtend,$name),$args);
-			}
-		}
-		throw new \Exception('Method '.$name.' doesn\'t exist in current vo.');
-	}
 
 	/**
 	 * Overwrite any existing property with the value in $vars
@@ -166,13 +129,17 @@ class Standard extends \stdClass {
 		return substr($this->getVoName(true),0,strpos($this->getVoName(true),'\\'));
 	}
 
+	public function getVOMeta(){
+		return $this->getFactory()->getVOMeta(get_called_class());
+	}
+
 	/**
 	 * Return the primary key of the given value object, default is table name with 'Id' suffix
 	 * @example Article VO will have the primaryKey articleId , if you extends the standard value object you can define a specific primaryKey just by defining the $_primaryKey property
 	 * @return string
 	 */
 	public function getPrimaryKey(){
-		return $this::primaryKey;
+		return $this::PRIMARY_KEY;
 	}
 
 	/**
@@ -235,22 +202,17 @@ class Standard extends \stdClass {
 	 */
 	public function getUrl($controllerPath,$params=array(),$replace=false){
 
-		if($this->getVoExtend() instanceof Extender){
-			if(method_exists($this->_voExtend, 'getUrl')){
-				return call_user_func_array(array($this->_voExtend,'getUrl'),array('controllerPath'=>$controllerPath,'params'=>$params,'replace'=>$replace));
-			}
-		}
 
 		if(!$replace){
 			$defaultParams = array(
 					'id' => $this->getId(),
 					'name' => $this->getName(),
 				);
-			if($this->getVoExtend() instanceof Extender){
-				if(method_exists($this->_voExtend, 'getUrlParams')){
-					$defaultParams = array_merge($defaultParams,$this->getUrlParams());
-				}
+
+			if(method_exists($this, 'getUrlParams')){
+				$defaultParams = array_merge($defaultParams,$this->getUrlParams());
 			}
+
 			$params = array_merge($defaultParams,$params);
 		}
 		$url = $this->getApplication()->makeControllerUrl($controllerPath,$params);

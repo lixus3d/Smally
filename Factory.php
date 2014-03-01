@@ -91,6 +91,7 @@ class Factory {
 			case 'Logic':
 				$fullName = $moduleName.'\\'.ucfirst($objectType);
 				break;
+			case 'VOMeta':
 			case 'Filter':
 			case 'Business':
 			case 'Validator':
@@ -154,7 +155,7 @@ class Factory {
 						->setPrimaryKey($voName::PRIMARY_KEY) // Every VO must define a PRIMARY_KEY constant
 						;
 
-			if($this->_dao[$voName] instanceof \Smally\Dao\InterfaceExtendedDao){
+			if(method_exists($this->_dao[$voName],'init')){
 				$this->_dao[$voName]->init();
 			}
 		}
@@ -244,6 +245,22 @@ class Factory {
 			}
 		}
 		return $this->_filter[$voName];
+	}
+
+	/**
+	 * Return the default filter of the given vo
+	 * @param  string $voName The vo name of the filter object you want
+	 * @return \Smally\Filter
+	 */
+	public function getVOMeta($voName){
+		if(is_null($voName)) return null;
+		if(!isset($this->_voMeta[$voName])){
+			$path = $this->getObjectPath($voName,'VOMeta');
+			if(class_exists($path)){
+				$this->_voMeta[$voName] = new $path();
+			}else throw new Exception('VOMeta doesn\'t exists for '.$voName);
+		}
+		return $this->_voMeta[$voName];
 	}
 
 	/**
