@@ -30,7 +30,7 @@ class Application {
 	protected $_urlRewriting		= null;
 	protected $_navigation			= null;
 
-	protected $_layout				= 'global';
+	protected $_layout				= null;
 
 	protected $_css					= array();
 	protected $_js					= array();
@@ -285,7 +285,7 @@ class Application {
 	public function getView(){
 		if(is_null($this->_view)){
 			$this->_view = new View($this);
-			$this->_view->setTemplatePath($this->_layout);
+			$this->_view->setTemplatePath($this->getLayout());
 		}
 		return $this->_view;
 	}
@@ -405,6 +405,9 @@ class Application {
 	 * @return string
 	 */
 	public function getLayout(){
+		if(is_null($this->_layout)){
+			$this->_layout = (string)$this->getConfig()->project->default->template->global?:'global';
+		}
 		return $this->_layout;
 	}
 
