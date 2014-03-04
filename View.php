@@ -298,11 +298,12 @@ class View {
 	 * @return string
 	 */
 	public function render($template,$params=array()){
+		$t = $template;
 		ob_start();
 		if($template = $this->templateExist($template)){ // check if exist and fix DIRECTORY_SEPARAOTR issues
 			include($this->getTemplateFullPath($template));
 		}else{
-			throw new Exception('Template not found : '.$template);
+			throw new Exception('Template not found : '.$t);
 		}
 		return ob_get_clean();
 	}
