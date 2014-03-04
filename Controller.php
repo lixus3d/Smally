@@ -127,11 +127,11 @@ abstract class Controller {
 	 */
 	public function getView(){
 		if(is_null($this->_view)){
-			$templatPath = $this->getAction(true);
+			$templatePath = $this->getAction(true);
 			if(DIRECTORY_SEPARATOR != '\\'){
 				$templatePath = str_replace('\\',DIRECTORY_SEPARATOR,$templatePath);
 			}
-			$this->setViewTemplatePath($templatPath);
+			$this->setViewTemplatePath($templatePath);
 		}
 		return $this->_view;
 	}
