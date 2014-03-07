@@ -34,6 +34,7 @@ class Router {
 		}
 		$this->setDefaultController((string)$this->getApplication()->getConfig()->project->default->router->controller?:'Index');
 		$this->setDefaultAction((string)$this->getApplication()->getConfig()->project->default->router->action?:'index');
+		$this->setClonePrefix((string)$this->getApplication()->getConfig()->smally->multisite->clonePrefix);
 	}
 
 	/**
