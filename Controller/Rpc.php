@@ -16,8 +16,6 @@ class Rpc extends \Smally\Controller {
 		$view = new \Smally\View($application);
 		$view->setTemplatePath('Generic\\Template\\json');
 		$this->setView($view);
-		// Change layout to json
-		$this->getApplication()->setLayout('Generic\\Template\\json');
 
 		// Change headers of the response to handle json logic
 		$this->getResponse()->setHeader('Content-type: application/json');
@@ -30,6 +28,8 @@ class Rpc extends \Smally\Controller {
 	 * @return null
 	 */
 	public function onViewX(){
+		// Change global layout to json
+		$this->getApplication()->setLayout('Generic\\Template\\json');
 		$this->getView()->content = $this->__toString();
 	}
 
