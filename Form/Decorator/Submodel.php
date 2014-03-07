@@ -22,7 +22,7 @@ class Submodel extends AbstractDecorator {
 		// Sub form will use placeholder instead of label
 		foreach($formFields as &$field){
 			$label = $field->getLabel();
-			$field->setLabel('');
+			$field->setLabel(null);
 			$field->setPlaceholder($label);
 		}
 		$wantedFields = $this->getElement()->getVoFields();
