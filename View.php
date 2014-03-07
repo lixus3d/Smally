@@ -237,32 +237,13 @@ class View {
 	}
 
 	/**
-	 * Get a controller url from his $path and $params
-	 * @param  string $controllerPath The controller path ( with action )
-	 * @param  array  $params         Array of $key => $value to put in the generated $url
-	 * @return string
-	 */
-	public function getControllerUrl($controllerPath,$params=array()){
-		return $this->getApplication()->getBaseUrl($this->getApplication()->makeControllerUrl($controllerPath,$params));
-	}
-
-	/**
-	 * Convert a template name (relative) to a complete file path
-	 * @param  string $template The template name you want to have the full path
-	 * @return string
-	 */
-	public function getTemplateFullPath($template){
-		return ROOT_PATH.'template'.DIRECTORY_SEPARATOR.$template.'.php';
-	}
-
-	/**
 	 * Check if a template exist
 	 * @param  string $template The template you want to test ( relative path )
 	 * @return boolean
 	 */
 	public function templateExist($template){
 		$template = str_replace(array('/','\\'),DIRECTORY_SEPARATOR,$template);
-		return file_exists($this->getTemplateFullPath($template))?$template:false;
+		return (stream_resolve_include_path($template.'.php')!==false) ;
 	}
 
 	/**
@@ -298,12 +279,12 @@ class View {
 	 * @return string
 	 */
 	public function render($template,$params=array()){
-		$t = $template;
+		$template = str_replace(array('/','\\'),DIRECTORY_SEPARATOR,$template);
 		ob_start();
-		if($template = $this->templateExist($template)){ // check if exist and fix DIRECTORY_SEPARAOTR issues
-			include($this->getTemplateFullPath($template));
+		if($this->templateExist($template)){ // check if exist and fix DIRECTORY_SEPARAOTR issues
+			include($template.'.php');
 		}else{
-			throw new Exception('Template not found : '.$t);
+			throw new Exception('Template not found : '.$template);
 		}
 		return ob_get_clean();
 	}

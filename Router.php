@@ -156,7 +156,8 @@ class Router {
 	 * @return \Smally\Controller
 	 */
 	public function getControllerObject($controllerPath){
-		$controllerName = '\\Controller\\'.$controllerPath;
+		$splitPosition = strrpos($controllerPath,'\\');
+		$controllerName = substr($controllerPath, 0, $splitPosition).'\\Controller'.substr($controllerPath, $splitPosition);
 		if(class_exists($controllerName)){
 			$controller = new $controllerName($this->getApplication());
 		}else throw new Exception('Invalid controller path given : '.$controllerName);

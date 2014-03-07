@@ -153,6 +153,15 @@ class Application {
 	}
 
 	/**
+	 * Force a multisite id in the current execution
+	 * @param int $siteId The site id you want to force
+	 * @return \Multisite
+	 */
+	public function setMultisiteId($siteId){
+		return \Multisite::getInstance()->x($siteId);
+	}
+
+	/**
 	 * Are we in a developpement context ?
 	 * @return boolean
 	 */
@@ -459,14 +468,14 @@ class Application {
 
 		if($this->getInit()) $this->getInit()->x();
 
-		// Execute the Router logic : Parse URL, define controller path and controller action
-		$this->getRouter()->x();
+		// Execute the Router logic and get the controller: Parse URL, define controller path and controller action
+		$controller = $this->getRouter()->x()->getController();
 
 		// Execute the bootstrap if present
 		if($bootstrap = $this->getBootstrap()) $bootstrap->x();
 
 		// Execute the controller and view
-		$controller = $this->getRouter()->getController()->x();
+		$controller->x();
 
 		// Place the view content in the global layout view and execute layout view
 		$layoutView = $this->getView()->setContent($controller->getView()->getRender())->x();

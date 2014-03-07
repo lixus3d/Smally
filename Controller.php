@@ -8,7 +8,7 @@ abstract class Controller {
 	protected $_action 		= null;
 	protected $_view 		= null;
 
-	protected $_controllerClassname = null;
+	protected $_templatePath = null;
 
 	/**
 	 * Construct the controller object
@@ -17,8 +17,10 @@ abstract class Controller {
 	public function __construct(\Smally\Application $application){
 		$this->setApplication($application);
 		// $this->setControllerClassnameForTemplate(str_replace('Controller\\','',get_class($this)));
-		if(method_exists($this, 'init')) $this->init();
+		$this->init();
 	}
+
+	public function init(){}
 
 	/**
 	 * Set the application reverse reference
@@ -52,15 +54,6 @@ abstract class Controller {
 	}
 
 	/**
-	 * Try to get a logic with the controller name
-	 * @return \Smally\AbstractLogic
-	 */
-	public function getLogic(){
-		$className = str_replace(array('Controller\\','Auto'),'',get_class($this)); // Auto controller refer to the default logic of their name
-		return $this->getFactory()->getLogic($className);
-	}
-
-	/**
 	 * Define the called action of the controller
 	 * @param string $action The name of the action to call
 	 * @return \Smally\Controller
@@ -79,34 +72,31 @@ abstract class Controller {
 		$this->_view = $view;
 		return $this;
 	}
-
-	public function setControllerClassnameForTemplate($controllerClassname){
-		$this->_controllerClassname = $controllerClassname;
-		return $this;
-	}
-
 	/**
 	 * Define the view to use by passing only the view $templatePath
 	 * @param string $templatePath the template path
 	 * @return \Smally\Controller
 	 */
-	public function setViewTemplatePath($templatePath){
+	public function setTemplatePath($templatePath){
 		if(DIRECTORY_SEPARATOR != '\\'){
 			$templatePath = str_replace('\\',DIRECTORY_SEPARATOR,$templatePath);
 		}
-		$this->_view = new View($this->getApplication());
-		$this->_view
-					->setController($this)
-					->setTemplatePath( $templatePath )
-					;
+		$this->_templatePath = $templatePath;
+		if(!is_null($this->_view)){ // we reset the view if already initialized
+			$this->getView(true); // force mode
+		}
 		return $this;
 	}
 
-	public function getControllerClassnameForTemplate(){
-		if(is_null($this->_controllerClassname)){
-			$this->_controllerClassname = str_replace('Controller\\','',get_class($this));
+	/**
+	 * Return the template path associate with the controller current action (auto generate it if not defined)
+	 * @return string
+	 */
+	public function getTemplatePath(){
+		if(is_null($this->_templatePath)){
+			$this->_templatePath = str_replace('Controller','Template',$this->getAction(true,false));
 		}
-		return $this->_controllerClassname;
+		return $this->_templatePath;
 	}
 
 	/**
@@ -114,9 +104,13 @@ abstract class Controller {
 	 * @param  boolean $full With the controller name or not
 	 * @return string
 	 */
-	public function getAction($full=false){
+	public function getAction($full=false,$clean=true){
 		if($full){
-			return $this->getControllerClassnameForTemplate() . '\\' . $this->_action;
+			if($clean){
+				return str_replace('Controller\\','',get_class($this)) . '\\' . $this->_action;
+			}else{
+				return get_class($this) . '\\' . $this->_action;
+			}
 		}
 		return $this->_action;
 	}
@@ -125,16 +119,26 @@ abstract class Controller {
 	 * Return the view object or create it the first time
 	 * @return \Smally\View
 	 */
-	public function getView(){
-		if(is_null($this->_view)){
-			$templatePath = $this->getAction(true);
-			if(DIRECTORY_SEPARATOR != '\\'){
-				$templatePath = str_replace('\\',DIRECTORY_SEPARATOR,$templatePath);
-			}
-			$this->setViewTemplatePath($templatePath);
+	public function getView($force=false){
+		if(is_null($this->_view)||$force){
+			$this->_view = new View($this->getApplication());
+			$this->_view
+					->setController($this)
+					->setTemplatePath( $this->getTemplatePath() )
+					;
 		}
 		return $this->_view;
 	}
+
+	/**
+	 * Try to get a logic with the controller name
+	 * @return \Smally\AbstractLogic
+	 */
+	public function getLogic(){
+		$className = str_replace(array('Controller\\','Auto'),'',get_class($this)); // Auto controller refer to the default logic of their name
+		return $this->getFactory()->getLogic($className);
+	}
+
 
 	/**
 	 * Check the controller action Acl

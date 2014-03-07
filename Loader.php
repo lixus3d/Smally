@@ -16,12 +16,11 @@ class Loader {
 	 */
 	static public function load($className){
 
-		$className = preg_replace('#^(\\\\)?Controller#','$1controller',$className); // Tricky fix to controller path
 		if(DIRECTORY_SEPARATOR !== '\\'){
 			$path = str_replace('\\',DIRECTORY_SEPARATOR,$className).'.php';
 		}else $path = $className.'.php';
-		$found = stream_resolve_include_path($path);
-		if($found !== false){
+
+		if(stream_resolve_include_path($path) !== false){
 			include_once($path);
 		}
 
