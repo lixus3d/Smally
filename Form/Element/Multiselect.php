@@ -12,7 +12,6 @@ class Multiselect extends Radio{
 		if($app = \Smally\Application::getInstance()){
 			$app
 				->setJs('js/jquery.min.js')
-				->setJs('js/bootstrap-multiselect.js')
 				->setJs('js/smally/form/Multiselect.js')
 				;
 		}
