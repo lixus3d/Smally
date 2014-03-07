@@ -162,6 +162,26 @@ class Application {
 	}
 
 	/**
+	 * Define a site specific namespace that will load specific bootstrap and init model
+	 * @param string $siteNamespace A namespace
+	 * @return \Smally\Application
+	 */
+	public function setSiteNamespace($siteNamespace){
+		// Specific Init of the site
+		$className = '\\'.$siteNamespace.'\\Init';
+		if(class_exists($className)){
+			$this->_init = new $className($this);
+			$this->_init->x();
+		}
+		// Specific Bootsrap
+		$className = '\\'.$siteNamespace.'\\Bootstrap';
+		if(class_exists($className)){
+			$this->_bootstrap = new $className($this);
+		}
+		return $this;
+	}
+
+	/**
 	 * Are we in a developpement context ?
 	 * @return boolean
 	 */
