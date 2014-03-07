@@ -578,8 +578,8 @@ class Standard extends \stdClass {
 			$criteria = $dao->getCriteria();
 			if($shared){
 				$criteria->setFilter(array(
-						'voName' => array('value'=>$this->getVoName(true)),
-						'voId' => array('value'=>$this->getId()),
+						'subVoName' => array('value'=>$this->getVoName(true)),
+						'subVoId' => array('value'=>$this->getId()),
 					));
 			}else{
 				$criteria->setFilter(array($this->getPrimaryKey()=>array('value'=>$this->getId())));
