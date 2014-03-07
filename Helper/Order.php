@@ -170,9 +170,37 @@ class Order {
 
 		if($direction = $this->inOrder($field)) {
 			$classes[] = 'orderActive';
-		} else $direction = 'ASC';
+		}
 
-		$classes[] = 'order'.ucfirst(strtolower($direction));
+		if($direction){
+			$classes[] = 'order'.ucfirst(strtolower($direction));
+		}else{
+			$classes[] = 'orderInactive';
+		}
+
+		return implode(' ',$classes);
+	}
+
+	/**
+	 * Return the classes to use for a field
+	 * @param  string $field The field you want the classes
+	 * @return string
+	 */
+	public function getIconClass($field){
+		$classes = array();
+
+		if($direction = $this->inOrder($field) ){
+			switch(strtoupper($direction)){
+				case 'ASC':
+					$classes[] = 'fa-sort-asc';
+					break;
+				case 'DESC':
+					$classes[] = 'fa-sort-desc';
+					break;
+			}
+		}else{
+			$classes[] = 'fa-sort';
+		}
 
 		return implode(' ',$classes);
 	}
