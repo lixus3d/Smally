@@ -25,10 +25,11 @@ class Menu extends AbstractDecorator {
 		}
 
 		// we render children before to adapt attributes if necessary (active class for example, or hasChildren)
-		$children = $this->renderChildren();
-		$html  = '<ul'.\Smally\HtmlUtil::toAttributes($this->getAttributes()).'>' . NN;
-		$html .= $children;
-		$html .= '</ul>' . NN;
+		if($children = $this->renderChildren()){
+			$html  = '<ul'.\Smally\HtmlUtil::toAttributes($this->getAttributes()).'>' . NN;
+			$html .= $children;
+			$html .= '</ul>' . NN;
+		}else $html = '';
 		return $this->concat($html,$content);
 	}
 

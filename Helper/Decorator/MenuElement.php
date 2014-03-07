@@ -67,30 +67,11 @@ class MenuElement extends AbstractDecorator {
 			$attributes = array_merge($this->getMenu()->getAttributesElement(),$attributes); // Attributes of the menu element, a generic class for
 		}
 
-		// TODO : Do a x logic function
-		// Add the active automatically
-		if( ($this->getElement()->getType()!='separator') && $application = \Smally\Application::getInstance() ){
-
-			// try the url approach
-			$actualUrl = $application->getRouter()->getActualUrl();
-			if($this->getElement()->getUrl() == $actualUrl && !$this->getElement()->isShortcut() ){
-				$attributes['class'][] = $this->_classActive;
-				// Add the active class to the parent of the current menu
-				if($parent = $this->getMenu()->getParent()){
-					$parent->setAttribute('class',$this->_classActive,'_attributes',true); // propagation
-				}
-			}
-
-			$actualUrl = $application->getRouter()->getActionPath();
-			if($this->getElement()->getActionPath() == $actualUrl){
-				$attributes['class'][] = $this->_classActive;
-				// Add the active class to the parent of the current menu
-				if($parent = $this->getMenu()->getParent()){
-					$parent->setAttribute('class',$this->_classActive,'_attributes',true); // propagation
-				}
-
-			}
+		if($activeAttributes = $this->testActive()){
+			$attributes = array_merge($attributes,$activeAttributes); // Attributes of the menu element, a generic class for
 		}
+
+
 
 		// Add alpha and omega automatically
 		if($this->_elementNumber === 0) $attributes['class'][] = $this->_classAlpha;
@@ -109,6 +90,42 @@ class MenuElement extends AbstractDecorator {
 			$this->_innerHtml = $this->getElement()->getName();
 		}
 		return $this->_innerHtml;
+	}
+
+	public function testActive(){
+		$attributes = array();
+		// Add the active automatically
+		if( ($this->getElement()->getType()!='separator') && $application = \Smally\Application::getInstance() ){
+			$active = false;
+
+			if(!$active){
+				// try the url approach
+				$actualUrl = $application->getRouter()->getActualUrl();
+				if($this->getElement()->getUrl() == $actualUrl && !$this->getElement()->isShortcut() ){
+					$active = true;
+					$attributes['class'][] = $this->_classActive;
+					// Add the active class to the parent of the current menu
+					if($parent = $this->getMenu()->getParent()){
+						$parent->setAttribute('class',$this->_classActive,'_attributes',true); // propagation
+					}
+				}
+			}
+
+			if(!$active){
+				// try the controller action path approach
+				$actualUrl = $application->getRouter()->getActionPath();
+				if($this->getElement()->getActionPath() == $actualUrl){
+					$active = true;
+					$attributes['class'][] = $this->_classActive;
+					// Add the active class to the parent of the current menu
+					if($parent = $this->getMenu()->getParent()){
+						$parent->setAttribute('class',$this->_classActive,'_attributes',true); // propagation
+					}
+				}
+			}
+
+		}
+		return $attributes;
 	}
 
 	/**
@@ -180,11 +197,14 @@ class MenuElement extends AbstractDecorator {
 			$renderLevel = $this->getMenu()->getRenderLevel();
 			$level = $this->getMenu()->getLevel();
 
-			if(is_null($renderLevel) || ($level+1 < $renderLevel)){
-				if($this->getElement()->hasChildren()){ // if we have subchildren
-					$this->_renderChildren = $this->getSubMenu()->render(); // render the sub menu in the actual menuElement
+
+			if($this->getElement()->hasChildren()){ // if we have subchildren
+				$subRender = $this->getSubMenu()->render(); // render the sub menu in the actual menuElement
+				if(is_null($renderLevel) || ($level+1 < $renderLevel)){
+					$this->_renderChildren = $subRender; // render the sub menu in the actual menuElement
 				}
 			}
+
 		}
 		return $this->_renderChildren;
 	}
