@@ -14,10 +14,10 @@ class Rpc extends \Smally\Controller {
 
 		// Change view template to json
 		$view = new \Smally\View($application);
-		$view->setTemplatePath('json');
+		$view->setTemplatePath('Generic\\Template\\json');
 		$this->setView($view);
 		// Change layout to json
-		$this->getApplication()->setLayout('json');
+		$this->getApplication()->setLayout('Generic\\Template\\json');
 
 		// Change headers of the response to handle json logic
 		$this->getResponse()->setHeader('Content-type: application/json');
