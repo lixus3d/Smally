@@ -162,6 +162,15 @@ class Standard extends \stdClass {
 	}
 
 	/**
+	 * Return a submodel criteria with the filter key of the current vo
+	 * @param  string $subVoName The sub vo name
+	 * @return \Smally\Criteria
+	 */
+	public function getSubmodelCriteria($subVoName=null){
+		return $this->getFactory()->getCriteria($subVoName)->setFilterKey($this->getPrimaryKey(),$this->getId());
+	}
+
+	/**
 	 * Convert the class to an array representation ( recursive )
 	 * @return array
 	 */
