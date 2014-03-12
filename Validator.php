@@ -139,9 +139,10 @@ class Validator {
 	 * @param  boolean $stopAtFirstError Do we stop the test of each field at the first error find , default is true
 	 * @return boolean
 	 */
-	public function x($stopAtFirstError=true){
+	public function x($stopAtFirstError=true,$testFieldList=null){
 		$this->resetError();
 		foreach($this->_rules as $field => $rules){
+			if(!is_null($testFieldList)&&is_array($testFieldList)&&!in_array($field,$testFieldList)) continue;
 			$fieldValue = $this->getValue($field);
 			foreach($rules as $rule){
 				if(!$rule->x($fieldValue)){
