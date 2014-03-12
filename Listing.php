@@ -159,7 +159,7 @@ class Listing {
 		// We init the final criteria with the paging interval and the order field and direction
 		$this->getCriteria()
 				->setLimit($this->getPaging()->getInterval())
-				->setOrder($this->getOrder()->getOrder())
+				->setOrder($this->getOrder()->getOrder(),true)
 				;
 
 		// we request the dao for the final items set with interval filter
