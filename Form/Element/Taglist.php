@@ -9,6 +9,8 @@ class TagList extends Radio{
 
 	protected $_voName = null;
 
+	protected $_flatValue = null;
+
 	public function init(){
 		if($app = \Smally\Application::getInstance()){
 			$app
@@ -39,6 +41,7 @@ class TagList extends Radio{
 	}
 
 	public function getValue(){
+		if(!is_null($this->_flatValue)) return $this->_flatValue;
 		$return = '';
 		if($this->getChecked() && $app = \Smally\Application::getInstance()){
 			$dao = $app->getFactory()->getDao($this->getVoName());
@@ -46,7 +49,7 @@ class TagList extends Radio{
 			$criteria ->setFilter(array($dao->getPrimaryKey()=>array('value'=>$this->getChecked(),'operator'=>'IN')));
 			if($list = $dao->fetchAll($criteria)){
 				foreach($list as $vo){
-					$return .= $vo->getName().',';
+					$return .= $vo->getName().', ';
 				}
 			}
 		}
@@ -63,10 +66,15 @@ class TagList extends Radio{
 	}
 
 	public function populateValue($values){
-		if($values instanceof \Smally\ContextStdClass) $values = $values->toArray();
-		if(!is_array($values)) $values = array($values);
-		foreach($values as $value){
-			$this->_checked[] = $value;
+		// TODO : A bit tricky to verify coming from a form
+		if(is_string($values)){
+			$this->_flatValue = $values;
+		}else{
+			if($values instanceof \Smally\ContextStdClass) $values = $values->toArray();
+			if(!is_array($values)) $values = array($values);
+			foreach($values as $value){
+				$this->_checked[] = $value;
+			}
 		}
 		return $this;
 	}

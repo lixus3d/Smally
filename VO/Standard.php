@@ -301,8 +301,9 @@ class Standard extends \stdClass {
 		$this->{$fieldName} = array();
 		$tags = explode(',',$tags);
 		foreach($tags as $k => $tag){
-			$tags[$k] = trim($tag);
+			$tag = trim($tag);
 			if($tag=='') unset($tags[$k]);
+			else $tags[$k] = $tag;
 		}
 
 		if($tags){

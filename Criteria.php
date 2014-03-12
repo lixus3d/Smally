@@ -215,7 +215,13 @@ class Criteria {
 					list($day,$month,$year) = explode('/',$value);
 					if(!is_numeric($day)||!is_numeric($month)||!is_numeric($year)) continue(2);
 					$value = mktime(0,0,0,$month,$day,$year);
-				break;
+					break;
+				case strpos($key,'tag')===0:
+					$methodName = 'set'.ucfirst($key);
+					$vo->$methodName($value);
+					$methodName = 'get'.ucfirst($key);
+					$value = $vo->$methodName();
+					break;
 			}
 
 			$filter[$key] = array('value'=>$value);
