@@ -17,6 +17,8 @@ class Submodel extends AbstractElement{
 		if($app = \Smally\Application::getInstance()){
 			$app
 				->setJs('js/jquery.min.js')
+				->setJs('js/jquery-ui.min.js')
+				->setCss('css/jqueryui-adn-theme/jquery-ui-1.8.24.custom.css')
 				->setJs('js/smally/vo/DeleteVo.js')
 				->setJs('js/smally/form/Submodel.js')
 				;
