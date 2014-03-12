@@ -264,6 +264,14 @@ class Standard extends \stdClass {
 		if(is_array($this->_nameKey)){
 			$name = array();
 			foreach($this->_nameKey as $partKey){
+				if(strpos($partKey,'Id')!==false){
+					$cleanPartKey = str_replace('Id','',$partKey);
+					$methodName = 'get'.ucfirst($cleanPartKey).'Name';
+					if(method_exists($this, $methodName)){
+						$name[] = (string) $this->$methodName();
+						continue;
+					}
+				}
 				$name[] = (string) $this->{$partKey};
 			}
 			return implode(' ',$name);
@@ -631,8 +639,8 @@ class Standard extends \stdClass {
 
 			if($vo){
 				if($shared){
-					$vo->voName = $this->getVoName(true);
-					$vo->voId = $this->getId();
+					$vo->subVoName = $this->getVoName(true);
+					$vo->subVoId = $this->getId();
 				}else{
 					$vo->{$this->getPrimaryKey()} = $this->getId();
 				}
