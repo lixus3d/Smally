@@ -48,7 +48,7 @@ class File extends AbstractDecorator {
 					'oKey' => \Smally\Uploader::generateOptionsKey($options)
 				);
 
-			$this->_uploadUrl = $application->getBaseUrl($application->makeControllerUrl('Upload\\add',$params));
+			$this->_uploadUrl = $application->getBaseUrl($application->makeControllerUrl('Generic\\Upload\\add',$params));
 		}
 		return $this->_uploadUrl;
 	}
