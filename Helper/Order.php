@@ -76,8 +76,16 @@ class Order {
 			}
 		}
 
-		if(!is_null($field)&&$direction){
+		if(is_string($field)&&$direction){
 			$this->_order = array(array($field,$direction));
+		}elseif(is_array($field)){
+			$order = $field;
+			$this->_order = array();
+			foreach($order as $key => $oField){
+				if(is_array($oField)){
+					$this->_order[] = $oField;
+				}
+			}
 		}
 
 		return $this;
@@ -135,7 +143,7 @@ class Order {
 	 * @param  string $field The field you want the url
 	 * @return string
 	 */
-	public function getUrl($field){
+	public function getUrl($field,$forceDirection=null){
 
 		if(is_null($this->_urlInfos)){
 			$this->_urlInfos = parse_url($this->_url);
@@ -151,9 +159,14 @@ class Order {
 		}
 		$params = $this->_urlInfos['params'];
 
-		if(!($direction = $this->inOrder($field))) $direction='ASC';
-		elseif($direction=='ASC') $direction='DESC';
-		else $direction = 'ASC';
+		if($forceDirection){
+			if($forceDirection!=='DESC') $direction = 'ASC';
+			else $direction = 'DESC';
+		}else{
+			if(!($direction = $this->inOrder($field))) $direction='ASC';
+			elseif($direction=='ASC') $direction='DESC';
+			else $direction = 'ASC';
+		}
 
 		$params[$this->_urlParam] = array(implode(',',array($field,$direction)));
 
