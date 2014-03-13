@@ -281,6 +281,14 @@ class Standard extends \stdClass {
 	}
 
 	/**
+	 * Must be defined precisely in the extend
+	 * @return string
+	 */
+	public function getNameForSelect(){
+		return $this->getName();
+	}
+
+	/**
 	 * Generic setter for uts field
 	 * @param  string $fieldName the field name
 	 * @param  string $date  the given date in dd/mm/YYYY format
