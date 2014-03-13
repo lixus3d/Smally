@@ -126,7 +126,7 @@ class Standard extends \stdClass {
 	}
 
 	public function getModule(){
-		return substr($this->getVoName(true),0,strpos($this->getVoName(true),'\\'));
+		return substr($this->getVoName(true),0,strrpos($this->getVoName(true),'\\VO\\'));
 	}
 
 	public function getVOMeta(){
