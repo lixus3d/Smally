@@ -166,7 +166,7 @@ class View {
 		$meta = $this->getApplication()->getMeta();
 		if($metas = $meta->getOtherMetas()){
 			foreach($metas as $element){
-				$output[] = '<meta'.\Smally\HtmlUtil::toAttributes($element).'/>';
+				$output[] = '<meta'.\Smally\Util::toAttributes($element).'/>';
 			}
 		}
 		return implode(NN.TT,$output);

@@ -144,7 +144,7 @@ class MenuElement extends AbstractDecorator {
 		switch($this->getElement()->getType()){
 			case 'separator':
 				$this->getElement()->setAttribute('class','divider');
-				$html  = '<li'.\Smally\HtmlUtil::toAttributes($this->getAttributes()).'>';
+				$html  = '<li'.\Smally\Util::toAttributes($this->getAttributes()).'>';
 				$html .= '<span>';
 				$html .= '<span>';
 				$html .= '</span>';
@@ -153,7 +153,7 @@ class MenuElement extends AbstractDecorator {
 			break;
 			case 'header':
 				$this->getElement()->setAttribute('class','nav-header');
-				$html  = '<li'.\Smally\HtmlUtil::toAttributes($this->getAttributes()).'>';
+				$html  = '<li'.\Smally\Util::toAttributes($this->getAttributes()).'>';
 				$html .= '<span>';
 				$html .= '<span>';
 				$html .= $this->getInnerHtml();
@@ -165,8 +165,8 @@ class MenuElement extends AbstractDecorator {
 			case 'page':
 				// we render children before to adapt attributes if necessary (active class for example, or hasChildren)
 				$children = $this->renderChildren();
-				$html  = '<li'.\Smally\HtmlUtil::toAttributes($this->getAttributes()).'>';
-				$html .= '<a href="'.$this->getElement()->getUrl().'" '.\Smally\HtmlUtil::toAttributes($this->_attributesA).'>';
+				$html  = '<li'.\Smally\Util::toAttributes($this->getAttributes()).'>';
+				$html .= '<a href="'.$this->getElement()->getUrl().'" '.\Smally\Util::toAttributes($this->_attributesA).'>';
 				if($icon = $this->getElement()->getIcon()){
 					$html .= $icon;
 				}

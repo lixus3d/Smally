@@ -30,7 +30,7 @@ class TagList extends AbstractDecorator {
 
 		$html = '<div class="input taglist">';
 		$html  = $this->getForm()->getDecorator('error',$this->_element)->render($html);
-		$html .= '<input '.\Smally\HtmlUtil::toAttributes($attributes).'/>';
+		$html .= '<input '.\Smally\Util::toAttributes($attributes).'/>';
 		$html  = $this->getForm()->getDecorator('help',$this->_element)->render($html);
 		$html .= '</div>';
 

@@ -19,7 +19,7 @@ class MenuElement extends \Smally\Helper\Decorator\MenuElement {
 		switch($this->getElement()->getType()){
 			case 'separator':
 				$this->getElement()->setAttribute('class','divider');
-				$html  = '<li'.\Smally\HtmlUtil::toAttributes($this->getAttributes()).'>';
+				$html  = '<li'.\Smally\Util::toAttributes($this->getAttributes()).'>';
 				$html .= '<span><span class="icon"></span>';
 				$html .= '<span class="text">';
 				$html .= '</span>';
@@ -28,7 +28,7 @@ class MenuElement extends \Smally\Helper\Decorator\MenuElement {
 			break;
 			case 'header':
 				$this->getElement()->setAttribute('class','nav-header');
-				$html  = '<li'.\Smally\HtmlUtil::toAttributes($this->getAttributes()).'>';
+				$html  = '<li'.\Smally\Util::toAttributes($this->getAttributes()).'>';
 				$html .= '<span><span class="icon"></span>';
 				$html .= '<span class="text">';
 				$html .= $this->getInnerHtml();
@@ -40,8 +40,8 @@ class MenuElement extends \Smally\Helper\Decorator\MenuElement {
 			case 'page':
 				// we render children before to adapt attributes if necessary (active class for example, or hasChildren)
 				$children = $this->renderChildren();
-				$html  = '<li'.\Smally\HtmlUtil::toAttributes($this->getAttributes()).'>';
-				$html .= '<a href="'.$this->getElement()->getUrl().'" '.\Smally\HtmlUtil::toAttributes($this->_attributesA).'>';
+				$html  = '<li'.\Smally\Util::toAttributes($this->getAttributes()).'>';
+				$html .= '<a href="'.$this->getElement()->getUrl().'" '.\Smally\Util::toAttributes($this->_attributesA).'>';
 				$html .= '<span><span class="icon"></span>';
 				$html .= '<span class="text">';
 				$html .= $this->getInnerHtml();

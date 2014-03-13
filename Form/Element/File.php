@@ -121,7 +121,7 @@ class File extends AbstractElement{
 				$template = '
 					<div class="file-preview'.(is_null($upload)?' jsFileTemplate':'').'" style="display:'.(is_null($upload)?'none':'block').'">
 						<i class="icon-move floatRight jsSortableHandle"></i>
-						<input class="id" '.\Smally\HtmlUtil::toAttributes($attributes).' value="'.$uploadObject->getId().'" />';
+						<input class="id" '.\Smally\Util::toAttributes($attributes).' value="'.$uploadObject->getId().'" />';
 				if($this->_nameUpdate){
 					$template .= '<h3><span class="labelname">Nom :</span><input type="text" value="'._h($uploadObject->name).'" name="uploadName" class="jsFileNameUpdate name" data-smally-updatename-url="'._h($uploadObject->getUploadUrl('updatename')).'" /></h3>';
 				}else{

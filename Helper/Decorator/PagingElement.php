@@ -79,7 +79,7 @@ class PagingElement extends AbstractDecorator {
 	 * @return string
 	 */
 	public function render($content=''){
-		$html  = '<li'.\Smally\HtmlUtil::toAttributes($this->getAttributes()).'>';
+		$html  = '<li'.\Smally\Util::toAttributes($this->getAttributes()).'>';
 		$html .= '<a href="'.$this->getPaging()->getUrl($this->getElement()).'">';
 		$html .= '<span>';
 		$html .= '<span>';

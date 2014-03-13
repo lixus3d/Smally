@@ -21,7 +21,7 @@ class Button extends AbstractDecorator {
 
 		$html = '<div class="input">';
 		$html  = $this->getForm()->getDecorator('error',$this->_element)->render($html);
-		$html .= '<button '.\Smally\HtmlUtil::toAttributes($attributes).'/>'.$this->getElement()->getValue().'</button>';
+		$html .= '<button '.\Smally\Util::toAttributes($attributes).'/>'.$this->getElement()->getValue().'</button>';
 		$html  = $this->getForm()->getDecorator('help',$this->_element)->render($html);
 		$html .= '</div>';
 

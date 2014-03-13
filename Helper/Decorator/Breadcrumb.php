@@ -19,7 +19,7 @@ class Breadcrumb extends AbstractDecorator {
 	 * @return string
 	 */
 	public function render($content=''){
-		$html  = '<ul'.\Smally\HtmlUtil::toAttributes($this->getAttributes()).'>' . NN;
+		$html  = '<ul'.\Smally\Util::toAttributes($this->getAttributes()).'>' . NN;
 		$html .= $this->renderPath();
 		$html .= '</ul>' . NN;
 		return $this->concat($html,$content);

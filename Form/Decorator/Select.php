@@ -32,7 +32,7 @@ class Select extends AbstractDecorator {
 
 		$attributes = array_merge($attributes,$this->_element->getAttributes());
 
-		$html .= '<select '.\Smally\HtmlUtil::toAttributes($attributes).'>';
+		$html .= '<select '.\Smally\Util::toAttributes($attributes).'>';
 
 		if( !is_array($this->getElement()->getValue()) ) $values = array($this->getElement()->getValue()=>$this->getElement()->getValue());
 		else $values = $this->getElement()->getValue();
@@ -44,7 +44,7 @@ class Select extends AbstractDecorator {
 			if(in_array($value,$this->getElement()->getChecked())){
 				$attributes['selected'] = 'selected';
 			}
-			$html .= '<option '.\Smally\HtmlUtil::toAttributes($attributes).'>'.$label.'</option>';
+			$html .= '<option '.\Smally\Util::toAttributes($attributes).'>'.$label.'</option>';
 		}
 		$html .= '</select>';
 

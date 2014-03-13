@@ -2,7 +2,7 @@
 
 namespace Smally ;
 
-class HtmlUtil {
+class Util {
 
 	/**
 	 * Convert an array of key => values to xml/html attributes
@@ -27,6 +27,17 @@ class HtmlUtil {
 			}
 		}
 		return rtrim($str);
+	}
+
+	/**
+	 * Return the hash for a given password
+	 * @param  string $password the string to hash
+	 * @param  string $salt     An optionnal hash, set to empty string for no salt
+	 * @return string The hash of the given $password
+	 */
+	static public function passHash($password,$salt=null){
+		if(is_null($salt)) $salt = (string)\Smally\Application->getInstance()->getConfig()->smally->salt?:'sel';
+		return md5($pass.$salt);
 	}
 
 }

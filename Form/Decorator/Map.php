@@ -30,7 +30,7 @@ class Map extends AbstractDecorator {
 
 		$html = '<div class="input jsMap">';
 		$html  = $this->getForm()->getDecorator('error',$this->_element)->render($html);
-		// $html .= '<input '.\Smally\HtmlUtil::toAttributes($attributes).'/>';
+		// $html .= '<input '.\Smally\Util::toAttributes($attributes).'/>';
 
 		$html .= '<div class="fields-block">';
 		$html .= '<input class="search jsMapSearch" type="text" name="mapsearch" value="" placeholder="'.$placeholder.'"/>';

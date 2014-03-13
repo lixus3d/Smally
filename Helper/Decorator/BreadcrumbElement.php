@@ -86,7 +86,7 @@ class BreadcrumbElement extends AbstractDecorator {
 	 * @return string
 	 */
 	public function render($content=''){
-		$html  = '<li'.\Smally\HtmlUtil::toAttributes($this->getAttributes()).'>';
+		$html  = '<li'.\Smally\Util::toAttributes($this->getAttributes()).'>';
 		$html .= '<a href="'.$this->getElement()->getUrl().'">';
 		$html .= '<span>';
 		$html .= '<span>';

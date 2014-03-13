@@ -27,7 +27,7 @@ class File extends AbstractDecorator {
 
 		$html = '<div class="input file">';
 		$html  = $this->getForm()->getDecorator('error',$this->_element)->render($html);
-		$html .= '<input '.\Smally\HtmlUtil::toAttributes($attributes).'/> <span class="html5-browser">'.__('FORM_DECORATOR_FILE_HELPER').'</span>';
+		$html .= '<input '.\Smally\Util::toAttributes($attributes).'/> <span class="html5-browser">'.__('FORM_DECORATOR_FILE_HELPER').'</span>';
 		$html .= '<hr />';
 		$html .= $this->getElement()->getItemTemplate();
 		$html .= $uploadsHtml;

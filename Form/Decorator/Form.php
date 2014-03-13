@@ -23,7 +23,7 @@ class Form{
 		$attributes = array('method'=>$this->_form->getMethod(),'action'=>$this->_form->getAction());
 		$attributes = array_merge($attributes,$this->_form->getAttributes());
 
-		return '<form'.\Smally\HtmlUtil::toAttributes($attributes).'>'
+		return '<form'.\Smally\Util::toAttributes($attributes).'>'
 				.$this->_form->getSeparator()
 				.$content
 				.$this->_form->getSeparator()

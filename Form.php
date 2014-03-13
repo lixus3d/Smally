@@ -233,6 +233,14 @@ class Form {
 		return $this->_fields;
 	}
 
+	public function removeField($fieldName){
+		if(isset($this->_fields[$fieldName])){
+			unset($this->_fields[$fieldName]);
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Automatically population field value from context
 	 * @return \Smally\Form

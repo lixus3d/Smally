@@ -26,7 +26,7 @@ class Textarea extends AbstractDecorator {
 
 		$html = '<div class="input">';
 		$html  = $this->getForm()->getDecorator('error',$this->_element)->render($html);
-		$html .= '<textarea '.\Smally\HtmlUtil::toAttributes($attributes).'>'. _h($value).'</textarea>';
+		$html .= '<textarea '.\Smally\Util::toAttributes($attributes).'>'. _h($value).'</textarea>';
 		$html  = $this->getForm()->getDecorator('help',$this->_element)->render($html);
 		$html .= '</div>';
 

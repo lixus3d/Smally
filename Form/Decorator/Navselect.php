@@ -26,7 +26,7 @@ class Navselect extends AbstractDecorator {
 
 		$attributes = array_merge($attributes,$this->_element->getAttributes());
 
-		$html .= '<select '.\Smally\HtmlUtil::toAttributes($attributes).'>';
+		$html .= '<select '.\Smally\Util::toAttributes($attributes).'>';
 
 		if( !is_array($this->getElement()->getValue()) ) $values = array($this->getElement()->getValue()=>$this->getElement()->getValue());
 		else $values = $this->getElement()->getValue();
@@ -87,7 +87,7 @@ class Navselect extends AbstractDecorator {
 			if(in_array($value,$this->getElement()->getChecked())){
 				$attributes['selected'] = 'selected';
 			}
-			$partHtml .= '<option '.\Smally\HtmlUtil::toAttributes($attributes).'>'.$prefix.$options['name'].'</option>';
+			$partHtml .= '<option '.\Smally\Util::toAttributes($attributes).'>'.$prefix.$options['name'].'</option>';
 			if(isset($options['children']) && $options['children']){
 				foreach($options['children'] as $subValue => $subOptions){
 					if($subPart = $this->getPartHtml($subValue,$subOptions,$level+1)){
