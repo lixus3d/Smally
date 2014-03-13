@@ -37,7 +37,7 @@ class Util {
 	 */
 	static public function passHash($password,$salt=null){
 		if(is_null($salt)) $salt = (string)\Smally\Application::getInstance()->getConfig()->smally->salt?:'sel';
-		return md5($pass.$salt);
+		return md5($password.$salt);
 	}
 
 }
