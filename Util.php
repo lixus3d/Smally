@@ -36,7 +36,7 @@ class Util {
 	 * @return string The hash of the given $password
 	 */
 	static public function passHash($password,$salt=null){
-		if(is_null($salt)) $salt = (string)\Smally\Application->getInstance()->getConfig()->smally->salt?:'sel';
+		if(is_null($salt)) $salt = (string)\Smally\Application::getInstance()->getConfig()->smally->salt?:'sel';
 		return md5($pass.$salt);
 	}
 
