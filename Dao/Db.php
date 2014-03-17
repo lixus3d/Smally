@@ -578,7 +578,7 @@ class Db implements InterfaceDao {
 		// extract all others words
 		$value = str_replace(array('`'),array('\''),$value);
 		$value = iconv('UTF-8','ASCII//TRANSLIT//IGNORE',$value);
-		$value = preg_replace('#[^a-zA-Z0-9 \'",.-]#','',$value);
+		$value = preg_replace('#[^a-zA-Z0-9 _-]#','',$value);
 		$words = explode(' ',str_replace(',',' ',$value));
 		foreach($words as $word){
 			if(!$word) continue;
