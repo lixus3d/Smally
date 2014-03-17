@@ -249,6 +249,14 @@ class Router {
 		die();
 	}
 
+	public function redirectToReferer(){
+		$dest = '';
+		if($referer = $_SERVER['HTTP_REFERER']){
+			$dest = $referer;
+		}
+		$this->redirect($dest);
+	}
+
 	/**
 	 * Convert an url action to a valid controller action inflected
 	 * @param string $actionName
