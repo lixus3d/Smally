@@ -9,6 +9,7 @@ class Assets {
 	protected $_application = null;
 
 	protected $_assets = array();
+	protected $_minify = array();
 
 	/**
 	 * Construct a new Assets object
