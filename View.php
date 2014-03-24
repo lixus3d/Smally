@@ -241,7 +241,7 @@ class View {
 	 * @param  string $template The template you want to test ( relative path )
 	 * @return boolean
 	 */
-	public function templateExist($template){
+	static public function templateExist($template){
 		$template = str_replace(array('/','\\'),DIRECTORY_SEPARATOR,$template);
 		return (stream_resolve_include_path($template.'.php')!==false) ;
 	}
