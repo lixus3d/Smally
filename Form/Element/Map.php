@@ -12,7 +12,7 @@ class Map extends AbstractElement{
 			$app
 				->setJs('js/jquery.min.js')
 				->setJs('https://maps.googleapis.com/maps/api/js?key='.((string)$app->getConfig()->googlemap->key?:'').'&sensor=false')
-				->setJs($app->getBaseUrl('assets/js/smally/form/Map.js'))
+				->setJs($app->urlAssets('js/smally/form/Map.js'))
 				;
 		}
 		if(!$this->getPlaceholder()){
