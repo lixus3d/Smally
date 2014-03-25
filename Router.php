@@ -99,11 +99,11 @@ class Router {
 	 * Return the base url of the project
 	 * @return string
 	 */
-	public function getBaseUrl(){
+	public function getBaseUrl($withClonePrefix=true){
 		if(!$this->_baseUrl){
 			$this->parseUri();
 		}
-		return $this->_baseUrl;
+		return $this->_baseUrl.($withClonePrefix?$this->_clonePrefix:'');
 	}
 
 	/**
@@ -223,7 +223,7 @@ class Router {
 			}
 
 			if($baseElems){
-				$this->_baseUrl .= implode('/',array_reverse($baseElems)).'/'. $this->_clonePrefix ;
+				$this->_baseUrl .= implode('/',array_reverse($baseElems)).'/'; // . $this->_clonePrefix ;
 			}
 			if($uriElems){
 				$this->_uri = implode('/',array_reverse($uriElems));
