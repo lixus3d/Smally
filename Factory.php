@@ -208,7 +208,7 @@ class Factory {
 		$path = $this->getObjectPath($voName,'Form');
 		if(class_exists($path)){
 			return new $path($options);
-		}else throw new Exception('Form doesn\'t exists : '.$path);
+		}else throw new Exception('Form doesn\'t exists : '.$voName);
 	}
 
 	/**
@@ -248,7 +248,7 @@ class Factory {
 	}
 
 	/**
-	 * Return the VOMeta object corresponding to a particular voName 
+	 * Return the VOMeta object corresponding to a particular voName
 	 * @param  string $voName The vo name of the VOMeta object you want
 	 * @return \Smally\VOMeta\AbstractVOMeta
 	 */
