@@ -135,7 +135,8 @@ abstract class Controller {
 	 * @return \Smally\AbstractLogic
 	 */
 	public function getLogic(){
-		$className = str_replace(array('Controller\\','Auto'),'',get_class($this)); // Auto controller refer to the default logic of their name
+		// $className = str_replace(array('Controller\\','Auto'),'',get_class($this)); // Auto controller refer to the default logic of their name
+		$className = preg_replace('#\\\\Controller(.*)$#','',get_class($this));
 		return $this->getFactory()->getLogic($className);
 	}
 
