@@ -21,6 +21,8 @@ class Saver {
 	protected $_partEdit = false;
 	protected $_mode = null;
 
+	protected $_storeState = false;
+
 	protected $_urlParamId = 'id';
 	protected $_urlParamCopyId = 'copyId';
 	protected $_formParamSubmitter = 'submitter';
@@ -151,6 +153,13 @@ class Saver {
 	 */
 	public function setPartEdit($state){
 		$this->_partEdit = $state?true:false;
+		return $this;
+	}
+
+	public function setVo($vo){
+		if( get_class($vo) == $this->_voName){
+			$this->_vo = $vo;
+		}
 		return $this;
 	}
 
@@ -314,7 +323,24 @@ class Saver {
 	}
 
 	/**
-	 * Weither their is a submitter or not in the inputs
+	 * Return the store state of the saver. False didn't mean the saver execute and not work, see getError to see if something block
+	 * @return boolean
+	 */
+	public function getStoreState(){
+		return $this->_storeState;
+	}
+
+	/**
+	 * Return the saver error, usually send by the validator
+	 * getError will return nothing if you don't x() before
+	 * @return array
+	 */
+	public function getError(){
+		return $this->getValidator()->getError();
+	}
+
+	/**
+	 * whether their is a submitter or not in the inputs
 	 * @return boolean
 	 */
 	public function hasSubmitter(){
@@ -344,6 +370,68 @@ class Saver {
 		}
 	}
 
+	public function initValidator(){
+		$this->getValidator()
+			->setMode( $this->getMode()=='edit' ? \Smally\Validator::MODE_EDIT : \Smally\Validator::MODE_NEW )
+			->setActualVoId($this->getVo()->getId()?:null)
+			;
+		return $this;
+	}
+
+	public function initFilter(){
+		$this->getFilter()
+			->setMode( $this->getMode()=='edit' ? \Smally\Filter::MODE_EDIT : \Smally\Filter::MODE_NEW )
+			->setActualVoId($this->getVo()->getId()?:null)
+			;
+		return $this;
+	}
+
+	public function initForm(){
+		$this->getForm()
+					->setNamePrefix($this->getFormPrefix()) // set the correct prefix
+					->setValidator($this->getValidator())
+					->populateValue($this->getPopulateValues())
+					;
+		return $this;
+	}
+
+	/**
+	 * Saver core method
+	 * This is for use in add,save,copy form context
+	 * @return null
+	 */
+	public function x(){
+
+		$this->initValidator();
+		$this->initFilter();
+
+
+		if($this->hasSubmitter()){
+
+			$this->_inputs = $this->getFilter()->x($this->getInputs());
+
+			if( $this->getValidator()->setTestValues($this->getInputs())->x(true, $this->_partEdit?array_keys($this->getInputs()):null) ) {
+
+				$this->getVo()->initVars($this->getInputs());
+				$this->autoValues(); // like siteId , authorId , etc ...
+
+				if( $this->_storeState = $this->getVo()->store() ){
+
+					if($redirect = $this->getRedirect()){
+						$this->getApplication()->getRouter()->redirect($redirect);
+					}
+				}
+			}else{
+				$this->getForm()->populateError($this->getValidator()->getError());
+			}
+		}
+
+		$this->initForm();
+
+		$this->sendToCallingController();
+
+	}
+
 	/**
 	 * Auto push some values to callingController and its view
 	 * @return null
@@ -357,59 +445,6 @@ class Saver {
 			}
 			$callingController->getView()->vo = new $this->_voName() ; // to have access to vo meta and others stuff
 		}
-	}
-
-	/**
-	 * Saver core method
-	 * This is for use in add,save,copy form context
-	 * @return null
-	 */
-	public function x(){
-
-
-		$this->getValidator()
-					->setMode( $this->getMode()=='edit' ? \Smally\Validator::MODE_EDIT : \Smally\Validator::MODE_NEW )
-					->setActualVoId($this->getVo()->getId()?:null)
-					;
-
-		$this->getFilter()
-					->setMode( $this->getMode()=='edit' ? \Smally\Filter::MODE_EDIT : \Smally\Filter::MODE_NEW )
-					->setActualVoId($this->getVo()->getId()?:null)
-					;
-
-		if($this->hasSubmitter()){
-
-			$this->_inputs = $this->getFilter()->x($this->getInputs());
-
-			if( $this->getValidator()->setTestValues($this->getInputs())->x(true, $this->_partEdit?array_keys($this->getInputs()):null) ) {
-
-				$this->getVo()->initVars($this->getInputs());
-				$this->autoValues(); // like siteId , authorId , etc ...
-
-				if( $this->_storeState = $this->getVo()->store() ){
-
-					if($callingController = $this->getController()){
-						$callingController->storeState = true;
-						$callingController->storedVo = $this->getVo();
-					}
-
-					if($redirect = $this->getRedirect()){
-						$this->getApplication()->getRouter()->redirect($redirect);
-					}
-				}
-			}else{
-				$this->getForm()->populateError($this->getValidator()->getError());
-			}
-		}
-
-		$this->getForm()
-					->setNamePrefix($this->getFormPrefix()) // set the correct prefix
-					->setValidator($this->getValidator())
-					->populateValue($this->getPopulateValues())
-					;
-
-		$this->sendToCallingController();
-
 	}
 
 }
