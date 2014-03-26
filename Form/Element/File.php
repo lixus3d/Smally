@@ -34,7 +34,7 @@ class File extends AbstractElement{
 	}
 
 	/**
-	 * Define weither name modification is available or not
+	 * Define whether name modification is available or not
 	 * @param boolean $value Set to true to enable modification
 	 * @return  \Smally\Form\Element\File
 	 */
@@ -47,7 +47,7 @@ class File extends AbstractElement{
 	}
 
 	/**
-	 * Define weither alt modification is available or not
+	 * Define whether alt modification is available or not
 	 * @param boolean $value Set to true to enable modification
 	 * @return  \Smally\Form\Element\File
 	 */

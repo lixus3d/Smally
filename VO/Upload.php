@@ -256,7 +256,7 @@ class Upload extends \Smally\VO\Standard {
 
 	/**
 	 * Get the file relative path ( means without the data folder )
-	 * @param  boolean $mkdir Weither to create the path or not
+	 * @param  boolean $mkdir whether to create the path or not
 	 * @return string
 	 */
 	public function getRelativePath($mkdir=false,$force=false){
@@ -272,7 +272,7 @@ class Upload extends \Smally\VO\Standard {
 
 	/**
 	 * Get a file path on disk ( complete mean from the current execution directory to the final file, thru the data folder so )
-	 * @param  boolean $mkdir Weither to create the path or not
+	 * @param  boolean $mkdir whether to create the path or not
 	 * @return string
 	 */
 	public function getCompletePath($mkdir=false,$force=false){

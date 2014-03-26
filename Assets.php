@@ -145,7 +145,7 @@ class Assets {
 	///////////////////
 
 	/**
-	 * Check weither an asset filepath (js for now) is in minify table or not
+	 * Check whether an asset filepath (js for now) is in minify table or not
 	 * @param string $path The path to the asset (relative)
 	 * @return boolean true if in minify array
 	 */

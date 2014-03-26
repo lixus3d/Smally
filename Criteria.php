@@ -170,7 +170,7 @@ class Criteria {
 	}
 
 	/**
-	 * Return weither or not a $field is filtered in the criteria
+	 * Return whether or not a $field is filtered in the criteria
 	 * @param  string  $field The field name you want to check
 	 * @return boolean
 	 */

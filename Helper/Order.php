@@ -127,7 +127,7 @@ class Order {
 	}
 
 	/**
-	 * Return weither a field is in actual order or not , return it's direction , null if not present
+	 * Return whether a field is in actual order or not , return it's direction , null if not present
 	 * @param  string $field The field to search for in the actual order
 	 * @return mixed ASC or DESC if present, null otherwise
 	 */
