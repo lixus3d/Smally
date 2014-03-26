@@ -7,6 +7,9 @@ class Unique extends AbstractRule {
 	protected $_voName = null;
 	protected $_errorTxt = 'Erreur';
 
+	protected $_testEmpty 		= false;
+	protected $_returnOnEmpty 	= true;
+
 	protected $_filterKey = null;
 
 	/**
@@ -60,40 +63,55 @@ class Unique extends AbstractRule {
 	}
 
 	/**
+	 * Return the current vo dao
+	 * @return \Smally\Dao\InterfaceDao
+	 */
+	public function getDao(){
+		if($app = \Smally\Application::getInstance()){
+			return $app->getFactory()->getDao($this->getVoName());
+		}
+		return null;
+	}
+
+	/**
 	 * Validate if the $valueToTest is filled
 	 * @param  mixed $valueToTest
 	 * @return boolean
 	 */
 	public function x($valueToTest){
 
-		if($valueToTest){
-			if($app = \Smally\Application::getInstance()){
-				$voName = $this->getVoName();
-				$dao = $app->getFactory()->getDao($voName);
+		if(method_exists($this, 'onX')){
+			$valueToTest = $this->onX($valueToTest);
+		}
+
+		if($valueToTest||$this->_testEmpty){
+			if($dao = $this->getDao()){
 				$criteria = $dao->getCriteria();
 				$criteria ->setFilter(array(
 								$this->getFieldName() => array('value'=>$valueToTest)
 							))
 							;
-				// Other filter keys, usually for a siteId
-				if($filterKey = $this->getFilterKey()){
-					$criteria->setFilter($filterKey);
-				}
+
 				if( ($this->getValidator() instanceof \Smally\Validator) && ($actualId = $this->getValidator()->getActualVoId()) ){
 					$criteria->setFilter(array(
 							$dao->getPrimaryKey() => array('value'=>$actualId, 'operator' => '!='),
 						));
 				}
 
-				if($found = $dao->fetch($criteria)){
+				// Other filter keys, usually for a siteId
+				if($filterKey = $this->getFilterKey()){
+					$criteria->setFilter($filterKey);
+				}
+
+				if($found = $dao->fetchAll($criteria)){
 					$this->addError($this->_errorTxt);
 					return false;
 				}else{
 					return true;
 				}
 
-			}else $this->addError('No valid Smally app found !');
-		}else return true;
+			}else $this->addError('No valid dao found for this vo !');
+		}else return $this->_returnOnEmpty;
 
 		return false;
 	}
