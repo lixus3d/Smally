@@ -252,7 +252,7 @@ class Standard extends \stdClass {
 	}
 
 	/**
-	 * Create a copy of the given vo
+	 * Create a copy of the given vo, will not copy sub element
 	 * @param array $newValues An array of values to overwrite on the copy
 	 * @return mixed
 	 */
