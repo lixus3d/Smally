@@ -497,8 +497,13 @@ class Application {
 		// Execute the controller and view
 		$controller->x();
 
+		$render = $controller->getView()->getRender();
+
+		\Smally\Messager::getInstance()->x();
+
 		// Place the view content in the global layout view and execute layout view
-		$layoutView = $this->getView()->setContent($controller->getView()->getRender())->x();
+		$layoutView = $this->getView()->setContent($render)->x();
+
 
 		// Execute response logic
 		$this->getResponse()->setContent($layoutView->getRender())->x();
