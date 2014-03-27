@@ -181,11 +181,16 @@ class Standard extends \stdClass {
 	 * Convert the class to an array representation ( recursive )
 	 * @return array
 	 */
-	public function toArray($withGetter=true,$withPrimaryKey=true){
+	public function toArray($withGetter=true,$withPrimaryKey=true,$excludedValues=array()){
 		$array = array();
 		foreach($this as $key => $value){
+
+			if(in_array($key, $excludedValues)) continue; // Excluded so continue to next
+
 			if(strpos($key,'_')===0) continue; // we did not export _protected values
-			if(!$withPrimaryKey&&$key==$this->getPrimaryKey()) continue;
+
+			if(!$withPrimaryKey&&$key==$this->getPrimaryKey()) continue; // No primary key demanded
+
 			$method = 'get'.ucfirst($key);
 			if($withGetter && method_exists($this, $method)){
 				$array[$key] = $this->{$method}();
@@ -252,13 +257,13 @@ class Standard extends \stdClass {
 	}
 
 	/**
-	 * Create a copy of the given vo, will not copy sub element
+	 * Create a copy of the given vo
 	 * @param array $newValues An array of values to overwrite on the copy
 	 * @return mixed
 	 */
-	public function copy($newValues=array()){
-		$copyVo = new static($this->toArray(false, false));
-		$copyVo->initVars($newValues,true);
+	public function copy($newValues=array(),$notCopy=array()){
+		$copyVo = new static($this->toArray(true, false,$notCopy));
+		$copyVo->initVars($newValues);
 		if($copyVo->store()){
 			return $copyVo;
 		}
