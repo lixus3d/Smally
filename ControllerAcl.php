@@ -94,6 +94,8 @@ class ControllerAcl {
 	 */
 	public function check($controllerPath,$redirect=true){
 
+		$originalControllerPath = $controllerPath;
+
 		if($this->_rules){
 			// find a rule recursively thru controller hierarchy
 			while(!isset($rule)){
@@ -106,12 +108,24 @@ class ControllerAcl {
 				}
 			}
 
+			if(!isset($rule)){
+				// We try regex rule if nothing found
+				foreach($this->_rules as $key => $rRule){
+					if( strpos($key, '#') === 0){ // regex rule
+						if( preg_match($key,$originalControllerPath) ){
+							$rule = $rRule;
+						}
+					}
+				}
+			}
+
 			if( isset($rule) && $rule ){
 				$acl = $this->getAcl();
 				return $acl
 					->setAllowArray($rule['allow'])
 					->check( $redirect ? (isset($rule['redirect'])?$rule['redirect']:$this->_defaultRedirect) : null );
 			}
+
 		}
 
 		return true;
