@@ -233,6 +233,23 @@ class Form {
 		return $this->_fields;
 	}
 
+	/**
+	 * Return a specific field of the form if present
+	 * @param  string $fieldName The name of the field you want to get
+	 * @return \Smally\Form\AbstractElement
+	 */
+	public function getField($fieldName){
+		if(isset($this->_fields[$fieldName])){
+			return $this->_fields[$fieldName];
+		}
+		return null;
+	}
+
+	/**
+	 * Remove a specific field of the form if present
+	 * @param  string $fieldName The name of the field you want to get
+	 * @return boolean
+	 */
 	public function removeField($fieldName){
 		if(isset($this->_fields[$fieldName])){
 			unset($this->_fields[$fieldName]);
