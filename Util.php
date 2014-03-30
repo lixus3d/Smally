@@ -40,4 +40,22 @@ class Util {
 		return md5($password.$salt);
 	}
 
+	/**
+	 * Return an url or id readable string of a given text
+	 * @param  string $string    A string you want to slugify
+	 * @param  string $separator The separator of each part, usually -
+	 * @return string The slugified string
+	 */
+	static public function slugify($string,$separator='-'){
+		$value = trim($string);
+		// convert accent
+		$value = iconv('UTF-8','ASCII//TRANSLIT//IGNORE',$value);
+		// lower case the string
+		$value = strtolower($value);
+		// convert space, comma, tabulation, etc to '-'
+		$value = preg_replace('#[\s,.\\\\/\n]+#',$separator,$value);
+		$value = preg_replace('#'.$separator.'{2,}#',$separator,$value);
+		return preg_replace('#[^a-z0-9'.$separator.']#','',$value);
+	}
+
 }
