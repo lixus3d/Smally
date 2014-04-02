@@ -54,8 +54,9 @@ class Util {
 		$value = strtolower($value);
 		// convert space, comma, tabulation, etc to '-'
 		$value = preg_replace('#[\s,.\\\\/\n]+#',$separator,$value);
+		$value = preg_replace('#[^a-z0-9'.$separator.']#','',$value);
 		$value = preg_replace('#'.$separator.'{2,}#',$separator,$value);
-		return preg_replace('#[^a-z0-9'.$separator.']#','',$value);
+		return trim($value,'-');
 	}
 
 }
