@@ -177,6 +177,10 @@ class Standard extends \stdClass {
 		return $this->getFactory()->getCriteria($subVoName)->setFilterKey($this->getPrimaryKey(),$this->getId());
 	}
 
+	public function isAutoSiteId(){
+		return !isset($this->_autoSiteId) ? true  : $this->_autoSiteId;
+	}
+
 	/**
 	 * Convert the class to an array representation ( recursive )
 	 * @return array
