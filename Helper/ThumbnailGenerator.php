@@ -174,6 +174,7 @@ class ThumbnailGenerator {
 	 * @return string
 	 */
 	static public function generateKey($params){
+		$params = ksort($params);
 		$key = serialize($params);
 		$key = md5($key);
 		$key = array_sum(str_split(preg_replace('#[^2-9]#','',$key)));
