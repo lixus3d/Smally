@@ -210,51 +210,54 @@ class Db implements InterfaceDao {
 	 */
 	public function getById($id,$force=false){
 
-		if( !isset($this->_getByIdCache[$id]) || $force ){
+		if($id!=0){
+			if( !isset($this->_getByIdCache[$id]) || $force ){
 
-			if($this->isSmallyCacheActive()){
-				$cacheKey = $this->getCache()->getHashKey('DB_GETBYID_'.$this->getVoName(true).'_'.$id);
-				if(!$force){
-					if( $this->getCache()->hasKey($cacheKey) ){
-						$cacheArray = $this->getCache()->getKey($cacheKey);
-						$voName = $this->getVoName(true);
-						$object = new $voName();
-						$object->initVars($cacheArray,true); // true for direct to property without setXxxx methods
-						$this->_getByIdCache[$id] = $object;
-						return $this->_getByIdCache[$id];
+				if($this->isSmallyCacheActive()){
+					$cacheKey = $this->getCache()->getHashKey('DB_GETBYID_'.$this->getVoName(true).'_'.$id);
+					if(!$force){
+						if( $this->getCache()->hasKey($cacheKey) ){
+							$cacheArray = $this->getCache()->getKey($cacheKey);
+							$voName = $this->getVoName(true);
+							$object = new $voName();
+							$object->initVars($cacheArray,true); // true for direct to property without setXxxx methods
+							$this->_getByIdCache[$id] = $object;
+							return $this->_getByIdCache[$id];
+						}
 					}
 				}
+
+				$primaryKey = $this->getPrimaryKey();
+				$criteria = $this->getCriteria()
+									->setFilter(array($primaryKey=>array('value'=>$id)))
+									;
+
+				$sql = $this->criteriaToSelect($criteria);
+
+				$this->log($sql);
+
+				if($result = $this->getConnector()->query($sql)){
+					if($result->num_rows==1){
+
+						if($this->isSmallyCacheActive()){
+							$cacheArray = $result->fetch_assoc();
+							$result->data_seek(0);
+							$this->getCache()->setKey($cacheKey,$cacheArray);
+						}
+						$object = $this->fetchValueObject($result,$this->getVoName());
+						$result->free();
+
+					}elseif($result->num_rows>1) throw new \Smally\Exception('Fetch-getbyid return more than one entry : '.$result->num_rows);
+				}else throw new \Smally\Exception('Db fetch error : '.$this->getConnector()->error . NN . 'Query : '.$sql);
+
+				if(isset($object) && $object){
+					$this->_getByIdCache[$id] = $object;
+				}
+
 			}
-
-			$primaryKey = $this->getPrimaryKey();
-			$criteria = $this->getCriteria()
-								->setFilter(array($primaryKey=>array('value'=>$id)))
-								;
-
-			$sql = $this->criteriaToSelect($criteria);
-
-			$this->log($sql);
-
-			if($result = $this->getConnector()->query($sql)){
-				if($result->num_rows==1){
-
-					if($this->isSmallyCacheActive()){
-						$cacheArray = $result->fetch_assoc();
-						$result->data_seek(0);
-						$this->getCache()->setKey($cacheKey,$cacheArray);
-					}
-					$object = $this->fetchValueObject($result,$this->getVoName());
-					$result->free();
-
-				}elseif($result->num_rows>1) throw new \Smally\Exception('Fetch-getbyid return more than one entry : '.$result->num_rows);
-			}else throw new \Smally\Exception('Db fetch error : '.$this->getConnector()->error . NN . 'Query : '.$sql);
-
-			if(isset($object) && $object){
-				$this->_getByIdCache[$id] = $object;
-			}
-
+			return $this->_getByIdCache[$id];
 		}
-		return $this->_getByIdCache[$id];
+		return null;
 	}
 
 	public function getByIdCache($id){
