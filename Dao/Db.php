@@ -213,7 +213,7 @@ class Db implements InterfaceDao {
 		if( !isset($this->_getByIdCache[$id]) || $force ){
 
 			if($this->isSmallyCacheActive()){
-				$cacheKey = $this->getCache()->getHashKey($this->getVoName(true).'_'.$id);
+				$cacheKey = $this->getCache()->getHashKey('DB_GETBYID_'.$this->getVoName(true).'_'.$id);
 				if(!$force){
 					if( $this->getCache()->hasKey($cacheKey) ){
 						$cacheArray = $this->getCache()->getKey($cacheKey);
@@ -367,9 +367,6 @@ class Db implements InterfaceDao {
 	 */
 	public function store($vo,$statement=null){
 
-
-
-
 		// pseudo event system
 		if(method_exists($vo, 'onStore')){
 			$vo->onStore($statement);
@@ -383,7 +380,7 @@ class Db implements InterfaceDao {
 			$statement = is_null($statement)?self::STATEMENT_UPDATE:$statement;
 			if(property_exists($vo,'utsUpdate')) $vo->utsUpdate = time();
 
-			$cacheKey = $this->getCache()->getHashKey($this->getVoName(true).'_'.$vo->getId());
+			$cacheKey = $this->getCache()->getHashKey('DB_GETBYID_'.$this->getVoName(true).'_'.$vo->getId());
 			$this->getCache()->deleteKey($cacheKey);
 		}else{
 			$statement = is_null($statement)?self::STATEMENT_INSERT:$statement;
