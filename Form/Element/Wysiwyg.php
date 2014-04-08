@@ -15,9 +15,9 @@ class Wysiwyg extends Textarea{
 		if($app = \Smally\Application::getInstance()){
 			$app
 				->setJs('js/jquery.min.js')
-				->setJs($app->urlAssets('assets/js/tiny_mce/jquery.tinymce.js'))
-				->setJs($app->urlAssets('assets/js/tiny_mce/tiny_mce.js'))
-				->setJs($app->urlAssets('assets/js/smally/form/Wysiwyg.js'))
+				->setJs('js/tiny_mce/jquery.tinymce.js')
+				->setJs('js/tiny_mce/tiny_mce.js')
+				->setJs('js/smally/form/Wysiwyg.js')
 				;
 		}
 	}
