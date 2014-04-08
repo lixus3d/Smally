@@ -13,6 +13,8 @@ class Db implements InterfaceDao {
 	protected $_voName = null;
 	protected $_connector = null;
 
+	protected $_smallyCacheActive = false;
+	protected $_smallyCache = null;
 	protected $_getByIdCache = array();
 	protected $_filterMethodCache = array();
 
@@ -26,6 +28,9 @@ class Db implements InterfaceDao {
 		if($logger = \Smally\Application::getInstance()->getLogger()){
 			$this->_logger = $logger;
 			$this->_logLevel = $logger->getLogLevel('dao');
+		}
+		if(\Smally\Application::getInstance()->getConfig()->smally->db->smallyCacheActive === true){
+			$this->_smallyCacheActive = true;
 		}
 	}
 
@@ -156,6 +161,17 @@ class Db implements InterfaceDao {
 	}
 
 	/**
+	 * Return the current Smally Cache instance
+	 * @return \Smally\SCache
+	 */
+	public function getCache(){
+		if(is_null($this->_smallyCache)){
+			$this->_smallyCache = \Smally\SCache::getInstance();
+		}
+		return $this->_smallyCache;
+	}
+
+	/**
 	 * Return true if the current $vo as a utsDelete field
 	 * @param  \Smally\VO\Standard  $vo A valid value object or null to instanciate an empty one
 	 * @return boolean
@@ -168,6 +184,10 @@ class Db implements InterfaceDao {
 			return property_exists($vo, 'utsDelete');
 		}
 		return false;
+	}
+
+	public function isSmallyCacheActive(){
+		return $this->_smallyCacheActive;
 	}
 
 	/**
@@ -189,12 +209,50 @@ class Db implements InterfaceDao {
 	 * @return \stdClass
 	 */
 	public function getById($id,$force=false){
+
 		if( !isset($this->_getByIdCache[$id]) || $force ){
+
+			if($this->isSmallyCacheActive()){
+				$cacheKey = $this->getCache()->getHashKey($this->getVoName(true).'_'.$id);
+				if(!$force){
+					if( $this->getCache()->hasKey($cacheKey) ){
+						$cacheArray = $this->getCache()->getKey($cacheKey);
+						$voName = $this->getVoName(true);
+						$object = new $voName();
+						$object->initVars($cacheArray,true); // true for direct to property without setXxxx methods
+						$this->_getByIdCache[$id] = $object;
+						return $this->_getByIdCache[$id];
+					}
+				}
+			}
+
 			$primaryKey = $this->getPrimaryKey();
 			$criteria = $this->getCriteria()
 								->setFilter(array($primaryKey=>array('value'=>$id)))
 								;
-			$this->_getByIdCache[$id] = $this->fetch($criteria);
+
+			$sql = $this->criteriaToSelect($criteria);
+
+			$this->log($sql);
+
+			if($result = $this->getConnector()->query($sql)){
+				if($result->num_rows==1){
+
+					if($this->isSmallyCacheActive()){
+						$cacheArray = $result->fetch_assoc();
+						$result->data_seek(0);
+						$this->getCache()->setKey($cacheKey,$cacheArray);
+					}
+					$object = $this->fetchValueObject($result,$this->getVoName());
+					$result->free();
+
+				}elseif($result->num_rows>1) throw new \Smally\Exception('Fetch-getbyid return more than one entry : '.$result->num_rows);
+			}else throw new \Smally\Exception('Db fetch error : '.$this->getConnector()->error . NN . 'Query : '.$sql);
+
+			if(isset($object) && $object){
+				$this->_getByIdCache[$id] = $object;
+			}
+
 		}
 		return $this->_getByIdCache[$id];
 	}
@@ -309,6 +367,9 @@ class Db implements InterfaceDao {
 	 */
 	public function store($vo,$statement=null){
 
+
+
+
 		// pseudo event system
 		if(method_exists($vo, 'onStore')){
 			$vo->onStore($statement);
@@ -321,6 +382,9 @@ class Db implements InterfaceDao {
 		if(property_exists($vo,$primaryKey)&&$vo->{$primaryKey}!=''){
 			$statement = is_null($statement)?self::STATEMENT_UPDATE:$statement;
 			if(property_exists($vo,'utsUpdate')) $vo->utsUpdate = time();
+
+			$cacheKey = $this->getCache()->getHashKey($this->getVoName(true).'_'.$vo->getId());
+			$this->getCache()->deleteKey($cacheKey);
 		}else{
 			$statement = is_null($statement)?self::STATEMENT_INSERT:$statement;
 			if(property_exists($vo,'utsCreate')) $vo->utsCreate = time();
