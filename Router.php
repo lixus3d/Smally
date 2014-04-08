@@ -99,11 +99,15 @@ class Router {
 	 * Return the base url of the project
 	 * @return string
 	 */
-	public function getBaseUrl($withClonePrefix=true){
+	public function getBaseUrl($withClonePrefix=true,$cutAtDomain=false){
 		if(!$this->_baseUrl){
 			$this->parseUri();
 		}
-		return $this->_baseUrl.($withClonePrefix?$this->_clonePrefix:'');
+		$baseUrl = $this->_baseUrl.($withClonePrefix?$this->_clonePrefix:'');
+		if($cutAtDomain){
+			$baseUrl = preg_replace('#http://[^/]+#','',$baseUrl);
+		}
+		return $baseUrl;
 	}
 
 	/**

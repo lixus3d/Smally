@@ -376,8 +376,13 @@ class Application {
 	 */
 	public function getBaseUrl($path='',$type='www',$htmlspecialchars=true){
 		static $baseUrl = null;
+
 		if(is_null($baseUrl)){
-			$baseUrl = $this->getRouter()->getBaseUrl();
+			if($this->isDev()){
+				$baseUrl = $this->getRouter()->getBaseUrl(true,true);
+			}else{
+				$baseUrl = $this->getRouter()->getBaseUrl();
+			}
 		}
 
 		switch($type){
