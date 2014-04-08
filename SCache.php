@@ -27,7 +27,7 @@ class SCache {
 
 	/**
 	 * Return the current CmsTemplate instance
-	 * @return \CmsTemplate\AbstractCmsTemplate
+	 * @return \Smally\SCache
 	 */
 	static public function getInstance(){
 		if( is_null(static::$_singleton) ){
