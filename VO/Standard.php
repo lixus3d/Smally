@@ -366,6 +366,12 @@ class Standard extends \stdClass {
 			$criteria = $dao->getCriteria();
 			$criteria ->setFilter(array($nameField=>array('value'=>$tags,'operator'=>'IN')));
 
+			// Only load current siteId elements
+			if(property_exists($voName, 'siteId') && $siteId = \Multisite::getInstance()->getSiteId() ){
+				$hasSiteId = true;
+				$criteria->setFilterKey('siteId',$siteId);
+			}else $hasSiteId = false;
+
 			$existingTags = array();
 			if($tagList = $dao->fetchAll($criteria)){
 				foreach($tagList as $tagVo){
@@ -379,6 +385,9 @@ class Standard extends \stdClass {
 				}else{
 					$vo = new $voName();
 					$vo->name = $tag;
+					if($hasSiteId){
+						$vo->siteId = $siteId;
+					}
 					if($dao->store($vo)){
 						$this->{$fieldName}[] = $vo->getId();
 					}
