@@ -62,7 +62,7 @@ abstract class AbstractUrlRewriting {
 	 * @return string null in case of no matching rule
 	 */
 	public function getControllerRewriting($controllerPath,$params=array()){
-		$controllerPathLowered = strtolower($controllerPath);
+		$controllerPathLowered = str_replace(array('\\','/'),'\\',strtolower($controllerPath));
 		$getPart = $params?'?'.http_build_query($params):'';
 		if(isset($this->_controllerRewriting[$controllerPathLowered])){
 			$rule = $this->_controllerRewriting[$controllerPathLowered];
