@@ -248,7 +248,11 @@ class Router {
 	 * @param int $code
 	 */
 	public function redirect($destination='',$code=302){
-		if(strpos($destination,'http') !== 0) $destination = $this->getBaseUrl() . $this->getApplication()->makeControllerUrl($destination);
+		// if(strpos($destination,'http') !== 0) $destination = $this->getBaseUrl() . $this->getApplication()->makeControllerUrl($destination);
+		if(strpos($destination,'http') !== 0 && strpos($destination,'/') !== 0 ){
+			// $destination = $this->getBaseUrl() . $this->getApplication()->makeControllerUrl($destination);
+			$destination = $this->getApplication()->getControllerUrl($destination);
+		}
 		header('Location: '.$destination,true,$code);
 		die();
 	}

@@ -374,11 +374,11 @@ class Application {
 	 * @param  boolean $htmlspecialchars Does we convert the string to be href compliant*
 	 * @return string
 	 */
-	public function getBaseUrl($path='',$type='www',$htmlspecialchars=true){
+	public function getBaseUrl($path='',$type='www',$htmlspecialchars=true,$forceComplete=false){
 		static $baseUrl = null;
 
 		if(is_null($baseUrl)){
-			if($this->isDev()){
+			if($this->isDev()&&!$forceComplete){
 				$baseUrl = $this->getRouter()->getBaseUrl(true,true);
 			}else{
 				$baseUrl = $this->getRouter()->getBaseUrl();

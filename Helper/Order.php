@@ -170,7 +170,7 @@ class Order {
 
 		$params[$this->_urlParam] = array(implode(',',array($field,$direction)));
 
-		return 'http://'.$this->_urlInfos['host'].$this->_urlInfos['path'].'?'.http_build_query($params);
+		return (isset($this->_urlInfos['host'])?'http://'.$this->_urlInfos['host']:'').$this->_urlInfos['path'].'?'.http_build_query($params);
 	}
 
 	/**
