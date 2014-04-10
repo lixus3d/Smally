@@ -240,8 +240,7 @@ class Standard extends \stdClass {
 
 			$params = array_merge($defaultParams,$params);
 		}
-		$url = $this->getApplication()->makeControllerUrl($controllerPath,$params);
-		return $this->getApplication()->getBaseUrl($url);
+		return $this->getApplication()->getControllerUrl($controllerPath,$params);
 	}
 
 	/**
@@ -696,6 +695,72 @@ class Standard extends \stdClass {
 		}
 
 		return $this;
+	}
+
+	/**
+	 * Generic store a one to many relation
+	 * @param  string $fieldName  the fieldname that contains the many idList
+	 * @param  string $manyVoName the many voName
+	 * @param  array $varsFilter the vars to put in the many voName to make it match with current vo
+	 * @return \Smally\VO\Standard
+	 */
+	protected function _genericStoreOneToMany($fieldName,$manyVoName,$varsFilter){
+
+		$getterName = 'get'.ucfirst($fieldName);
+		if(method_exists($this, $getterName)){
+			$values = $this->{$getterName}();
+		}else $values = $this->{$fieldName};
+
+		if(is_array($values)){
+
+			$manyBusiness = $this->getFactory()->getBusiness($manyVoName);
+			$criteria = $manyBusiness->getCriteria();
+
+			foreach($varsFilter as $key => &$value){
+				$criteria->setFilterKey($key,$value);
+			}
+
+
+			$actualManyIdList = array();
+			if($actualManyList = $manyBusiness->fetchAll($criteria)){
+				foreach($actualManyList as $actualManyVo){
+					if(!in_array($actualManyVo->getId(), $values)){
+						$actualManyVo->delete();
+					}else{
+						$actualManyIdList[$actualManyVo->getId()] = $actualManyVo;
+					}
+				}
+			}
+
+			foreach($values as $newManyId){
+				if(!array_key_exists($newManyId, $actualManyIdList)){
+					// we must assign this block to the field
+					if($newManyVo = $manyBusiness->getById($newManyId)){
+						$newManyVo->initVars($varsFilter);
+						$newManyVo->store();
+					}
+				}
+			}
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Generic get a one to many relation from a $varsFilter
+	 * @param  string $manyVoName The many voName
+	 * @param  array $varsFilter The vars that the many must have to be with current vo
+	 * @return array
+	 */
+	protected function _genericGetOneToMany($manyVoName,$varsFilter){
+		$manyBusiness = $this->getFactory()->getBusiness($manyVoName);
+		$criteria = $manyBusiness->getCriteria();
+
+		foreach($varsFilter as $key => &$value){
+			$criteria->setFilterKey($key,$value);
+		}
+
+		return $manyBusiness->fetchAll($criteria);
 	}
 
 }
