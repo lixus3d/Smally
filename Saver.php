@@ -21,7 +21,7 @@ class Saver {
 	protected $_partEdit = false;
 	protected $_mode = null;
 
-	protected $_storeState = false;
+	protected $_storeState = null;
 
 	protected $_urlParamId = 'id';
 	protected $_urlParamCopyId = 'copyId';
