@@ -156,6 +156,7 @@ class View {
 		foreach($cssFiles as $file){
 			if( ($this->getApplication()->getConfig()->smally->cssMtime === true) && (strpos($file, '.less') !== false) ){
 				$testFileName = str_replace('.less.css','.less',$file);
+				$testFileName = preg_replace('#http://[^/]+/#','',$testFileName);
 				if(file_exists(REAL_PATH.'assets\\'.$testFileName)){
 					if( $mtime = filemtime(REAL_PATH.'assets\\'.$testFileName) ){
 						$file = substr($file,0,strrpos($file, '.')) . '.' . $mtime . strrchr($file, '.');
