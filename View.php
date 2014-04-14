@@ -154,7 +154,7 @@ class View {
 		$output = array();
 		$cssFiles = $this->getApplication()->getCss();
 		foreach($cssFiles as $file){
-			if( (strpos($file,'http')===false) && ($this->getApplication()->getConfig()->smally->cssMtime === true) && (strpos($file, '.less') !== false) ){
+			if( ($this->getApplication()->getConfig()->smally->cssMtime === true) && (strpos($file, '.less') !== false) ){
 				$testFileName = str_replace('.less.css','.less',$file);
 				if(file_exists(REAL_PATH.'assets\\'.$testFileName)){
 					if( $mtime = filemtime(REAL_PATH.'assets\\'.$testFileName) ){
