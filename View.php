@@ -154,7 +154,7 @@ class View {
 		$output = array();
 		$cssFiles = $this->getApplication()->getCss();
 		foreach($cssFiles as $file){
-			if( $this->getApplication()->getConfig()->smally->cssMtime === true ){
+			if( $this->getApplication()->getConfig()->smally->cssMtime === true && file_exists(REAL_PATH.'assets\\'.$file)){
 				if( strpos($file,'http')===false && $mtime = filemtime(REAL_PATH.'assets\\'.$file) ){
 					$file = substr($file,0,strrpos($file, '.')) . '.' . $mtime . strrchr($file, '.');
 				}
