@@ -154,6 +154,15 @@ class View {
 		$output = array();
 		$cssFiles = $this->getApplication()->getCss();
 		foreach($cssFiles as $file){
+			if( ($this->getApplication()->getConfig()->smally->cssMtime === true) && (strpos($file, '.less') !== false) ){
+				$testFileName = preg_replace('#^http://[^/]+/#','',$file);
+				$testFileName = str_replace(array('\\','/','.less.css'),array(DIRECTORY_SEPARATOR,DIRECTORY_SEPARATOR,'.less'),REAL_PATH . 'assets\\' . $testFileName);
+				if(file_exists($testFileName)){
+					if( $mtime = filemtime($testFileName) ){
+						$file = substr($file,0,strrpos($file, '.')) . '.' . $mtime . strrchr($file, '.');
+					}
+				}
+			}
 			if(strpos($file,'.less') > 0 && !$this->getApplication()->isDev()) {
 				$file .= '.css';
 			}
