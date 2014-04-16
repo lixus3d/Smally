@@ -255,7 +255,9 @@ class Db implements InterfaceDao {
 				}
 
 			}
-			return $this->_getByIdCache[$id];
+			if(isset($this->_getByIdCache[$id])){
+				return $this->_getByIdCache[$id];
+			}
 		}
 		return null;
 	}
