@@ -4,7 +4,7 @@ namespace Smally\Form\Element;
 
 class Submodel extends AbstractElement{
 
-	protected $_type = 'text';
+	protected $_type = 'submodel';
 	protected $_decorator = 'submodel';
 
 	protected $_voName = null;
