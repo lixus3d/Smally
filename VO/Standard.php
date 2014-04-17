@@ -763,4 +763,33 @@ class Standard extends \stdClass {
 		return $manyBusiness->fetchAll($criteria);
 	}
 
+	/**
+	 * Validate that a slugify is unique for a particular field
+	 * @param  string $fieldName The name of the slugify field you want to be unique
+	 * @return string
+	 */
+	protected function _genericUniqueSlugify($fieldName){
+
+		$value = \Smally\Util::slugify($this->{$fieldName}?:$this->getName());
+		// we loop until we found a valid slugify for this field
+		while(true){
+			$criteria = $this->getBusiness()->getCriteria()
+												->setFilterKey($fieldName,$value)
+												;
+			if($id = $this->getId()) $criteria->setFilterKey($this->getPrimaryKey(),$id,'!=');
+
+			if($fetch = $this->getBusiness()->fetch($criteria)){
+				if(preg_match('#^(.+)-([0-9]+)$#',$value,$matches)){
+					$value = $matches[1].'-'.($matches[2] + 1);
+				}else{
+					$value .= '-1';
+				}
+			}else{
+				break;
+			}
+		}
+
+		return $this->{$fieldName} = $value;
+	}
+
 }
