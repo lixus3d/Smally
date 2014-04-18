@@ -101,7 +101,8 @@ class MenuElement extends AbstractDecorator {
 			if(!$active){
 				// try the url approach
 				$actualUrl = $application->getRouter()->getActualUrl();
-				if($this->getElement()->getUrl() == $actualUrl && !$this->getElement()->isShortcut() ){
+				// if($this->getElement()->getUrl() == $actualUrl && !$this->getElement()->isShortcut() ){
+				if( !$this->getElement()->isShortcut() && strpos(strrev($actualUrl), strrev($this->getElement()->getUrl()))===0 ){
 					$active = true;
 					$attributes['class'][] = $this->_classActive;
 					// Add the active class to the parent of the current menu
