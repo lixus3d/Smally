@@ -609,7 +609,11 @@ class Db implements InterfaceDao {
 		}
 
 		foreach($criteria->getOrder() as $orderField){
-			$order[] = '`'.$this->getTable().'`.`'.$orderField[0].'` '.$orderField[1];
+			if(strpos($orderField[0], '.')===false&&strpos($orderField[0], '(')===false){
+				$order[] = '`'.$this->getTable().'`.`'.$orderField[0].'` '.$orderField[1];
+			}else{
+				$order[] = ''.$orderField[0].' '.$orderField[1];
+			}
 		}
 
 		if(is_array($criteria->getLimit())){
