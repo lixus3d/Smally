@@ -427,6 +427,10 @@ class Standard extends \stdClass {
 		if(method_exists($this, $getterName)){
 			$modelIdList = $this->{$getterName}();
 		}else $modelIdList = $this->{$fieldName};
+		if(!is_array($modelIdList)){
+			if(!$modelIdList) $modelIdList = array();
+			else $modelIdList = array($modelIdList);
+		}
 
 		$inBaseIdList = $this->_genericGetJointModelId($fieldName,$jVoName,$jointVars,null,$destinationFieldName);
 
