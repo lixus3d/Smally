@@ -587,6 +587,11 @@ class Db implements InterfaceDao {
 				}
 
 				switch($operator){
+					case '&':
+					case '|':
+					case '^':
+					case '>>':
+					case '<<':
 					case '=':
 					case '>':
 					case '<':
