@@ -64,11 +64,11 @@ class MenuElement extends AbstractDecorator {
 
 
 		if($menu = $this->getMenu()){
-			$attributes = array_merge($this->getMenu()->getAttributesElement(),$attributes); // Attributes of the menu element, a generic class for
+			$attributes = array_merge_recursive($this->getMenu()->getAttributesElement(),$attributes); // Attributes of the menu element, a generic class for
 		}
 
 		if($activeAttributes = $this->testActive()){
-			$attributes = array_merge($attributes,$activeAttributes); // Attributes of the menu element, a generic class for
+			$attributes = array_merge_recursive($attributes,$activeAttributes); // Attributes of the menu element, a generic class for
 		}
 
 

@@ -115,7 +115,11 @@ class Tree {
 		switch($attribute){
 			case 'class':
 				if(!isset($this->{$type}[$attribute])) $this->{$type}[$attribute] = array();
-				$this->{$type}[$attribute][] = $value;
+				if(is_array($value)){
+					$this->{$type}[$attribute] = array_merge($this->{$type}[$attribute],$value);
+				}else{
+					$this->{$type}[$attribute][] = $value;
+				}
 			break;
 			default:
 				$this->{$type}[$attribute] = $value;
