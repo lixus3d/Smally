@@ -225,7 +225,7 @@ class Standard extends \stdClass {
 	 * @param  string $controllerPath The controller action you want
 	 * @return string The absolute url of the controller action wanted
 	 */
-	public function getUrl($controllerPath,$params=array(),$replace=false){
+	public function getUrl($controllerPath,$params=array(),$replace=false,$makeMode=false){
 
 
 		if(!$replace){
@@ -240,7 +240,11 @@ class Standard extends \stdClass {
 
 			$params = array_merge($defaultParams,$params);
 		}
-		return $this->getApplication()->getControllerUrl($controllerPath,$params);
+		if($makeMode){
+			return $this->getApplication()->makeControllerUrl($controllerPath,$params);
+		}else{
+			return $this->getApplication()->getControllerUrl($controllerPath,$params);
+		}
 	}
 
 	/**
