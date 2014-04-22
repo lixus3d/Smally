@@ -8,7 +8,6 @@ $translate = array(
 	'FORM_DECORATOR_MAP_PLACEHOLDER' => 'Rechercher une adresse',
 	'FORM_DECORATOR_MAP_HELP' => 'Vous pouvez rechercher une adresse, ou déplacer le marqueur avec votre souris à l\'endroit désiré.',
 
-
 	// VALIDATOR
 	'VALIDATOR_DATE_ERROR_FORMAT_FR' => 'Le format de date JJ/MM/AAAA n\'est pas respecté',
 	'VALIDATOR_DATE_ERROR_FORMAT_EN' => 'Le format de date MM/JJ/AAAA n\'est pas respecté',
@@ -29,5 +28,7 @@ $translate = array(
 	'VALIDATOR_INTEGER_ERROR' => 'Cette valeur n\'est pas un nombre entier',
 
 	'VALIDATOR_BOOLEAN_ERROR' => 'Cette valeur n\'est pas un booléen',
+
+	'VALIDATOR_CAPTCHA_ERROR' => 'La Captcha n\'est pas correcte. Veuillez recommencer.',
 
 );

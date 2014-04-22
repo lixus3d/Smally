@@ -29,4 +29,6 @@ $translate = array(
 
 	'VALIDATOR_BOOLEAN_ERROR' => 'This value is not a boolean.',
 
+	'VALIDATOR_CAPTCHA_ERROR' => 'The captcha is not correct. Please fill again.',
+
 );
