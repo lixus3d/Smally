@@ -436,6 +436,8 @@ class Standard extends \stdClass {
 			else $modelIdList = array($modelIdList);
 		}
 
+		$modelIdList = array_filter($modelIdList);
+
 		$inBaseIdList = $this->_genericGetJointModelId($fieldName,$jVoName,$jointVars,null,$destinationFieldName);
 
 		// We update/insert joints
