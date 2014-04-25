@@ -15,6 +15,8 @@ class Application {
 	protected $_environnement 		= self::ENV_DEVELOPMENT;
 	protected $_logger				= null;
 
+	protected $_siteNamespace 		= null;
+
 	protected $_init				= null;
 	protected $_bootstrap			= null;
 	protected $_factory				= null;
@@ -167,17 +169,26 @@ class Application {
 	 * @return \Smally\Application
 	 */
 	public function setSiteNamespace($siteNamespace){
+
+		$this->_siteNamespace = $siteNamespace;
+
 		// Specific Init of the site
-		$className = '\\'.$siteNamespace.'\\Init';
+		$className = '\\'.$this->_siteNamespace.'\\Init';
 		if(class_exists($className)){
 			$this->_init = new $className($this);
 			$this->_init->x();
 		}
 		// Specific Bootsrap
-		$className = '\\'.$siteNamespace.'\\Bootstrap';
+		$className = '\\'.$this->_siteNamespace.'\\Bootstrap';
 		if(class_exists($className)){
 			$this->_bootstrap = new $className($this);
 		}
+		// Specific UrlRewriting
+		$className = '\\'.$this->_siteNamespace.'\\UrlRewriting';
+		if(class_exists($className)){
+			$this->_urlRewriting = new $className();
+		}
+
 		return $this;
 	}
 
