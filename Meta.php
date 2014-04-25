@@ -54,8 +54,10 @@ class Meta{
 	 * @return \Smally\Meta
 	 */
 	public function addMeta($type,$content='',$default=false){
-		$dest = $default? '_default' : '_metas';
-		$this->{$dest}[$type][] = $content;
+		if($content){
+			$dest = $default? '_default' : '_metas';
+			$this->{$dest}[$type][] = $content;
+		}
 		return $this;
 	}
 
