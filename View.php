@@ -247,17 +247,18 @@ class View {
 	 */
 	public function beginCache($keyPrefix){
 
-		$this->cacheActive = $this->getApplication()->getFactory()->getLogic('Cms')->isCacheActive();
-		$this->smallyCache = \Smally\SCache::getInstance();
+		if(!$this->inCache()){
+			$this->cacheActive = $this->getApplication()->getFactory()->getLogic('Cms')->isCacheActive();
+			$this->smallyCache = \Smally\SCache::getInstance();
 
-		if(!isset($this->topBlock)){
-
-			$this->renderCacheKey = $this->smallyCache->getHashKey($keyPrefix.'_RENDER');
-			$this->assetsCacheKey = $this->smallyCache->getHashKey($keyPrefix.'_ASSETS');
+			$this->cacheKey = $keyPrefix;
+			$this->cacheKeyRender = $this->smallyCache->getHashKey($keyPrefix.'_RENDER');
+			$this->cacheKeyAssets = $this->smallyCache->getHashKey($keyPrefix.'_ASSETS');
 
 			$this->topBlock = array(
 				'js' => array(),
-				'css' => array()
+				'css' => array(),
+				'meta' => array(),
 				);
 
 			return true;
@@ -269,13 +270,21 @@ class View {
 	}
 
 	/**
+	 * Return whether we are already in a cache block or not ( actually we can't start a new cache in a cache , we always cache the biggest cache block)
+	 * @return boolean
+	 */
+	public function inCache(){
+		return isset($this->topBlock);
+	}
+
+	/**
 	 * Experimental cache system get from cache function that will either get from cache or effectively launch the cache ob
 	 * @return boolean
 	 */
-	public function getFromCache(){
-		if($this->cacheActive){
-			$render = $this->smallyCache->getKey($this->renderCacheKey); // render must be differnt from false or null to be considered as valid cache entry
-			$assets = $this->smallyCache->getKey($this->assetsCacheKey);
+	public function getFromCache($keyPrefix){
+		if($this->cacheActive && $keyPrefix == $this->cacheKey){
+			$render = $this->smallyCache->getKey($this->cacheKeyRender); // render must be differnt from false or null to be considered as valid cache entry
+			$assets = $this->smallyCache->getKey($this->cacheKeyAssets);
 			if( $render!==false && $render!==null && is_array($assets) ){
 				$this->cacheRender = $render;
 				$this->cacheAssets = $assets;
@@ -290,30 +299,54 @@ class View {
 	 * Experimental cache system end cache function that will save and output de render either from cache or just rendered
 	 * @return null
 	 */
-	public function endCache(){
+	public function endCache($keyPrefix){
 
-		if(!isset($this->cacheRender)){
-			$this->cacheRender = ob_get_clean();
-			$this->smallyCache->setKey($this->renderCacheKey,$this->cacheRender);
-		}
-		if(!isset($this->cacheAssets)){
-			$this->cacheAssets = $this->topBlock;
-			$this->smallyCache->setKey($this->assetsCacheKey,$this->cacheAssets);
-		}
+		if($keyPrefix != $this->cacheKey){
+			$render = ob_get_clean();
+		}else{
 
-		echo $this->cacheRender;
-
-		$application = $this->getApplication();
-		foreach($this->cacheAssets as $type => $assets){
-			$method = 'set'.ucfirst($type);
-			foreach($assets as $asset){
-				$application->$method($asset);
+			if(!isset($this->cacheRender)){
+				$this->cacheRender = ob_get_clean();
+				$this->smallyCache->setKey($this->cacheKeyRender,$this->cacheRender);
 			}
+			$render = $this->cacheRender;
+
+			if(!isset($this->cacheAssets)){
+				$this->cacheAssets = $this->topBlock;
+				$this->smallyCache->setKey($this->cacheKeyAssets,$this->cacheAssets);
+			}
+
+			$application = $this->getApplication();
+			$metaHandler = $application->getMeta();
+			foreach($this->cacheAssets as $type => $assets){
+				switch($type){
+					case 'js':
+					case 'css':
+						$method = 'set'.ucfirst($type);
+						foreach($assets as $asset){
+							$application->$method($asset);
+						}
+						break;
+					case 'meta':
+						foreach($assets as $metaType => $meta){
+							$metaHandler->addMeta($metaType,$meta);
+						}
+						break;
+				}
+			}
+
+			unset($this->cacheRender);
+			unset($this->cacheAssets);
+			unset($this->topBlock);
+
 		}
 
-		unset($this->cacheRender);
-		unset($this->cacheAssets);
-		unset($this->topBlock);
+		if($render){
+			echo $render;
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
