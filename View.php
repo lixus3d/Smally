@@ -9,6 +9,8 @@ class View {
 
 	protected $_templatePath = null;
 
+	protected $_parentView = null;
+
 	public $content = ''; // eventually a sub content in the view. Usually for a Global layout
 	protected $_render = '';
 
@@ -47,6 +49,11 @@ class View {
 	 */
 	public function setTemplatePath($templatePath){
 		$this->_templatePath = $templatePath;
+		return $this;
+	}
+
+	public function setParentView(\Smally\View $parentView){
+		$this->_parentView = $parentView;
 		return $this;
 	}
 
@@ -127,6 +134,14 @@ class View {
 	 */
 	public function getTemplatePath(){
 		return $this->_templatePath;
+	}
+
+	public function getSubView($subViewTemplatePath){
+		$subViewTemplatePath = str_replace(array('/','\\'),DIRECTORY_SEPARATOR,$subViewTemplatePath);
+		$subView = clone($this);
+		$subView->setParentView($this);
+		$subView->setTemplatePath($subViewTemplatePath);
+		return $subView;
 	}
 
 	/**
@@ -245,27 +260,25 @@ class View {
 	 * @param  string $keyPrefix A unique cache prefix key
 	 * @return boolean
 	 */
-	public function beginCache($keyPrefix){
+	protected function beginCache($keyPrefix){
 
-		if(!$this->inCache()){
-			$this->cacheActive = $this->getApplication()->getFactory()->getLogic('Cms')->isCacheActive();
-			$this->smallyCache = \Smally\SCache::getInstance();
+		$this->cacheActive = $this->getApplication()->getFactory()->getLogic('Cms')->isCacheActive();
+		$this->smallyCache = \Smally\SCache::getInstance();
 
-			$this->cacheKey = $keyPrefix;
-			$this->cacheKeyRender = $this->smallyCache->getHashKey($keyPrefix.'_RENDER');
-			$this->cacheKeyAssets = $this->smallyCache->getHashKey($keyPrefix.'_ASSETS');
+		$this->caching = true;
+		$this->cacheRender = null;
+		$this->cacheAssets = null;
+		$this->cacheKey = $keyPrefix;
+		$this->cacheKeyRender = $this->smallyCache->getHashKey($keyPrefix.'_RENDER');
+		$this->cacheKeyAssets = $this->smallyCache->getHashKey($keyPrefix.'_ASSETS');
 
-			$this->topBlock = array(
-				'js' => array(),
-				'css' => array(),
-				'meta' => array(),
-				);
+		$this->topBlock = array(
+			'js' => array(),
+			'css' => array(),
+			'meta' => array(),
+			);
 
-			return true;
-		}
-
-		return false;
-
+		return true;
 
 	}
 
@@ -273,16 +286,16 @@ class View {
 	 * Return whether we are already in a cache block or not ( actually we can't start a new cache in a cache , we always cache the biggest cache block)
 	 * @return boolean
 	 */
-	public function inCache(){
-		return isset($this->topBlock);
+	public function inCacheRender(){
+		return isset($this->cacheKey)&&$this->cacheKey;
 	}
 
 	/**
 	 * Experimental cache system get from cache function that will either get from cache or effectively launch the cache ob
 	 * @return boolean
 	 */
-	public function getFromCache($keyPrefix){
-		if($this->cacheActive && $keyPrefix == $this->cacheKey){
+	protected function getFromCache(){
+		if($this->cacheActive){
 			$render = $this->smallyCache->getKey($this->cacheKeyRender); // render must be differnt from false or null to be considered as valid cache entry
 			$assets = $this->smallyCache->getKey($this->cacheKeyAssets);
 			if( $render!==false && $render!==null && is_array($assets) ){
@@ -291,62 +304,56 @@ class View {
 				return true;
 			}
 		}
-		ob_start();
 		return false;
 	}
 
 	/**
-	 * Experimental cache system end cache function that will save and output de render either from cache or just rendered
+	 * Call this function to avoid caching of the block, for example because of a sub view can't be cached
 	 * @return null
 	 */
-	public function endCache($keyPrefix){
+	public function avoidCacheRender(){
+		$this->caching = false;
+		if(!is_null($this->_parentView)){
+			$this->_parentView->avoidCacheRender();
+		}
+	}
 
-		if($keyPrefix != $this->cacheKey){
-			$render = ob_get_clean();
-		}else{
+	/**
+	 * Experimental cache system end cache function that will save and output de render either from cache or just rendered
+	 * @return boolean Return the expected output
+	 */
+	protected function endCache(){
 
-			if(!isset($this->cacheRender)){
-				$this->cacheRender = ob_get_clean();
-				$this->smallyCache->setKey($this->cacheKeyRender,$this->cacheRender);
-			}
-			$render = $this->cacheRender;
+		if(is_null($this->cacheRender)){
+			$this->cacheRender = $this->getRender();
+			if($this->caching) $this->smallyCache->setKey($this->cacheKeyRender,$this->cacheRender);
+		}else $this->setRender($this->cacheRender);
 
-			if(!isset($this->cacheAssets)){
-				$this->cacheAssets = $this->topBlock;
-				$this->smallyCache->setKey($this->cacheKeyAssets,$this->cacheAssets);
-			}
-
-			$application = $this->getApplication();
-			$metaHandler = $application->getMeta();
-			foreach($this->cacheAssets as $type => $assets){
-				switch($type){
-					case 'js':
-					case 'css':
-						$method = 'set'.ucfirst($type);
-						foreach($assets as $asset){
-							$application->$method($asset);
-						}
-						break;
-					case 'meta':
-						foreach($assets as $metaType => $meta){
-							$metaHandler->addMeta($metaType,$meta);
-						}
-						break;
-				}
-			}
-
-			unset($this->cacheRender);
-			unset($this->cacheAssets);
-			unset($this->topBlock);
-
+		if(is_null($this->cacheAssets)){
+			$this->cacheAssets = $this->topBlock;
+			if($this->caching) $this->smallyCache->setKey($this->cacheKeyAssets,$this->cacheAssets);
 		}
 
-		if($render){
-			echo $render;
-			return true;
+		$application = $this->getApplication();
+		$metaHandler = $application->getMeta();
+		foreach($this->cacheAssets as $type => $assets){
+			switch($type){
+				case 'js':
+				case 'css':
+					$method = 'set'.ucfirst($type);
+					foreach($assets as $asset){
+						$application->$method($asset);
+					}
+					break;
+				case 'meta':
+					foreach($assets as $metaType => $meta){
+						$metaHandler->addMeta($metaType,$meta);
+					}
+					break;
+			}
 		}
 
-		return false;
+		return $this->getRender();
 	}
 
 	/**
@@ -383,6 +390,14 @@ class View {
 	public function x($params=array()){
 		$this->setRender($this->render($this->getTemplatePath(),$params));
 		return $this;
+	}
+
+	public function cacheRender($cacheKey, $params=array()){
+		$this->beginCache($cacheKey);
+		if( !$this->getFromCache() ){
+			$this->x($params);
+		}
+		return $this->endCache();
 	}
 
 	/**
