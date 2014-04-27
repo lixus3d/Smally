@@ -184,6 +184,11 @@ class View {
 				$output[] = '<meta'.\Smally\Util::toAttributes($element).'/>';
 			}
 		}
+		if($headTags = $meta->getHeadTags()){
+			foreach($headTags as $tag){
+				$output[] = '<'.$tag['tag'].''.\Smally\Util::toAttributes($tag['attr']).'/>';
+			}
+		}
 		return implode(NN.TT,$output);
 	}
 

@@ -19,6 +19,7 @@ class Meta{
 			);
 
 	protected $_otherMetas = array();
+	protected $_headTags = array();
 
 	/**
 	 * Construct the meta object
@@ -78,6 +79,24 @@ class Meta{
 	}
 
 	/**
+	 * Add a head tag ( rel prev, next, etc ...)
+	 * @param string $tagType  tag name (link for example)
+	 * @param array  $tagAttr  tag attributes
+	 * @param string $uniqName A uniqname to avoid multiple entries
+	 */
+	public function addHeadTag($tagType,$tagAttr=array(),$uniqName=null){
+		if($tagType){
+			$tagArray = array('tag'=>$tagType,'attr'=>$tagAttr);
+			if(is_null($uniqName)){
+				$this->_headTags[] = $tagArray;
+			}else{
+				$this->_headTags[$uniqName] = $tagArray;
+			}
+		}
+		return $this;
+	}
+
+	/**
 	 * Get a particular meta
 	 * @param string $type title, keywords or description
 	 * @return mixed
@@ -98,6 +117,14 @@ class Meta{
 	 */
 	public function getOtherMetas(){
 		return $this->_otherMetas;
+	}
+
+	/**
+	 * Return the array of head tags (link, etc...)
+	 * @return array
+	 */
+	public function getHeadTags(){
+		return $this->_headTags;
 	}
 
 

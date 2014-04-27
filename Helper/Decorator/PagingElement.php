@@ -60,8 +60,16 @@ class PagingElement extends AbstractDecorator {
 
 		// Add the active automatically
 		if($application = \Smally\Application::getInstance()){
-			if( $this->getPaging()->getPage() == ($this->getElement()-1) ){
+			$pageNumber = $this->getElement() - 1 ;
+			$actualPageNumber = $this->getPaging()->getPage();
+			if( $pageNumber == $actualPageNumber ){
 				$attributes['class'][] = $this->_classActive;
+			}else{
+				if($pageNumber == $actualPageNumber-1){
+					$application->getMeta()->addHeadTag('link',array('rel'=>'prev','href'=>$this->getPaging()->getUrl($pageNumber+1)),'rel-prev');
+				}elseif($pageNumber == $actualPageNumber+1){
+					$application->getMeta()->addHeadTag('link',array('rel'=>'next','href'=>$this->getPaging()->getUrl($pageNumber+1)),'rel-next');
+				}
 			}
 		}
 
