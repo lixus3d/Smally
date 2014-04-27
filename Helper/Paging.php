@@ -239,9 +239,13 @@ class Paging {
 		}
 		$params = $this->_urlInfos['params'];
 
-		$params[$this->_urlParam] = $pageNumber;
+		if($pageNumber>1){
+			$params[$this->_urlParam] = $pageNumber;
+		}elseif(isset($params[$this->_urlParam])){
+			unset($params[$this->_urlParam]);
+		}
 
-		return 'http://'.$this->_urlInfos['host'].$this->_urlInfos['path'].'?'.http_build_query($params).($withSuffix?$this->_urlSuffix:'');
+		return (isset($this->_urlInfos['host'])?'http://'.$this->_urlInfos['host']:'').$this->_urlInfos['path'].($params?'?'.http_build_query($params):'').($withSuffix?$this->_urlSuffix:'');
 	}
 
 	/**
