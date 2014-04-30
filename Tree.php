@@ -101,7 +101,11 @@ class Tree {
 	 * @param  $child Child array
 	 */
 	public function addChild($child){
-		$this->_children[] = new static($child,$this);
+		if($child instanceof static){
+			$this->_children[] = $child;
+		}else{
+			$this->_children[] = new static($child,$this);
+		}
 		return $this;
 	}
 
