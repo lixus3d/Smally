@@ -386,25 +386,36 @@ class Application {
 	 * @return string
 	 */
 	public function getBaseUrl($path='',$type='www',$htmlspecialchars=true,$forceComplete=false){
-		static $baseUrl = null;
 
-		if(is_null($baseUrl)){
-			if($this->isDev()&&!$forceComplete){
-				$baseUrl = $this->getRouter()->getBaseUrl(true,true);
-			}else{
-				$baseUrl = $this->getRouter()->getBaseUrl();
+		static $baseUrl = null;
+		static $baseUrlComplete = null;
+		static $pathPrefix = null;
+		static $dataPaths = null;
+		static $assetsPaths = null;
+
+		if( !$this->isDev() || $forceComplete ){
+			if(is_null($baseUrlComplete)){
+				$baseUrlComplete = $this->getRouter()->getBaseUrl();
 			}
+			$url = $baseUrlComplete;
+		}else{
+			if(is_null($baseUrl)){
+				$baseUrl = $this->getRouter()->getBaseUrl(true,true);
+			}
+			$url = $baseUrl;
 		}
 
 		switch($type){
 			case 'www': break;
 			case $this->isDev(): // If we are in developpement context, then we always use the standard base url but we prefix with type directory
-				if( isset($this->getConfig()->smally->paths->{$type.'Prefix'}) ) $pathPrefix = $this->getConfig()->smally->paths->{$type.'Prefix'};
-				else $pathPrefix = '';
+				if( is_null($pathPrefix) ){
+					if(isset($this->getConfig()->smally->paths->{$type.'Prefix'})) $pathPrefix = $this->getConfig()->smally->paths->{$type.'Prefix'};
+					else $pathPrefix = '';
+				}
 				$path = $pathPrefix.$type.'/'.$path;
 			break;
 			case 'data':
-				if( !$this->getConfig()->smally->paths->data->isEmpty() && $dataPaths = $this->getConfig()->smally->paths->data->toArray()){
+				if( !is_null($dataPaths) || (!$this->getConfig()->smally->paths->data->isEmpty() && $dataPaths = $this->getConfig()->smally->paths->data->toArray()) ){
 					// generate a unique key (ip + $path first char)
 					$ip = substr(strrchr($this->getContext()->getIp(), '.'),1); // serv always same domain to a particular ip
 					$ip += ord(basename($path)) + strlen($path);
@@ -414,7 +425,7 @@ class Application {
 				}
 			break;
 			case 'assets':
-				if( !$this->getConfig()->smally->paths->assets->isEmpty() && $assetsPaths = $this->getConfig()->smally->paths->assets->toArray()){
+				if( !is_null($assetsPaths) ||  (!$this->getConfig()->smally->paths->assets->isEmpty() && $assetsPaths = $this->getConfig()->smally->paths->assets->toArray()) ){
 					// generate a unique key (ip + $path first char)
 					$ip = substr(strrchr($this->getContext()->getIp(), '.'),1); // serv always same domain to a particular ip
 					$ip += ord(basename($path)) + strlen($path);
@@ -424,7 +435,6 @@ class Application {
 				}
 			break;
 		}
-		if(!isset($url)) $url = $baseUrl;
 		$url .= $path;
 		return $htmlspecialchars?htmlspecialchars($url,ENT_COMPAT,'UTF-8'):$url;
 	}
