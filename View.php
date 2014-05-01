@@ -141,6 +141,10 @@ class View {
 		$subView = clone($this);
 		$subView->setParentView($this);
 		$subView->setTemplatePath($subViewTemplatePath);
+		if(isset($this->topBlock)){
+			$subView->topBlock = &$this->topBlock;
+			$subView->ownTopBlock = false;
+		}
 		return $subView;
 	}
 
@@ -275,13 +279,17 @@ class View {
 		$this->cacheAssets = null;
 		$this->cacheKey = $keyPrefix;
 		$this->cacheKeyRender = $this->smallyCache->getHashKey($keyPrefix.'_RENDER');
-		$this->cacheKeyAssets = $this->smallyCache->getHashKey($keyPrefix.'_ASSETS');
+		if(!isset($this->ownTopBlock)||$this->ownTopBlock){
+			$this->cacheKeyAssets = $this->smallyCache->getHashKey($keyPrefix.'_ASSETS');
+		}
 
-		$this->topBlock = array(
-			'js' => array(),
-			'css' => array(),
-			'meta' => array(),
-			);
+		if(!isset($this->topBlock)){
+			$this->topBlock = array(
+				'js' => array(),
+				'css' => array(),
+				'meta' => array(),
+				);
+		}
 
 		return true;
 
@@ -302,10 +310,13 @@ class View {
 	protected function getFromCache(){
 		if($this->cacheActive){
 			$render = $this->smallyCache->getKey($this->cacheKeyRender); // render must be differnt from false or null to be considered as valid cache entry
-			$assets = $this->smallyCache->getKey($this->cacheKeyAssets);
-			if( $render!==false && $render!==null && is_array($assets) ){
+			if( $render!==false && $render!==null ){
 				$this->cacheRender = $render;
-				$this->cacheAssets = $assets;
+				if(!isset($this->ownTopBlock)||$this->ownTopBlock){
+					if( is_array($assets = $this->smallyCache->getKey($this->cacheKeyAssets)) ){
+						$this->cacheAssets = $assets;
+					}
+				}
 				return true;
 			}
 		}
@@ -334,29 +345,33 @@ class View {
 			if($this->caching) $this->smallyCache->setKey($this->cacheKeyRender,$this->cacheRender);
 		}else $this->setRender($this->cacheRender);
 
-		if(is_null($this->cacheAssets)){
-			$this->cacheAssets = $this->topBlock;
-			if($this->caching) $this->smallyCache->setKey($this->cacheKeyAssets,$this->cacheAssets);
-		}
 
-		$application = $this->getApplication();
-		$metaHandler = $application->getMeta();
-		foreach($this->cacheAssets as $type => $assets){
-			switch($type){
-				case 'js':
-				case 'css':
-					$method = 'set'.ucfirst($type);
-					foreach($assets as $asset){
-						$application->$method($asset);
-					}
-					break;
-				case 'meta':
-					foreach($assets as $metaType => $meta){
-						$metaHandler->addMeta($metaType,$meta);
-					}
-					break;
+		if(!isset($this->ownTopBlock)||$this->ownTopBlock){
+			if(is_null($this->cacheAssets)){
+				$this->cacheAssets = $this->topBlock;
+				if($this->caching) $this->smallyCache->setKey($this->cacheKeyAssets,$this->cacheAssets);
+			}
+
+			$application = $this->getApplication();
+			$metaHandler = $application->getMeta();
+			foreach($this->cacheAssets as $type => $assets){
+				switch($type){
+					case 'js':
+					case 'css':
+						$method = 'set'.ucfirst($type);
+						foreach($assets as $asset){
+							$application->$method($asset);
+						}
+						break;
+					case 'meta':
+						foreach($assets as $metaType => $meta){
+							$metaHandler->addMeta($metaType,$meta);
+						}
+						break;
+				}
 			}
 		}
+
 
 		return $this->getRender();
 	}
