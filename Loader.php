@@ -20,8 +20,8 @@ class Loader {
 			$path = str_replace('\\',DIRECTORY_SEPARATOR,$className).'.php';
 		}else $path = $className.'.php';
 
-		if(stream_resolve_include_path($path) !== false){
-			include_once($path);
+		if( ($absPath = stream_resolve_include_path($path)) !== false){
+			include_once($absPath);
 		}
 
 	}
