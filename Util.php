@@ -13,20 +13,19 @@ class Util {
 	 * @return string
 	 */
 	static public function toAttributes(array $attributes,$enclosure='"',$equal='=',$sep=' '){
-		$str = "";
+		$str = '';
 		if (is_array($attributes)) {
-			$str .= $sep;
 			foreach($attributes as $key => $value) {
 				if(is_array($value)) $value = implode(' ',$value); // case of "class" is practical under array type
 				switch (true) {
 					case (strlen($value) > 0) : // a value must be defined , except for special $key
 					case $key == 'action' : // action key has valid empty value
-						$str .= $key . $equal . $enclosure . htmlspecialchars($value,ENT_COMPAT,'UTF-8',false) . $enclosure .$sep;
+						$str .= $sep . $key . $equal . $enclosure . htmlspecialchars($value,ENT_COMPAT,'UTF-8',false) . $enclosure;
 						break;
 				}
 			}
 		}
-		return rtrim($str);
+		return $str;
 	}
 
 	/**
