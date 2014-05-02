@@ -10,7 +10,7 @@ class Application {
 
 	static protected $_singleton 	= null;
 
-	protected $_language 			= 'fr';
+	protected $_language 			= null;
 
 	protected $_environnement 		= self::ENV_DEVELOPMENT;
 	protected $_logger				= null;
@@ -232,6 +232,13 @@ class Application {
 	 * @return string
 	 */
 	public function getLanguage(){
+		if(is_null($this->_language)){
+			// load from config, fallback to fr
+			if( ! ($lang = (string) $this->getConfig()->smally->language) ){
+				$lang = 'fr';
+			}
+			$this->_language = $lang;
+		}
 		return $this->_language;
 	}
 
@@ -254,6 +261,14 @@ class Application {
 	public function getConfig(){
 		if(is_null($this->_config)) $this->_config = new Config();
 		return $this->_config;
+	}
+
+	/**
+	 * Return the actual site namespace
+	 * @return string
+	 */
+	public function getSiteNamespace(){
+		return $this->_siteNamespace;
 	}
 
 	/**

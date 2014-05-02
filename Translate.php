@@ -7,9 +7,10 @@ class Translate {
 	protected $_application = null;
 
 	protected $_language = null;
+	protected $_defaultLanguage = null;
 
-	protected $_loaded = false;
-	protected $_defaultLoaded = false;
+	protected $_translate = null;
+	protected $_defaultTranslate = null;
 
 	/**
 	 * Construct the global $Translate object
@@ -39,51 +40,110 @@ class Translate {
 		return $this->_application;
 	}
 
-	public function load(){
-		global $globalTranslate;
-
-		$filename = 'i18n/'.$this->_language.'.php';
-		if(stream_resolve_include_path($filename)!==false){
-			include_once($filename);
-			if(isset($translate) && $translate){
-				$globalTranslate = $translate;
-
-			}else{
-				$this->loadDefaultLanguage();
-			}
-			$this->_loaded = true;
-		}
+	/**
+	 * Return the actual wanted language (2 letters style)
+	 * @return string
+	 */
+	public function getLanguage(){
+		return $this->_language;
 	}
 
-	public function loadDefaultLanguage(){
-		$defaultLanguage = 'fr';
+	/**
+	 * Return the default fallback language (2 letters style)
+	 * @return string
+	 */
+	public function getDefaultLanguage(){
+		if(is_null($this->_defaultLanguage)){
+			$this->_defaultLanguage = (string)$this->getApplication()->getConfig()->smally->defaultLanguage?:'fr';
+		}
+		return $this->_defaultLanguage;
+	}
+
+	public function getLoadPaths(){
+		return array(
+			LIBRARY_PATH.'Smally/',
+			ROOT_PATH,
+			MODULE_PATH.$this->getApplication()->getSiteNamespace().'/',
+			);
+	}
+
+	/**
+	 * Load translation from smally and then from project, them from site namespace to allow overwrite
+	 * @return \Smally\Translate
+	 */
+	public function load(){
+
+		$language = $this->getLanguage();
+		$this->_translate = array();
+
+		$filename = 'i18n/'.$language.'.php';
+
+		foreach($this->getLoadPaths() as $path){
+			$filePath = str_replace(array('/','\\'),DIRECTORY_SEPARATOR,$path.$filename);
+			if(file_exists($filePath)){
+				include_once($filePath);
+				if(isset($translate)&&is_array($translate)){
+					$this->_translate = array_merge($this->_translate,$translate);
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * Load fallback translate. Usually loaded on demand if key not find in actual language
+	 * @return \Smally\Translate
+	 */
+	public function loadDefault(){
+
+		$defaultLanguage = $this->getDefaultLanguage();
+		$this->_defaultTranslate = array();
 
 		$filename = 'i18n/'.$defaultLanguage.'.php';
 
-		if(stream_resolve_include_path($filename)!==false){
-			include_once($filename);
-			if(isset($translate) && $translate){
-				$this->_defaultTranslate = $translate;
+		foreach($this->getLoadPaths() as $path){
+			$filePath = str_replace(array('/','\\'),DIRECTORY_SEPARATOR,$path.$filename);
+			if(file_exists($filePath)){
+				include_once($filePath);
+				if(isset($translate)&&is_array($translate)){
+					$this->_defaultTranslate = array_merge($this->_defaultTranslate,$translate);
+				}
 			}
-			$this->_defaultLoaded = true;
 		}
 	}
 
-	public function getDefaultTranslate($key){
-		if(!$this->_defaultLoaded) $this->loadDefaultLanguage();
-		if(isset($this->_defaultTranslate[$key])) return $this->_defaultTranslate[$key];
-		return null;
+	/**
+	 * Return the translation of a key if existing. Load the translate if not yet loaded automatically
+	 * @param  string $key The translate key name you want the actual language translation
+	 * @return string
+	 */
+	public function getTranslation($key){
+		if(is_null($this->_translate)) $this->load();
+		return isset($this->_translate[$key]) ? $this->_translate[$key] : null;
 	}
 
+	/**
+	 * Return the default translation of a key if existing. Load the default translate if not yet loaded automatically
+	 * @param  string $key The translate key name you want the default language translation
+	 * @return string
+	 */
+	public function getDefaultTranslation($key){
+		if(is_null($this->_defaultTranslate)) $this->loadDefault();
+		return isset($this->_defaultTranslate[$key]) ? $this->_defaultTranslate[$key] : null;
+	}
+
+	/**
+	 * Translate a key
+	 * @param  string $key The translate key name you want to translate
+	 * @return tring
+	 */
 	public function translate($key){
-
-		global $globalTranslate;
-
-		if(!$this->_loaded) $this->load();
-
-		if(isset($globalTranslate[$key])) return $globalTranslate[$key];
-		elseif($default = $this->getDefaultTranslate($key) ) return $default;
-		else return 'Missing translation';
+		if( !($translation = $this->getTranslation($key)) ){
+			if( !($translation = $this->getDefaultTranslation($key)) ){
+				$translation = 'Missing translation';
+			}
+		}
+		return $translation;
 	}
 
 }

@@ -3,6 +3,9 @@
 $translate = array(
 
 	// FORM
+	'FORM_SUBMIT_TEXT'	=> 'Enregistrer',
+	'FORM_FILTER_SUBMIT_TEXT' => 'Rechercher',
+
 	'FORM_DECORATOR_FILE_HELPER' => 'Glisser-déposer vos fichiers ici',
 
 	'FORM_DECORATOR_MAP_PLACEHOLDER' => 'Rechercher une adresse',
