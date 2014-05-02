@@ -57,7 +57,7 @@ class Navselect extends AbstractDecorator {
 	public function getPartHtml($value,$options,$level=0){
 
 		if($level>1){
-			$prefix = str_pad('',$level,'-',STR_PAD_LEFT).'| ';
+			$prefix = str_pad('',($level-1)*2,'-',STR_PAD_LEFT).'| ';
 		}else{
 			$prefix = '';
 		}
