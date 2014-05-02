@@ -141,10 +141,6 @@ class View {
 		$subView = clone($this);
 		$subView->setParentView($this);
 		$subView->setTemplatePath($subViewTemplatePath);
-		if(isset($this->topBlock)){
-			$subView->topBlock = &$this->topBlock;
-			$subView->ownTopBlock = false;
-		}
 		return $subView;
 	}
 
@@ -279,17 +275,9 @@ class View {
 		$this->cacheAssets = null;
 		$this->cacheKey = $keyPrefix;
 		$this->cacheKeyRender = $this->smallyCache->getHashKey($keyPrefix.'_RENDER');
-		if(!isset($this->ownTopBlock)||$this->ownTopBlock){
-			$this->cacheKeyAssets = $this->smallyCache->getHashKey($keyPrefix.'_ASSETS');
-		}
+		$this->cacheKeyAssets = $this->smallyCache->getHashKey($keyPrefix.'_ASSETS');
 
-		if(!isset($this->topBlock)){
-			$this->topBlock = array(
-				'js' => array(),
-				'css' => array(),
-				'meta' => array(),
-				);
-		}
+		$this->topBlock = array();
 
 		return true;
 
@@ -312,10 +300,8 @@ class View {
 			$render = $this->smallyCache->getKey($this->cacheKeyRender); // render must be differnt from false or null to be considered as valid cache entry
 			if( $render!==false && $render!==null ){
 				$this->cacheRender = $render;
-				if(!isset($this->ownTopBlock)||$this->ownTopBlock){
-					if( is_array($assets = $this->smallyCache->getKey($this->cacheKeyAssets)) ){
-						$this->cacheAssets = $assets;
-					}
+				if( is_array($assets = $this->smallyCache->getKey($this->cacheKeyAssets)) ){
+					$this->cacheAssets = $assets;
 				}
 				return true;
 			}
@@ -346,12 +332,15 @@ class View {
 		}else $this->setRender($this->cacheRender);
 
 
-		if(!isset($this->ownTopBlock)||$this->ownTopBlock){
-			if(is_null($this->cacheAssets)){
-				$this->cacheAssets = $this->topBlock;
-				if($this->caching) $this->smallyCache->setKey($this->cacheKeyAssets,$this->cacheAssets);
-			}
+		if(is_null($this->cacheAssets)){
+			$this->cacheAssets = $this->topBlock;
+			if($this->caching&&$this->topBlock) $this->smallyCache->setKey($this->cacheKeyAssets,$this->cacheAssets);
+		}
 
+		// Assets must go to the most top block too, because we cache the most top level block possible
+		if( !is_null($this->_parentView) && isset($this->_parentView->topBlock) && is_array($this->_parentView->topBlock) ){
+			$this->_parentView->topBlock = array_merge_recursive($this->cacheAssets,$this->_parentView->topBlock);
+		}else{
 			$application = $this->getApplication();
 			$metaHandler = $application->getMeta();
 			foreach($this->cacheAssets as $type => $assets){
