@@ -24,6 +24,8 @@ class Form {
 
 	protected $_fields 		= array();
 
+	protected $_actualVo 	= null;
+
 	/**
 	 * Construct a new form with this $options
 	 * @param array $options An associative array where key = property name
@@ -134,6 +136,15 @@ class Form {
 	 */
 	public function setValidator(\Smally\Validator $validator){
 		$this->_validator = $validator;
+		return $this;
+	}
+
+	/**
+	 * Set the actual vo associated with the form
+	 * @param \Smally\Form
+	 */
+	public function setActualVo($vo){
+		$this->_actualVo = $vo;
 		return $this;
 	}
 
@@ -256,6 +267,14 @@ class Form {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Return the actual vo associated with the form
+	 * @return object
+	 */
+	public function getActualVo(){
+		return $this->_actualVo;
 	}
 
 	/**

@@ -180,7 +180,11 @@ class Saver {
 	 */
 	public function getForm(){
 		if( is_null($this->_form) && $this->_voName ){
-			$this->_form =  $this->getApplication()->getFactory()->getForm($this->_voName); // create the good form for the $vo
+			$options = array();
+			if($this->getVo()->getId()){
+				$options['actualVo'] = $this->getVo();
+			}
+			$this->_form =  $this->getApplication()->getFactory()->getForm($this->_voName,$options); // create the good form for the $vo
 		}
 		return $this->_form;
 	}
@@ -422,11 +426,12 @@ class Saver {
 					}
 				}
 			}else{
-				$this->getForm()->populateError($this->getValidator()->getError());
+				$errors = $this->getValidator()->getError();
 			}
 		}
 
 		$this->initForm();
+		if(isset($errors)) $this->getForm()->populateError($errors);
 
 		$this->sendToCallingController();
 
