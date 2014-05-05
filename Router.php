@@ -253,6 +253,7 @@ class Router {
 			// $destination = $this->getBaseUrl() . $this->getApplication()->makeControllerUrl($destination);
 			$destination = $this->getApplication()->getControllerUrl($destination);
 		}
+		$destination = htmlspecialchars_decode($destination);
 		header('Location: '.$destination,true,$code);
 		die();
 	}
