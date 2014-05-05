@@ -268,14 +268,18 @@ class View {
 	protected function beginCache($keyPrefix){
 
 		$this->cacheActive = $this->getApplication()->getFactory()->getLogic('Cms')->isCacheActive();
-		$this->smallyCache = \Smally\SCache::getInstance();
+		$this->isPragmaNoCache = $this->getApplication()->getFactory()->getLogic('Cms')->isPragmaNoCache();
 
-		$this->caching = true;
-		$this->cacheRender = null;
-		$this->cacheAssets = null;
-		$this->cacheKey = $keyPrefix;
-		$this->cacheKeyRender = $this->smallyCache->getHashKey($keyPrefix.'_RENDER');
-		$this->cacheKeyAssets = $this->smallyCache->getHashKey($keyPrefix.'_ASSETS');
+		if($this->cacheActive){
+			$this->smallyCache = \Smally\SCache::getInstance();
+
+			$this->caching = true;
+			$this->cacheRender = null;
+			$this->cacheAssets = null;
+			$this->cacheKey = $keyPrefix;
+			$this->cacheKeyRender = $this->smallyCache->getHashKey($keyPrefix.'_RENDER');
+			$this->cacheKeyAssets = $this->smallyCache->getHashKey($keyPrefix.'_ASSETS');
+		}
 
 		$this->topBlock = array();
 
@@ -296,7 +300,7 @@ class View {
 	 * @return boolean
 	 */
 	protected function getFromCache(){
-		if($this->cacheActive){
+		if($this->cacheActive && !$this->isPragmaNoCache){
 			$render = $this->smallyCache->getKey($this->cacheKeyRender); // render must be differnt from false or null to be considered as valid cache entry
 			if( $render!==false && $render!==null ){
 				$this->cacheRender = $render;
@@ -328,13 +332,13 @@ class View {
 
 		if(is_null($this->cacheRender)){
 			$this->cacheRender = $this->getRender();
-			if($this->caching) $this->smallyCache->setKey($this->cacheKeyRender,$this->cacheRender);
+			if($this->caching && $this->cacheActive) $this->smallyCache->setKey($this->cacheKeyRender,$this->cacheRender);
 		}else $this->setRender($this->cacheRender);
 
 
 		if(is_null($this->cacheAssets)){
 			$this->cacheAssets = $this->topBlock;
-			if($this->caching&&$this->topBlock) $this->smallyCache->setKey($this->cacheKeyAssets,$this->cacheAssets);
+			if($this->caching && $this->cacheActive && $this->topBlock) $this->smallyCache->setKey($this->cacheKeyAssets,$this->cacheAssets);
 		}
 
 		// Assets must go to the most top block too, because we cache the most top level block possible
