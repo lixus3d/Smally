@@ -790,6 +790,9 @@ class Standard extends \stdClass {
 			$criteria = $this->getBusiness()->getCriteria()
 												->setFilterKey($fieldName,$value)
 												;
+			if(isset($this->siteId) && $siteId = $this->siteId){
+				$criteria->setFilterKey('siteId',$siteId);
+			}
 			if($id = $this->getId()) $criteria->setFilterKey($this->getPrimaryKey(),$id,'!=');
 
 			if($fetch = $this->getBusiness()->fetch($criteria)){
