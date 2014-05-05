@@ -4,7 +4,7 @@ $translate = array(
 
 	// FORM
 	'FORM_SUBMIT_TEXT'	=> 'Save',
-	'FORM_FILTER_SUMBIT_TEXT' => 'Filter',
+	'FORM_FILTER_SUBMIT_TEXT' => 'Filter',
 
 	'FORM_DECORATOR_FILE_HELPER' => 'Drag and drop your files here',
 
