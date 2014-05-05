@@ -268,8 +268,12 @@ class Standard extends \stdClass {
 	 * @param array $newValues An array of values to overwrite on the copy
 	 * @return mixed
 	 */
-	public function copy($newValues=array(),$notCopy=array()){
-		$copyVo = new static($this->toArray(true, false,$notCopy));
+	public function copy($newValues=array(),$notCopy=array(),$cloning=true){
+		if($cloning){
+			$copyVo = new static($this->toArray(true, false, $notCopy));
+		}else{
+			$copyVo = $this;
+		}
 		$copyVo->initVars($newValues);
 		if($copyVo->store()){
 			return $copyVo;
