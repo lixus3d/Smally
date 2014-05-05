@@ -321,6 +321,8 @@ class Saver {
 			return $this->getVo()->toArray();
 		}elseif($defaultValues = $this->getDefaultValues()){
 			return $defaultValues;
+		}else{
+			return $this->getVo()->toArray();
 		}
 
 		return array();
