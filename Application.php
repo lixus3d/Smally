@@ -404,7 +404,6 @@ class Application {
 
 		static $baseUrl = null;
 		static $baseUrlComplete = null;
-		static $pathPrefix = null;
 		static $dataPaths = null;
 		static $assetsPaths = null;
 
@@ -420,13 +419,14 @@ class Application {
 			$url = $baseUrl;
 		}
 
+		if(isset($this->getConfig()->smally->paths->{$type.'Prefix'})) $pathPrefix = $this->getConfig()->smally->paths->{$type.'Prefix'};
+		else $pathPrefix = '';
+
+
 		switch($type){
 			case 'www': break;
 			case $this->isDev(): // If we are in developpement context, then we always use the standard base url but we prefix with type directory
-				if( is_null($pathPrefix) ){
-					if(isset($this->getConfig()->smally->paths->{$type.'Prefix'})) $pathPrefix = $this->getConfig()->smally->paths->{$type.'Prefix'};
-					else $pathPrefix = '';
-				}
+
 				$path = $pathPrefix.$type.'/'.$path;
 			break;
 			case 'data':
@@ -436,7 +436,7 @@ class Application {
 					$ip += ord(basename($path)) + strlen($path);
 					$url = $dataPaths[$ip % count($dataPaths)];
 				}else{
-					$path = $type.'/'.$path;
+					$path = $pathPrefix.$type.'/'.$path;
 				}
 			break;
 			case 'assets':
@@ -446,7 +446,7 @@ class Application {
 					$ip += ord(basename($path)) + strlen($path);
 					$url = $assetsPaths[$ip % count($assetsPaths)];
 				}else{
-					$path = $type.'/'.$path;
+					$path = $pathPrefix.$type.'/'.$path;
 				}
 			break;
 		}
