@@ -58,4 +58,29 @@ class Util {
 		return trim($value,'-');
 	}
 
+	/**
+	 * Special mkdir method that will create each needed folder until the $path is really created
+	 * @param  string $path The path you want to create
+	 * @return boolean Return of is_dir($path) of the given $path
+	 */
+	static public function fullmkdir($path){
+		$path = str_replace(array('/','\\'), DIRECTORY_SEPARATOR, $path);
+		$pathParts = explode(DIRECTORY_SEPARATOR,$path);
+		$path = '';
+		foreach($pathParts as $k => $part){
+			// if($part=='.') continue;
+			// if($part=='..'){
+			// 	$path = substr($path, 0, strrpos($path,DIRECTORY_SEPARATOR,-2)).DIRECTORY_SEPARATOR;
+			// 	continue;
+			// }
+			$path .= $part;
+			if(!@is_dir($path)){
+				@mkdir($path);
+				@chmod($path,0777);
+			}
+			$path .= DIRECTORY_SEPARATOR;
+		}
+		return is_dir($path);
+	}
+
 }
