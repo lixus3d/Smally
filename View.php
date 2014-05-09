@@ -200,17 +200,21 @@ class View {
 
 		$output = array();
 
-		foreach($this->getApplication()->getCss() as $file){
-			if(strpos($file,'http')!==0){
+		foreach($this->getApplication()->getCss() as $fileArray){
+			list($file,$allowMtime) = $fileArray;
+			if($allowMtime){
 				if($mtime = \Smally\Assets::getInstance()->getAssetMtime($file) ){
 					$file = substr($file,0,strrpos($file, '.')) . '.' . $mtime . strrchr($file, '.');
 				}
 				if(strpos($file,'.less') > 0 && !$this->getApplication()->isDev()) {
 					$file .= '.css';
 				}
-				$url = $this->urlAssets($file);
+				$url = $file;
 			}else{
 				$url = $file;
+			}
+			if(strpos($url,'http')!==0){
+				$url = $this->urlAssets($url);
 			}
 
 			$output[] = '<link rel="stylesheet"  type="text/css"  media="all" href="'.$url.'"/>';
@@ -228,7 +232,8 @@ class View {
 		$output = array();
 		$preoutput = array();
 
-		foreach($this->getApplication()->getJs() as $file){
+		foreach($this->getApplication()->getJs() as $fileArray){
+			list($file,$allowMtime) = $fileArray;
 			if(\Smally\Assets::getInstance()->isMinify($file)){
 				$addMinify = true;
 				if(!$this->getApplication()->isDev()) {
@@ -248,7 +253,11 @@ class View {
 			if($this->getApplication()->isDev()) {
 				$output[] = '<img src="'.$this->urlAssets($file).'" width="0" height="0" style="display:none"/>';
 			}else{
-				$mtime = \Smally\Assets::getInstance()->getAssetMtime($file);
+				if($allowMtime){
+					$mtime = \Smally\Assets::getInstance()->getAssetMtime($file);
+				}else{
+					$mtime = null;
+				}
 				$file = substr($file,0,strrpos($file, '.')) . ($mtime?'.' . $mtime:'') . '.min'. strrchr($file, '.') ;
 				$preoutput[] = '<script type="text/javascript" src="'.$this->urlAssets($file).'"></script>';
 			}

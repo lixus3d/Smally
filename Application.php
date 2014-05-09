@@ -139,8 +139,8 @@ class Application {
 	 * @param string $script
 	 * @return \Smally\Application
 	 */
-	public function setJs($script){
-		$this->_js[$script] = $script;
+	public function setJs($script,$allowMtime=true){
+		$this->_js[$script] = array($script,$allowMtime);
 		return $this;
 	}
 
@@ -149,8 +149,8 @@ class Application {
 	 * @param string $css
 	 * @return \Smally\Application
 	 */
-	public function setCss($css){
-		$this->_css[$css] = $css;
+	public function setCss($css,$allowMtime=true){
+		$this->_css[$css] = array($css,$allowMtime);
 		return $this;
 	}
 
