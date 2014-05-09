@@ -68,6 +68,7 @@ class Util {
 		$pathParts = explode(DIRECTORY_SEPARATOR,$path);
 		$path = '';
 		foreach($pathParts as $k => $part){
+			if(!$part) continue;
 			// if($part=='.') continue;
 			// if($part=='..'){
 			// 	$path = substr($path, 0, strrpos($path,DIRECTORY_SEPARATOR,-2)).DIRECTORY_SEPARATOR;
