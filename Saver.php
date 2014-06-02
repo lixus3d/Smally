@@ -22,6 +22,7 @@ class Saver {
 	protected $_mode = null;
 
 	protected $_storeState = null;
+	protected $_errors = null;
 
 	protected $_urlParamId = 'id';
 	protected $_urlParamCopyId = 'copyId';
@@ -363,14 +364,18 @@ class Saver {
 	public function autoValues(){
 
 		// siteId is a automatic one
-		$this->_autoValues['siteId'] = \Multisite::getInstance()->getSiteId() ;
+		if(class_exists('Multisite')){
+			$this->_autoValues['siteId'] = \Multisite::getInstance()->getSiteId() ;
+		}
 
-		foreach($this->_autoValues as $key => $value){
-			if(property_exists($this->getVo(), $key) && $this->getVo()->getPrimaryKey()!==$key ){
-				// test with Reflection if we can access the property
-				$reflector = new \ReflectionClass($this->getVo());
-				if($reflector->getProperty($key)->isPublic()){
-					$this->getVo()->{$key} = $value;
+		if($this->_autoValues){
+			foreach($this->_autoValues as $key => $value){
+				if(property_exists($this->getVo(), $key) && $this->getVo()->getPrimaryKey()!==$key ){
+					// test with Reflection if we can access the property
+					$reflector = new \ReflectionClass($this->getVo());
+					if($reflector->getProperty($key)->isPublic()){
+						$this->getVo()->{$key} = $value;
+					}
 				}
 			}
 		}
@@ -428,7 +433,7 @@ class Saver {
 					}
 				}
 			}else{
-				$errors = $this->getValidator()->getError();
+				$errors = $this->getError();
 			}
 		}
 
