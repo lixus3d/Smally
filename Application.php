@@ -37,6 +37,8 @@ class Application {
 	protected $_css					= array();
 	protected $_js					= array();
 
+	protected $_enableMessager		= true;
+
 	private $__startTime 			= 0;
 
 	public function __construct(){
@@ -189,6 +191,15 @@ class Application {
 			$this->_urlRewriting = new $className();
 		}
 
+		return $this;
+	}
+
+	/**
+	 * Do we enable the Messager system
+	 * @param boolean $state True to activate, default is true
+	 */
+	public function setEnableMessager($state){
+		$this->_enableMessager = (boolean) $state;
 		return $this;
 	}
 
@@ -540,7 +551,9 @@ class Application {
 
 		$render = $controller->getView()->getRender();
 
-		\Smally\Messager::getInstance()->x();
+		if($this->_enableMessager){
+			\Smally\Messager::getInstance()->x();
+		}
 
 		// Place the view content in the global layout view and execute layout view
 		$layoutView = $this->getView()->setContent($render)->x();
