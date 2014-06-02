@@ -442,6 +442,7 @@ class Saver {
 
 		$this->sendToCallingController();
 
+		return $this;
 	}
 
 	/**
