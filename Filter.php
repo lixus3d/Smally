@@ -11,6 +11,8 @@ class Filter {
 	protected $_testValues = array();
 	protected $_rules = array();
 
+	protected $_dropNull = false;
+
 	protected $_actualVoId = null;
 
 	/**
@@ -53,6 +55,16 @@ class Filter {
 	 */
 	public function setActualVoId($actualVoId){
 		$this->_actualVoId = $actualVoId;
+		return $this;
+	}
+
+	/**
+	 * Do we drop null values when _testValues are returned
+	 * @param boolean $state Set true for drop
+	 * @return  \Smally\Filter
+	 */
+	public function setDropNull($state){
+		$this->_dropNull = (boolean) $state;
 		return $this;
 	}
 
@@ -124,7 +136,15 @@ class Filter {
 		foreach($this->_rules as $field => $rules){
 			foreach($rules as $rule){
 				$fieldValue = $this->getValue($field);
-				$this->setValue($field,$rule->x($fieldValue));
+				$newValue = $rule->x($fieldValue);
+				$this->setValue($field,$newValue);
+			}
+		}
+		if($this->_dropNull){
+			foreach($this->_testValues as $key => $value){
+				if(is_null($value)){
+					unset($this->_testValues[$key]);
+				}
 			}
 		}
 		return $this->_testValues;
