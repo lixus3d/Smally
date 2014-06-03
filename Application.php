@@ -82,6 +82,9 @@ class Application {
 	 */
 	public function setLanguage($language){
 		$this->_language = $language;
+		if(!is_null($this->_translate)){
+			$this->getTranslate(true); // If the translate is already loaded , we reload it, else it will load correct 
+		}
 		return $this;
 	}
 
@@ -286,8 +289,8 @@ class Application {
 	 * Get the translate object or create a new empty one for compatibility
 	 * @return \Smally\Translate
 	 */
-	public function getTranslate(){
-		if(is_null($this->_translate)) $this->_translate = new Translate($this);
+	public function getTranslate($force=false){
+		if(is_null($this->_translate)||$force) $this->_translate = new Translate($this);
 		return $this->_translate;
 	}
 
