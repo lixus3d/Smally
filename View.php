@@ -270,14 +270,32 @@ class View {
 	}
 
 	/**
+	 * Return the state of the smallyCache system
+	 * @return boolean Return true if the cache is active
+	 */
+	public function isCacheActive(){
+		$config = (boolean)(string)$this->getApplication()->getConfig()->cms->smallyCacheActive;
+		return $config;
+	}
+
+	/**
+	 * Return the pragma no cache value of the request
+	 * @return boolean True if the no-cache options was sent
+	 */
+	public function isPragmaNoCache(){
+		$pragma = isset($_SERVER['HTTP_PRAGMA'])&&$_SERVER['HTTP_PRAGMA']=='no-cache'?true:false;
+		return $pragma;
+	}
+
+	/**
 	 * Experimental cache system begin function to call before the content you want to cache
 	 * @param  string $keyPrefix A unique cache prefix key
 	 * @return boolean
 	 */
 	protected function beginCache($keyPrefix){
 
-		$this->cacheActive = $this->getApplication()->getFactory()->getLogic('Cms')->isCacheActive();
-		$this->isPragmaNoCache = $this->getApplication()->getFactory()->getLogic('Cms')->isPragmaNoCache();
+		$this->cacheActive = $this->isCacheActive();
+		$this->isPragmaNoCache = $this->isPragmaNoCache();
 
 		if($this->cacheActive){
 			$this->smallyCache = \Smally\SCache::getInstance();
