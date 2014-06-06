@@ -14,6 +14,8 @@ class Saver {
 	protected $_filter = null;
 	protected $_inputs = null;
 	protected $_defaultValues = null;
+	protected $_allowedFieldsCreate = null;
+	protected $_allowedFieldsUpdate = null;
 	protected $_redirect = null;
 	protected $_autoValues = null;
 	protected $_vo = null;
@@ -71,6 +73,18 @@ class Saver {
 	 */
 	public function setDefaultValues($defaultValues){
 		$this->_defaultValues = $defaultValues;
+		return $this;
+	}
+
+	/**
+	 * Define the fields that will be allowed in the inputs
+	 * @param array $createFields An array of fields name
+	 * @param array $updateFields An array of fields name or null if you want the same as $createFields
+	 * @return \Smally\Saver
+	 */
+	public function setAllowedFields($createFields, $updateFields=null){
+		$this->_allowedFieldsCreate = $createFields;
+		$this->_allowedFieldsUpdate = !is_null($updateFields)?$updateFields:$createFields;
 		return $this;
 	}
 
@@ -207,6 +221,22 @@ class Saver {
 	}
 
 	/**
+	 * Return the alloweds fields during a create/add saver
+	 * @return array Return null if no allowedfields has been defined
+	 */
+	public function getAllowedFieldsCreate(){
+		return $this->_allowedFieldsCreate;
+	}
+
+	/**
+	 * Return the alloweds fields during a update/edit saver
+	 * @return array Return null if no allowedfields has been defined
+	 */
+	public function getAllowedFieldsUpdate(){
+		return $this->_allowedFieldsUpdate;
+	}
+
+	/**
 	 * Return the form prefix, default is computed from _voName
 	 * @return string
 	 */
@@ -264,7 +294,23 @@ class Saver {
 	 */
 	public function getInputs(){
 		if(is_null($this->_inputs) && $formPrefix = $this->getFormPrefix()){
-			$this->_inputs = $this->getApplication()->getContext()->{$formPrefix}->toArray();
+
+			$inputs = $this->getApplication()->getContext()->{$formPrefix}->toArray();
+
+			$testFields = null;
+			switch($this->getMode()){
+				case 'add':
+					$testFields = $this->getAllowedFieldsCreate();
+					break;
+				case 'edit':
+					$testFields = $this->getAllowedFieldsUpdate();
+					break;
+			}
+			if(!is_null($testFields)){
+				$inputs = array_intersect_key($this->_requestData, array_flip($testFields) ); // we must flip the array because usually we will put directly the name as values, and intersect key expect key not values
+			}
+
+			$this->_inputs = $inputs;
 		}
 		return $this->_inputs;
 	}
