@@ -199,7 +199,15 @@ class Standard extends \stdClass {
 			if($withGetter && method_exists($this, $method)){
 				$array[$key] = $this->{$method}();
  			}else{
-				$array[$key] = $value;
+ 				if(strpos($key,'Id')!==false){
+ 					if(is_array($value)){
+ 						$array[$key] = array_map('intval',$value);
+ 					}else{
+ 						$array[$key] = (int) $value;
+ 					}
+ 				}else{
+ 					$array[$key] = $value;
+ 				}
 			}
 		}
 		return $array;
