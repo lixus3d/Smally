@@ -307,7 +307,8 @@ class Saver {
 					break;
 			}
 			if(!is_null($testFields)){
-				$inputs = array_intersect_key($this->_requestData, array_flip($testFields) ); // we must flip the array because usually we will put directly the name as values, and intersect key expect key not values
+				$testFields[] = $this->_formParamSubmitter;
+				$inputs = array_intersect_key($inputs, array_flip($testFields) ); // we must flip the array because usually we will put directly the name as values, and intersect key expect key not values
 			}
 
 			$this->_inputs = $inputs;
@@ -465,7 +466,7 @@ class Saver {
 
 		if($this->hasSubmitter()){
 
-			$this->_inputs = $this->getFilter()->x($this->getInputs());
+			$this->getFilter()->x($this->getInputs());
 
 			if( $this->getValidator()->setTestValues($this->getInputs())->x(true, $this->_partEdit?array_keys($this->getInputs()):null) ) {
 
