@@ -195,19 +195,24 @@ class Standard extends \stdClass {
 
 			if(!$withPrimaryKey&&$key==$this->getPrimaryKey()) continue; // No primary key demanded
 
+			$realValue = $value;
+
 			$method = 'get'.ucfirst($key);
 			if($withGetter && method_exists($this, $method)){
-				$array[$key] = $this->{$method}();
- 			}else{
- 				if(strpos($key,'Id')!==false){
- 					if(is_array($value)){
- 						$array[$key] = array_map('intval',$value);
- 					}else{
- 						$array[$key] = (int) $value;
- 					}
- 				}else{
- 					$array[$key] = $value;
- 				}
+				$realValue = $this->{$method}();
+ 			}
+			if(strpos($key,'Id')!==false){
+				if(is_array($realValue)){
+					if(!is_array($realValue[0])){ // if the sub items are not array, they are id so intval them
+						$array[$key] = array_map('intval',$realValue);
+					}else{
+						$array[$key] = $realValue;
+					}
+				}else{
+					$array[$key] = (int) $realValue;
+				}
+			}else{
+				$array[$key] = $realValue;
 			}
 		}
 		return $array;
