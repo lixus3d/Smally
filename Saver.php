@@ -466,7 +466,7 @@ class Saver {
 
 		if($this->hasSubmitter()){
 
-			$this->getFilter()->x($this->getInputs());
+			$this->_inputs = $this->getFilter()->x($this->getInputs());
 
 			if( $this->getValidator()->setTestValues($this->getInputs())->x(true, $this->_partEdit?array_keys($this->getInputs()):null) ) {
 
