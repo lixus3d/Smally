@@ -203,7 +203,7 @@ class Standard extends \stdClass {
  			}
 			if(strpos($key,'Id')!==false){
 				if(is_array($realValue)){
-					if(!is_array($realValue[0])){ // if the sub items are not array, they are id so intval them
+					if($realValue&&!is_array($realValue[0])){ // if the sub items are not array, they are id so intval them
 						$array[$key] = array_map('intval',$realValue);
 					}else{
 						$array[$key] = $realValue;
