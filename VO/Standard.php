@@ -459,17 +459,22 @@ class Standard extends \stdClass {
 
 		// We update/insert joints
 		foreach($modelIdList as $ord => $modelId){
+			$alreadyExist = false;
 			$vars = array_merge($jointVars,array($destinationFieldName => $modelId));
 
 			if(!($jObject = $jDao->exists($vars))){
 				$jObject = new $jVoName($vars);
+			}else{
+				$alreadyExist = true;
 			}
 
 			if(property_exists($jObject, 'ord')){
 				$jObject->ord = $ord;
+				$jObject->store();
+			}else if( !$alreadyExist ){
+				$jObject->store();
 			}
 
-			$jDao->store($jObject);
 			if(in_array($modelId,$inBaseIdList)){
 				unset($inBaseIdList[array_search($modelId, $inBaseIdList)]);
 			}

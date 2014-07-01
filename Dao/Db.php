@@ -450,11 +450,16 @@ class Db implements InterfaceDao {
 
 		$this->log($sql);
 
-		$return = $this->getConnector()->query($sql);
-
-		// pseudo event system
-		if(method_exists($vo, 'onDeleteSuccess')){
-			$vo->onDeleteSuccess();
+		if( $return = $this->getConnector()->query($sql)){
+			// pseudo event system
+			if(method_exists($vo, 'onDeleteSuccess')){
+				$vo->onDeleteSuccess();
+			}
+		}else{
+			// pseudo event system
+			if(method_exists($vo, 'onDeleteFail')){
+				$vo->onDeleteFail();
+			}
 		}
 
 		return $return;
