@@ -181,6 +181,14 @@ class Standard extends \stdClass {
 		return !isset($this->_autoSiteId) ? true  : $this->_autoSiteId;
 	}
 
+	public function reload(){ 
+		if( $itemId = $this->getId() ){
+			$reloaded = $this->getDao()->getById($itemId,true);
+			return $reloaded;
+		}
+		return $this;
+	}
+
 	/**
 	 * Convert the class to an array representation ( recursive )
 	 * @return array
