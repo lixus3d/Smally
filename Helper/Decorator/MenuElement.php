@@ -76,6 +76,7 @@ class MenuElement extends AbstractDecorator {
 		// Add alpha and omega automatically
 		if($this->_elementNumber === 0) $attributes['class'][] = $this->_classAlpha;
 		if($this->_elementNumber === ($this->_elementTotal-1)) $attributes['class'][] = $this->_classOmega;
+		$attributes['class'][] = 'menu-item-'.$this->_elementNumber;
 
 		// Add element specific class
 		if(isset($this->getElement()->class) && $class = $this->getElement()->class){
