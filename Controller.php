@@ -170,6 +170,11 @@ abstract class Controller {
 		}
 		$this->getView()->x($params);
 
+		// pseudo event system before view execution
+		if(method_exists($this, 'postViewX')){
+			$this->postViewX();
+		}
+
 		return $this;
 	}
 
