@@ -84,4 +84,114 @@ class Util {
 		return is_dir($path);
 	}
 
+	/**
+	 * Extract parts from a $text that contains $search terms
+	 * @param  string  $text    The text you want to extract parts from
+	 * @param  string  $search  The search you want to extract
+	 * @param  boolean $boldify Default will bold search terms
+	 * @param  boolean $partify Default will extract multiple parts
+	 * @param  integer $before  Number of chars to extract before the search term
+	 * @param  integer $after   Number of chars to extract eafter the search term
+	 * @return string
+	 */
+	static public function getRevelantText($text, $search, $boldify=true, $partify=true, $before=50, $after=40){
+
+		$splitChars = str_split(" \n\t,.:;");
+
+		$originalText = $text;
+		$textLength = strlen($text);
+
+		// we split the search
+		$searchTerms = explode(' ', $search);
+		$searchTerms[] = $search;
+		foreach($searchTerms as $term){
+			$searchTerms[] = ucfirst($term);
+			$searchTerms[] = strtoupper($term);
+			$searchTerms[] = strtolower($term);
+		}
+
+		$parts = array();
+
+		if($partify){
+
+			// We find all term positions
+			$termPlaceList = array();
+			foreach($searchTerms as $term){
+				$offset = 0;
+				while( ($pos = strpos($text,$term,$offset)) !== false ){
+					$termPlaceList[$pos] = $term;
+					$offset = $pos+1;
+				}
+			}
+			ksort($termPlaceList);
+
+
+			// We extract parts of text
+			foreach($termPlaceList as $position => $term){
+				$begin = $position - $before;
+				if( $begin <= 0 ){
+					$begin = 0;
+					$prefix = '';
+				}else{
+					while( true ){
+						if( in_array(mb_substr($text,$begin,1,'UTF-8'),$splitChars) ){
+							$begin++;
+							break;
+						}else{
+							$begin--;
+						}
+						if( $begin == 0 ) break;
+					}
+					$prefix = '... ';
+				}
+
+				$end = $position + strlen($term) + $after;
+				if( $end > ($textLength-1) ){
+					$end = $textLength - 1;
+					$suffix = '';
+				}else{
+					while( true ){
+						if( in_array(mb_substr($text,$end,1,'UTF-8'),$splitChars) ){
+							break;
+						}else{
+							$end++;
+						}
+						if( $end == ($textLength - 1) ) break;
+					}
+					$suffix = ' ...';
+				}
+				// print_r(array($begin,$end));
+				$parts[] = $prefix . mb_substr($text, $begin, $end - $begin, 'UTF-8') . $suffix;
+			}
+		}
+
+		if($parts){
+			$text = trim(implode($parts,''));
+			$text = str_replace('......',' ... ',$text);
+		}else{
+			$length = 50 + $before + $after;
+			while( true ){
+				if( in_array(mb_substr($text,$length,1,'UTF-8'),$splitChars) ){
+					// $length--;
+					break;
+				}else{
+					$length++;
+				}
+				if( $length >= ($textLength) ) break;
+			}
+			if( $length > $textLength){
+				$text = $text;
+			}else{
+				$text = mb_substr($originalText, 0, $length, 'UTF-8').' ...';
+			}
+		}
+
+
+		foreach($searchTerms as $term){
+			$text = str_replace($term,'<strong>'.$term.'</strong>',$text);
+		}
+
+		return $text;
+	}
+
 }
