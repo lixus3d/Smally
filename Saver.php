@@ -411,13 +411,13 @@ class Saver {
 	public function autoValues(){
 
 		// siteId is a automatic one
-		if(class_exists('Multisite')){
+		if(class_exists('Multisite') && !isset($this->_autoValues['siteId']) ){
 			$this->_autoValues['siteId'] = \Multisite::getInstance()->getSiteId() ;
 		}
 
 		if($this->_autoValues){
 			foreach($this->_autoValues as $key => $value){
-				if(property_exists($this->getVo(), $key) && $this->getVo()->getPrimaryKey()!==$key ){
+				if($value && property_exists($this->getVo(), $key) && $this->getVo()->getPrimaryKey()!==$key ){
 					// test with Reflection if we can access the property
 					$reflector = new \ReflectionClass($this->getVo());
 					if($reflector->getProperty($key)->isPublic()){
