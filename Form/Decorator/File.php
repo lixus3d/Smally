@@ -16,6 +16,7 @@ class File extends AbstractDecorator {
 
 		$attributes = array(
 				'name' => 'Upload['.$this->getElement()->getName(false).']',
+				'value' => 'Select a file',
 				'type' => $this->getElement()->getType(),
 				'data-url' => $this->getUploadUrl(),
 				'multiple' => 'multiple'
