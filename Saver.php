@@ -47,6 +47,16 @@ class Saver {
 	}
 
 	/**
+	 * Define the mode (add or edit) of the Saver
+	 * @param string $mode The mode you want to place the Saver in 'add' or 'edit'
+	 * @return \Smally\Saver
+	 */
+	public function setMode($mode){
+		$this->_mode = $mode;
+		return $this;
+	}
+
+	/**
 	 * Force a particular form, default form is auto loaded from _voName
 	 * @param \Smally\Form $form A form you want to force to use
 	 * @return \Smally\Saver
