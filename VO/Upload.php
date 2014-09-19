@@ -370,6 +370,8 @@ class Upload extends \Smally\VO\Standard {
 				'url' => $this->getUploadUrl(),
 				'thumbnail_url' => $this->getUploadUrl('thumbnail'),
 				'delete_url' => $this->getUploadUrl('delete'),
+				'updatename_url' => $this->getUploadUrl('updatename'),
+				'updatealt_url' => $this->getUploadUrl('updatealt'),
 				'delete_type' => 'DELETE'
 			);
 	}
