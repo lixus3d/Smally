@@ -113,7 +113,7 @@ class Util {
 	 * @param  integer $after   Number of chars to extract eafter the search term
 	 * @return string
 	 */
-	static public function getRevelantText($text, $search, $boldify=true, $partify=true, $before=50, $after=40){
+	static public function getRevelantText($text, $search, $boldify=true, $partify=true, $before=50, $after=40, $length=50){
 
 		$splitChars = str_split(" \n\t,.:;");
 
@@ -188,7 +188,7 @@ class Util {
 			$text = trim(implode($parts,''));
 			$text = str_replace('......',' ... ',$text);
 		}else{
-			$length = 50 + $before + $after;
+			$length = $length + $before + $after;
 			while( true ){
 				if( in_array(mb_substr($text,$length,1,'UTF-8'),$splitChars) ){
 					// $length--;
@@ -205,9 +205,10 @@ class Util {
 			}
 		}
 
-
-		foreach($searchTerms as $term){
-			$text = str_replace($term,'<strong>'.$term.'</strong>',$text);
+		if($boldify){
+			foreach($searchTerms as $term){
+				$text = str_replace($term,'<strong>'.$term.'</strong>',$text);
+			}
 		}
 
 		return $text;
