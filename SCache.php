@@ -9,6 +9,8 @@ class SCache {
 	protected $_connector = null;
 	protected $_ttl = null;
 
+	protected $_hashPrefix = null;
+
 	public function __construct(){
 		$this->_ttl = (int)(string)\Smally\Application::getInstance()->getConfig()->smally->cache->ttl?:36000;
 	}
@@ -41,7 +43,10 @@ class SCache {
 	 * @return string
 	 */
 	static public function getHashPrefix(){
-		return MD5(ROOT_PATH); // we md5 the ROOT_PATH which is a "good" uniqid to identify a project
+		if(is_null($this->_hashPrefix)){
+			$this->_hashPrefix = MD5(ROOT_PATH);
+		}
+		return $this->_hashPrefix; // we md5 the ROOT_PATH which is a "good" uniqid to identify a project
 	}
 
 	/**
@@ -57,7 +62,7 @@ class SCache {
 	 * Store a $value in cache system identified by $key
 	 * @param string  $key   the key to access/store the value
 	 * @param mixed  $value The value you want to cache
-	 * @param integer $ttl   Optionnal TTL for the cache entry
+	 * @param integer $ttl   Optionnal TTL for the cache entry in seconds
 	 */
 	public function setKey($key,$value,$ttl=null){
 		if(is_null($ttl)) $ttl = $this->_ttl;
