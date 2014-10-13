@@ -282,7 +282,7 @@ class Saver {
 	 */
 	public function getValidator(){
 		if(is_null($this->_validator) && $this->_voName){
-			$this->_validator = $this->getApplication()->getFactory()->getValidator($this->_voName);
+			$this->_validator = $this->getApplication()->getFactory()->getValidator($this->_voName, $this->getMode()=='edit' ? \Smally\Validator::MODE_EDIT : \Smally\Validator::MODE_NEW );
 		}
 		return $this->_validator;
 	}
