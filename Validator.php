@@ -140,7 +140,14 @@ class Validator {
 	 * @return boolean
 	 */
 	public function x($stopAtFirstError=true,$testFieldList=null){
+
 		$this->resetError();
+
+		// Usefull to add some conditional rules ( this must be required if other field not present , etc ... )
+		if(method_exists($this, 'onX')){
+			$this->onX($stopAtFirstError,$testFieldList);
+		}
+
 		foreach($this->_rules as $field => $rules){
 			if(!is_null($testFieldList)&&is_array($testFieldList)&&!in_array($field,$testFieldList)) continue;
 			$fieldValue = $this->getValue($field);
