@@ -42,7 +42,7 @@ class SCache {
 	 * Return the hash prefix for the current scache (Important to not share keys between multiple projects.)
 	 * @return string
 	 */
-	static public function getHashPrefix(){
+	public function getHashPrefix(){
 		if(is_null($this->_hashPrefix)){
 			$this->_hashPrefix = MD5(ROOT_PATH);
 		}
@@ -55,7 +55,7 @@ class SCache {
 	 * @return string
 	 */
 	public function getHashKey($string){
-		return self::getHashPrefix().'_'.$string;
+		return $this->getHashPrefix().'_'.$string;
 	}
 
 	/**
