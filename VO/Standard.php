@@ -181,7 +181,7 @@ class Standard extends \stdClass {
 		return !isset($this->_autoSiteId) ? true  : $this->_autoSiteId;
 	}
 
-	public function reload(){ 
+	public function reload(){
 		if( $itemId = $this->getId() ){
 			$reloaded = $this->getDao()->getById($itemId,true);
 			return $reloaded;
@@ -434,7 +434,7 @@ class Standard extends \stdClass {
 	 * @param  string $destinationFieldName The fieldName in the join table for the given $fieldName (usefull for multi joint table like j_upload)
 	 * @return \Smally\Vo\Standard
 	 */
-	protected function _genericStoreJointModelId($fieldName,$jVoName=null,$jointVars=null,$destinationFieldName=null){
+	protected function _genericStoreJointModelId($fieldName,$jVoName=null,$jointVars=null,$destinationFieldName=null,$typing=true){
 
 		if(is_null($destinationFieldName)) $destinationFieldName = $fieldName;
 
@@ -463,7 +463,7 @@ class Standard extends \stdClass {
 
 		$modelIdList = array_filter($modelIdList);
 
-		$inBaseIdList = $this->_genericGetJointModelId($fieldName,$jVoName,$jointVars,null,$destinationFieldName);
+		$inBaseIdList = $this->_genericGetJointModelId($fieldName,$jVoName,$jointVars,null,$destinationFieldName,$typing);
 
 		// We update/insert joints
 		foreach($modelIdList as $ord => $modelId){
@@ -521,7 +521,7 @@ class Standard extends \stdClass {
 	 * @param  string $destinationFieldName The fieldname of the joint table if different from $fieldName
 	 * @return array
 	 */
-	protected function _genericGetJointModelId($fieldName,$jVoName=null,$jointVarsFilter=null,$orderFilter=null,$destinationFieldName=null){
+	protected function _genericGetJointModelId($fieldName,$jVoName=null,$jointVarsFilter=null,$orderFilter=null,$destinationFieldName=null,$typing=true){
 
 		if(is_null($destinationFieldName)) $destinationFieldName = $fieldName;
 
@@ -554,7 +554,11 @@ class Standard extends \stdClass {
 
 		if($results = $jDao->fetchAll($criteria)){
 			foreach($results as $joint){
-				$idList[]= (int) $joint->{$destinationFieldName};
+				if($typing){
+					$idList[]= (int) $joint->{$destinationFieldName};
+				}else{
+					$idList[]= $joint->{$destinationFieldName};
+				}
 			}
 		}
 
