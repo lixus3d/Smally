@@ -55,7 +55,7 @@ class SCache {
 	 * @return string
 	 */
 	public function getHashKey($string){
-		return $this->getHashPrefix().'_'.$string;
+		return self::getHashPrefix().'_'.$string;
 	}
 
 	/**
