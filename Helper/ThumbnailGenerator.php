@@ -63,6 +63,16 @@ class ThumbnailGenerator {
 	}
 
 	/**
+	 * Override the thumbnail destination path
+	 * @param string $thumbnailPath A complete path with the filename
+	 * @return  \Smally\Helper\ThumbnailGenerator
+	 */
+	public function setThumbnailPath($thumbnailPath){
+		$this->_thumbnailPath = $thumbnailPath;
+		return $this;
+	}
+
+	/**
 	 * Get the current Smally Application
 	 * @return \Smally\Application
 	 */
@@ -89,12 +99,12 @@ class ThumbnailGenerator {
 	 * @return string
 	 */
 	public function getThumbnailPath($mkdir=false){
-		if(is_null($this->_thumbnailPath)||$mkdir){
+		if(is_null($this->_thumbnailPath)){
 			$basePath = dirname($this->_filePath).DIRECTORY_SEPARATOR.'thumbnail'.DIRECTORY_SEPARATOR.self::constructParamsString($this->_params);
-			if($mkdir){
-				$this->makePath($basePath);
-			}
 			$this->_thumbnailPath = $basePath.DIRECTORY_SEPARATOR.basename($this->_filePath);
+		}
+		if($mkdir){
+			$this->makePath(dirname($this->_thumbnailPath));
 		}
 		return $this->_thumbnailPath;
 	}
