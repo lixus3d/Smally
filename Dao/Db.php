@@ -87,7 +87,8 @@ class Db implements InterfaceDao {
 	 */
 	public function getTable($withPrefix=true){
 		if(is_null($this->_table)){
-			$this->_table = trim(preg_replace('#([A-Z])#e',"strtolower('_\\1')",$this->getVoName(false)),'_');
+			// $this->_table = trim(preg_replace('#([A-Z])#e',"strtolower('_\\1')",$this->getVoName(false)),'_');
+			$this->_table = trim(preg_replace_callback('#[A-Z]#',function($matches){return '_'.strtolower($matches[0]);},$this->getVoName(false)),'_');
 		}
 		if($withPrefix){
 			return $this->getTablePrefix().$this->_table;
