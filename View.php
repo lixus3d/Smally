@@ -206,6 +206,7 @@ class View {
 
 		$addMinify = false;
 		$output = array();
+		$preoutput = array();
 
 		foreach($this->getApplication()->getJs() as $file){
 			if(\Smally\Assets::getInstance()->isMinify($file)){
@@ -229,11 +230,14 @@ class View {
 			}else{
 				$mtime = \Smally\Assets::getInstance()->getAssetMtime($file);
 				$file = substr($file,0,strrpos($file, '.')) . ($mtime?'.' . $mtime:'') . '.min'. strrchr($file, '.') ;
-				$output[] = '<script type="text/javascript" src="'.$this->urlAssets($file).'"></script>';
+				$preoutput[] = '<script type="text/javascript" src="'.$this->urlAssets($file).'"></script>';
 			}
 		}
 
-		return implode(NN.TT,$output);
+
+		$js = implode(NN.TT,$preoutput).NN.implode(NN.TT,$output);
+
+		return $js;
 	}
 
 	/**
