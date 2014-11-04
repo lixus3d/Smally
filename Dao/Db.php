@@ -648,22 +648,32 @@ class Db implements InterfaceDao {
 
 		$value = (string) trim($value,' ,');
 
-		// extract all exact sentence > "foo bar" and 'foo bar'
-		if(preg_match_all('#(["\'])((?!\\1).+)\\1#iU',$value,$matches,PREG_SET_ORDER)){
-			foreach($matches as $match){
-				$patterns[]= $match[2];
-				$value = str_replace($match[0],'',$value);
+		if( !isset($options['simple']) ){
+			// extract all exact sentence > "foo bar" and 'foo bar'
+			if(preg_match_all('#(["\'])((?!\\1).+)\\1#iU',$value,$matches,PREG_SET_ORDER)){
+				foreach($matches as $match){
+					$patterns[]= $match[2];
+					$value = str_replace($match[0],'',$value);
+				}
 			}
-		}
 
-		// extract all others words
-		$value = str_replace(array('`'),array('\''),$value);
-		$value = iconv('UTF-8','ASCII//TRANSLIT//IGNORE',$value);
-		$value = preg_replace('#[^a-zA-Z0-9 _-]#','',$value);
-		$words = explode(' ',str_replace(',',' ',$value));
-		foreach($words as $word){
-			if(!$word) continue;
-			$patterns[] = $word;
+			// extract all others words
+			$value = str_replace(array('`'),array('\''),$value);
+			$value = iconv('UTF-8','ASCII//TRANSLIT//IGNORE',$value);
+			$value = preg_replace('#[^a-zA-Z0-9 _-]#','',$value);
+			$words = explode(' ',str_replace(',',' ',$value));
+			foreach($words as $word){
+				if(!$word) continue;
+				$patterns[] = $word;
+			}
+		}else{
+			$value = str_replace(array('%','_'),' ',$value);
+			$value = \Smally\Util::convertAccent($value);
+			$words = explode(' ',$value);
+			foreach($words as $word){
+				if(!$word) continue;
+				$patterns[] = $word;
+			}
 		}
 
 		$parts = array();
