@@ -212,7 +212,7 @@ class Db implements InterfaceDao {
 	public function getById($id,$force=false){
 
 		if($id!=0){
-			if( !isset($this->_getByIdCache[$id]) || $force ){
+			if( !isset($this->_getByIdCache[(int)$id]) || $force ){
 
 				if($this->isSmallyCacheActive()){
 					$cacheKey = $this->getCache()->getHashKey('DB_GETBYID_'.$this->getVoName(true).'_'.$id);
@@ -222,8 +222,8 @@ class Db implements InterfaceDao {
 							$voName = $this->getVoName(true);
 							$object = new $voName();
 							$object->initVars($cacheArray,true); // true for direct to property without setXxxx methods
-							$this->_getByIdCache[$id] = $object;
-							return $this->_getByIdCache[$id];
+							$this->_getByIdCache[(int)$id] = $object;
+							return $this->_getByIdCache[(int)$id];
 						}
 					}
 				}
@@ -252,19 +252,19 @@ class Db implements InterfaceDao {
 				}else throw new \Smally\Exception('Db fetch error : '.$this->getConnector()->error . NN . 'Query : '.$sql);
 
 				if(isset($object) && $object){
-					$this->_getByIdCache[$id] = $object;
+					$this->_getByIdCache[(int)$id] = $object;
 				}
 
 			}
-			if(isset($this->_getByIdCache[$id])){
-				return $this->_getByIdCache[$id];
+			if(isset($this->_getByIdCache[(int)$id])){
+				return $this->_getByIdCache[(int)$id];
 			}
 		}
 		return null;
 	}
 
 	public function getByIdCache($id){
-		return isset($this->_getByIdCache[$id])?$this->_getByIdCache[$id]:null;
+		return isset($this->_getByIdCache[(int)$id])?$this->_getByIdCache[(int)$id]:null;
 	}
 
 	/**
@@ -301,6 +301,9 @@ class Db implements InterfaceDao {
 				if(is_null($fetchVoName)) $fetchVoName = $this->getVoName();
 				$object = $this->fetchValueObject($result,$fetchVoName);
 				$result->free();
+				if(isset($object) && $object){
+					$this->_getByIdCache[(int)$object->getId()] = $object;
+				}
 				return $object;
 			}elseif($result->num_rows>1) throw new \Smally\Exception('Fetch return more than one entry : '.$result->num_rows);
 		}else throw new \Smally\Exception('Db fetch error : '.$this->getConnector()->error . NN . 'Query : '.$sql);
@@ -327,7 +330,7 @@ class Db implements InterfaceDao {
 			if($result->num_rows>=1){
 				if(is_null($fetchVoName)) $fetchVoName = $this->getVoName();
 				while($object = $this->fetchValueObject($result,$fetchVoName)){
-					$this->_getByIdCache[$object->getId()] = $object;
+					$this->_getByIdCache[(int)$object->getId()] = $object;
 					$return[] = $object;
 				}
 				$result->free();
@@ -395,8 +398,15 @@ class Db implements InterfaceDao {
 
 		// define each field
 		$set = array();
+		$nullProperties = $vo->getNullProperties();
 		foreach($vo as $property => $value){
 			if($property == $primaryKey && $statement === self::STATEMENT_UPDATE ) continue;
+			if(in_array($property,$nullProperties)){
+				if( $value === 0 || $value === '' ){
+					$set[] = '`'.$property.'`=NULL';
+					continue;
+				}
+			}
 			$set[] = '`'.$property.'` = \''.$this->getConnector()->escape_string($value).'\'';
 		}
 
@@ -409,6 +419,7 @@ class Db implements InterfaceDao {
 		if($return = $this->getConnector()->query($sql)){
 			if($statement==self::STATEMENT_INSERT&&!$vo->{$primaryKey}){
 				$vo->{$primaryKey} = $this->getLastInsertId();
+				$this->_getByIdCache[(int)$vo->getId()] = $vo;
 			}
 		}
 

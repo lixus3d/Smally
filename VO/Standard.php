@@ -22,6 +22,8 @@ class Standard extends \stdClass {
 
 	protected $_logger = null;
 
+	protected $_nullProperties = array();
+
 
 	/**
 	 * Init a value object with $vars
@@ -175,6 +177,10 @@ class Standard extends \stdClass {
 	 */
 	public function getSubmodelCriteria($subVoName=null){
 		return $this->getFactory()->getCriteria($subVoName)->setFilterKey($this->getPrimaryKey(),$this->getId());
+	}
+
+	public function getNullProperties(){
+		return $this->_nullProperties;
 	}
 
 	public function isAutoSiteId(){
@@ -465,27 +471,43 @@ class Standard extends \stdClass {
 
 		$inBaseIdList = $this->_genericGetJointModelId($fieldName,$jVoName,$jointVars,null,$destinationFieldName,$typing);
 
+		// We check if the joint has ord field
+		$testObject = new $jVoName(); // TODO : might have a better solution to test the presence like reflexion
+		$hasOrd = property_exists($testObject, 'ord');
+
 		// We update/insert joints
 		foreach($modelIdList as $ord => $modelId){
+
 			$alreadyExist = false;
+
 			$vars = array_merge($jointVars,array($destinationFieldName => $modelId));
 
-			if(!($jObject = $jDao->exists($vars))){
+			// If the modelId is not in the actual inBaseIdList , we create a new vo
+			if( !in_array($modelId, $inBaseIdList) ){
 				$jObject = new $jVoName($vars);
 			}else{
+				// If it already exists we retrieve its position
 				$alreadyExist = true;
+				$actualOrd = array_search($modelId, $inBaseIdList);
+				unset($inBaseIdList[$actualOrd]); // if it is present, we can delete from the inBase for next foreach( delete missing )
 			}
 
-			if(property_exists($jObject, 'ord')){
-				$jObject->ord = $ord;
-				$jObject->store();
+			// if have order field
+			if( $hasOrd ){
+				// we verify if we have to update the vo
+				if( $alreadyExist){
+					if( $ord != $actualOrd){
+						$sql = 'UPDATE `'.$jDao->getTable().'` SET ord='.(int)$k.' WHERE `'.$jDao->getPrimaryKey().'`='.(int)$modelId;
+						$jDao->query($sql);
+					}
+				}else{
+					$jObject->ord = $ord;
+					$jObject->store();
+				}
 			}else if( !$alreadyExist ){
 				$jObject->store();
 			}
 
-			if(in_array($modelId,$inBaseIdList)){
-				unset($inBaseIdList[array_search($modelId, $inBaseIdList)]);
-			}
 		}
 
 		// We delete joints that we didn't found in the field
