@@ -497,7 +497,7 @@ class Standard extends \stdClass {
 				// we verify if we have to update the vo
 				if( $alreadyExist){
 					if( $ord != $actualOrd){
-						$sql = 'UPDATE `'.$jDao->getTable().'` SET ord='.(int)$k.' WHERE `'.$jDao->getPrimaryKey().'`='.(int)$modelId;
+						$sql = 'UPDATE `'.$jDao->getTable().'` SET ord='.(int)$ord.' WHERE `'.$jDao->getPrimaryKey().'`='.(int)$modelId;
 						$jDao->query($sql);
 					}
 				}else{
