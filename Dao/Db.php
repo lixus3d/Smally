@@ -402,7 +402,7 @@ class Db implements InterfaceDao {
 		foreach($vo as $property => $value){
 			if($property == $primaryKey && $statement === self::STATEMENT_UPDATE ) continue;
 			if(in_array($property,$nullProperties)){
-				if( $value === 0 || $value === '' ){
+				if( is_null($value) || $value === '' ){
 					$set[] = '`'.$property.'`=NULL';
 					continue;
 				}
