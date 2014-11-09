@@ -60,7 +60,7 @@ class Util {
 		$value = preg_replace('#[\s,.\\\\/\n]+#',$separator,$value);
 		$value = preg_replace('#[^a-z0-9'.$separator.']#','',$value);
 		$value = preg_replace('#'.$separator.'{2,}#',$separator,$value);
-		return trim($value,'-');
+		return trim($value,$separator);
 	}
 
 	static public function convertAccent($string){
