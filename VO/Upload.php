@@ -99,7 +99,7 @@ class Upload extends \Smally\VO\Standard {
 	 */
 	public function filterName($name){
 		// convert accent
-		$name = iconv('UTF-8','ASCII//TRANSLIT//IGNORE',$name);
+		$name = \Smally\Util::convertAccent($name);
 		// convert space, comma, tabulation, etc to '-'
 		$name = preg_replace('#[\s\'"`\[\]()\n]#iu','-',$name);
 		// list only valid chars
