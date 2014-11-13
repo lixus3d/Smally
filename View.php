@@ -11,6 +11,8 @@ class View {
 
 	protected $_parentView = null;
 
+	protected $_pragma = null;
+
 	public $content = ''; // eventually a sub content in the view. Usually for a Global layout
 	protected $_render = '';
 
@@ -283,8 +285,10 @@ class View {
 	 * @return boolean True if the no-cache options was sent
 	 */
 	public function isPragmaNoCache(){
-		$pragma = isset($_SERVER['HTTP_PRAGMA'])&&$_SERVER['HTTP_PRAGMA']=='no-cache'?true:false;
-		return $pragma;
+		if( is_null($this->_pragma) ){
+			$this->_pragma = isset($_SERVER['HTTP_PRAGMA'])&&$_SERVER['HTTP_PRAGMA']=='no-cache'?true:false;
+		}
+		return $this->_pragma;
 	}
 
 	/**
