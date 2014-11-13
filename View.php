@@ -295,7 +295,6 @@ class View {
 	protected function beginCache($keyPrefix){
 
 		$this->cacheActive = $this->isCacheActive();
-		$this->isPragmaNoCache = $this->isPragmaNoCache();
 
 		if($this->cacheActive){
 			$this->smallyCache = \Smally\SCache::getInstance();
@@ -327,7 +326,7 @@ class View {
 	 * @return boolean
 	 */
 	protected function getFromCache(){
-		if($this->cacheActive && !$this->isPragmaNoCache){
+		if($this->cacheActive && !$this->isPragmaNoCache()){
 			$render = $this->smallyCache->getKey($this->cacheKeyRender); // render must be differnt from false or null to be considered as valid cache entry
 			if( $render!==false && $render!==null ){
 				$this->cacheRender = $render;
