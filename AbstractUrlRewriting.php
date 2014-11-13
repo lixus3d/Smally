@@ -87,14 +87,15 @@ abstract class AbstractUrlRewriting {
 	public function paramToUrl($matches){
 		$param = $matches[1];
 		$value = isset($this->_replaceParams[$param])?$this->_replaceParams[$param]:'';
-		// convert accent
-		$value = iconv('UTF-8','ASCII//TRANSLIT//IGNORE',$value);
-		// lower case the string
-		$value = strtolower($value);
-		// convert space, comma, tabulation, etc to '-'
-		$value = preg_replace('#[\s,.\\\\/\n]+#','-',$value);
-		$value = preg_replace('#-{2,}#','-',$value);
-		return preg_replace('#[^a-z0-9-]#','',$value);
+		return \Smally\Util::slugify($value);
+		// // convert accent
+		// $value = iconv('UTF-8','ASCII//TRANSLIT//IGNORE',$value);
+		// // lower case the string
+		// $value = strtolower($value);
+		// // convert space, comma, tabulation, etc to '-'
+		// $value = preg_replace('#[\s,.\\\\/\n]+#','-',$value);
+		// $value = preg_replace('#-{2,}#','-',$value);
+		// return preg_replace('#[^a-z0-9-]#','',$value);
 	}
 
 	/**
