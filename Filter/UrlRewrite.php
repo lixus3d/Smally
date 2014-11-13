@@ -15,7 +15,7 @@ class UrlRewrite extends AbstractRule {
 
 		if($value!=''){
 			// convert accent
-			$value = iconv('UTF-8','ASCII//TRANSLIT//IGNORE',$value);
+			$value = \Smally\Util::convertAccent($value);
 			// lower case the string
 			$value = strtolower($value);
 			// convert space, comma, tabulation, etc to '-'
