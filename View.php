@@ -11,6 +11,7 @@ class View {
 
 	protected $_parentView = null;
 
+	protected $_cacheActive = null;
 	protected $_pragma = null;
 
 	public $content = ''; // eventually a sub content in the view. Usually for a Global layout
@@ -276,8 +277,10 @@ class View {
 	 * @return boolean Return true if the cache is active
 	 */
 	public function isCacheActive(){
-		$config = (boolean)(string)$this->getApplication()->getConfig()->cms->smallyCacheActive;
-		return $config;
+		if(is_null($this->_cacheActive)){
+			$this->_cacheActive = (boolean)(string)$this->getApplication()->getConfig()->cms->smallyCacheActive;
+		}
+		return $this->_cacheActive;
 	}
 
 	/**
@@ -299,6 +302,7 @@ class View {
 	protected function beginCache($keyPrefix){
 
 		$this->cacheActive = $this->isCacheActive();
+		$this->pragma = $this->isPragmaNoCache();
 
 		if($this->cacheActive){
 			$this->smallyCache = \Smally\SCache::getInstance();
@@ -330,7 +334,7 @@ class View {
 	 * @return boolean
 	 */
 	protected function getFromCache(){
-		if($this->cacheActive && !$this->isPragmaNoCache()){
+		if($this->cacheActive && !$this->pragma){
 			$render = $this->smallyCache->getKey($this->cacheKeyRender); // render must be differnt from false or null to be considered as valid cache entry
 			if( $render!==false && $render!==null ){
 				$this->cacheRender = $render;
