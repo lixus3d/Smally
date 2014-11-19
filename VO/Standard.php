@@ -834,7 +834,7 @@ class Standard extends \stdClass {
 	 * @param  string $fieldName The name of the slugify field you want to be unique
 	 * @return string
 	 */
-	protected function _genericUniqueSlugify($fieldName){
+	protected function _genericUniqueSlugify($fieldName,$testSiteId=true){
 
 		$value = \Smally\Util::slugify($this->{$fieldName}?:$this->getName());
 		// we loop until we found a valid slugify for this field
@@ -842,7 +842,7 @@ class Standard extends \stdClass {
 			$criteria = $this->getBusiness()->getCriteria()
 												->setFilterKey($fieldName,$value)
 												;
-			if(isset($this->siteId) && $siteId = $this->siteId){
+			if( $testSiteId && isset($this->siteId) && $siteId = $this->siteId){
 				$criteria->setFilterKey('siteId',$siteId);
 			}
 			if($id = $this->getId()) $criteria->setFilterKey($this->getPrimaryKey(),$id,'!=');
