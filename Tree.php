@@ -110,6 +110,19 @@ class Tree {
 	}
 
 	/**
+	 * Add a child to the begin of the tree ( a sub Tree object )
+	 * @param  $child Child array
+	 */
+	public function unshiftChild($child){
+		if($child instanceof static){
+			array_unshift($this->_children,$child);
+		}else{
+			array_unshift($this->_children, new static($child,$this) );
+		}
+		return $this;
+	}
+
+	/**
 	 * Define an attribute of the tree element when rendered
 	 * @param string $attribute the attribute name to define
 	 * @param mixed $value the value
