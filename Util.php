@@ -221,4 +221,20 @@ class Util {
 		return $text;
 	}
 
+	/**
+	 * Recursive rmdir that will also delete sub files and directories
+	 * @param string $dir The directorty to recursive delete
+	 * @return boolean
+	 */
+	static public function rrmdir($dir) {
+		$structure = glob(rtrim($dir, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.'*');
+		if (is_array($structure)) {
+			foreach($structure as $file) {
+				if (is_dir($file)) self::rrmdir($file);
+				elseif (is_file($file)) unlink($file);
+			}
+		}
+		return rmdir($dir);
+	}
+
 }

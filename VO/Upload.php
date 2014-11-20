@@ -17,6 +17,7 @@ class Upload extends \Smally\VO\Standard {
 	public $size = null;
 	public $uid = null;
 	public $filePath = null;
+	public $options = null;
 	public $utsCreate = null;
 
 	protected $_filePath = null;
@@ -31,6 +32,22 @@ class Upload extends \Smally\VO\Standard {
 	public function setName($name){
 		$this->name = $this->filterName($name);
 		return $this;
+	}
+
+	public function setOptions($options=array()){
+		$serialize = serialize($options);
+		if( $this->options !== $serialize){
+			$this->options = $serialize;
+			$this->resetThumbnails();
+		}
+		return $this;
+	}
+
+	public function getOptions(){
+		if( $this->options ){
+			return unserialize($this->options);
+		}
+		return array();
 	}
 
 	/**
@@ -206,6 +223,7 @@ class Upload extends \Smally\VO\Standard {
 		switch($type){
 			case 'thumbnail':
 				if($this->filePath){
+					if( !isset($params['c']) ) $params['c'] = 1; // we always use crop except if we are called not to
 					$relative = str_replace('\\','/',$this->cutUid($this->getUid()));
 					$relative .= '/thumbnail/';
 					$relative .= $this->getThumbnailGenerator()->constructParamsString($params);
@@ -213,19 +231,29 @@ class Upload extends \Smally\VO\Standard {
 					$relative .= '/'.substr(strrchr($cleanFilePath,'/'),1); // basename ???
 					$url = $application->urlData($relative);
 				}
-			break;
+				break;
+			case 'cropped':
+				if( $this->getOptions()){
+					$url = $this->getUploadUrl('thumbnail',array('c'=>1,'x'=>5000));
+				}else{
+					$url = $this->getUploadUrl();
+				}
+				break;
 			case 'delete':
 				$url = $application->getBaseUrl($application->makeControllerUrl('Generic\\Upload\\delete',array('id'=>$this->getId())));
-			break;
+				break;
 			case 'updatename':
 				$url = $application->getBaseUrl($application->makeControllerUrl('Generic\\Upload\\updatename',array('id'=>$this->getId())));
-			break;
+				break;
 			case 'updatealt':
 				$url = $application->getBaseUrl($application->makeControllerUrl('Generic\\Upload\\updatealt',array('id'=>$this->getId())));
-			break;
+				break;
+			case 'crop':
+				$url = $application->getBaseUrl($application->makeControllerUrl('Generic\\Upload\\crop',array('id'=>$this->getId())));
+				break;
 			default:
 				$url = $application->urlData(str_replace('\\', '/', $this->filePath));
-			break;
+				break;
 		}
 		return $url;
 	}
@@ -372,6 +400,7 @@ class Upload extends \Smally\VO\Standard {
 				'delete_url' => $this->getUploadUrl('delete'),
 				'updatename_url' => $this->getUploadUrl('updatename'),
 				'updatealt_url' => $this->getUploadUrl('updatealt'),
+				'crop_url' => $this->getUploadUrl('crop'),
 				'delete_type' => 'DELETE'
 			);
 	}
@@ -385,6 +414,7 @@ class Upload extends \Smally\VO\Standard {
 			$this->_thumbnailGenerator = new \Smally\Helper\ThumbnailGenerator();
 			$this->_thumbnailGenerator->setFilePath($this->getCompletePath());
 			$this->_thumbnailGenerator->setExtension($this->getExtension());
+			$this->_thumbnailGenerator->setDefaultOptions($this->getOptions());
 		}
 		return $this->_thumbnailGenerator;
 	}
@@ -419,6 +449,13 @@ class Upload extends \Smally\VO\Standard {
 		}
 		echo file_get_contents($thumbnailPath);
 		return $this;
+	}
+
+	/**
+	 * This will delete all thumbnails of the actual upload
+	 */
+	public function resetThumbnails(){
+		return $this->getThumbnailGenerator()->resetAllThumbnails();
 	}
 
 }

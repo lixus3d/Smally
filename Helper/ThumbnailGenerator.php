@@ -44,6 +44,16 @@ class ThumbnailGenerator {
 	}
 
 	/**
+	 * Set the default options, usefull for cropping
+	 * @param string $extension The file options
+	 * @return  \Smally\Helper\ThumbnailGenerator
+	 */
+	public function setDefaultOptions($options){
+		$this->_defaultOptions = $options;
+		return $this;
+	}
+
+	/**
 	 * Set the params of the thumbnail
 	 * @param array  $params The params you want for the thumbnail
 	 * @return  \Smally\Helper\ThumbnailGenerator
@@ -150,8 +160,13 @@ class ThumbnailGenerator {
 				$key = $part[0];
 				$value = substr($part,1);
 				switch($key){
-					case 'x':
-					case 'y':
+					case 'c': // use crop
+					case 'x': // destWidth
+					case 'y': // destHeight
+					case 'u': // left
+					case 'v': // top
+					case 'w': // srcWidth
+					case 'h': // srcHeight
 						$params[$key] = (int) $value;
 						break;
 					case 't':
@@ -222,27 +237,51 @@ class ThumbnailGenerator {
 			return $this;
 		}
 
+		$params = &$this->_params;
+		$params = array_merge($this->_defaultOptions,$params);
+
+
 		list($width,$height,$type,$attr) = getimagesize($this->_filePath);
 		if(is_null($width)) $width = 256;
 		if(is_null($height)) $height = 256;
 
-		$params = &$this->_params;
-		$destWidth = isset($params['x'])?$params['x']:400;
+		// Crop params
+		if( isset($params['c']) && $params['c'] == 1 && isset($params['w']) && isset($params['h']) && isset($params['u']) && isset($params['v'])){
+			$left = $params['u'] * $width;
+			$top = $params['v'] * $height;
+			$width = $params['w'] * $width;
+			$height = $params['h'] * $height;
+		}
+
+		$destWidth = isset($params['x'])?$params['x']:null;
 		$destHeight = isset($params['y'])?$params['y']:null;
 		$destType =  isset($params['t'])?$params['t']:'fit';
 
-		// There is no need to create a thumbnail, just copy the original to the destination
-		if($destWidth>$width && $destHeight>$height && $destType=='fit'){
-			copy($this->_filePath,$this->getThumbnailPath(true));
-			chmod($this->getThumbnailPath(true),0777);
-			return $this;
+		if( is_null($destWidth) && is_null($destHeight) ){
+			$destWidth = 256;
+		}
+
+		// There is no need to create a thumbnail, just copy the original to the destination if dest size greater and mode to fit
+		if( ( is_null($destWidth) || $destWidth>$width ) && ( is_null($destHeight) || $destHeight>$height ) && $destType=='fit'){
+			if(!isset($top)){ // if the source is not cropped , symply copy the original
+				copy($this->_filePath,$this->getThumbnailPath(true));
+				chmod($this->getThumbnailPath(true),0777);
+				return $this;
+			}else{
+				if( $destWidth ) $destWidth = $width;
+				else $destHeight = $height;
+			}
 		}
 
 		// Create the original image in GD
 		$img = $this->getGdImage($this->_filePath);
 
 		// Create the thumbnail image
-		$thbImg = $this->$destType($img,$width,$height,$destWidth,$destHeight);
+		if(isset($top)){
+			$thbImg = $this->$destType($img,$width,$height,$destWidth,$destHeight,$left,$top);
+		}else{
+			$thbImg = $this->$destType($img,$width,$height,$destWidth,$destHeight);
+		}
 
 		// Write the thumbnail image to disk
 		$this->writeImage($thbImg);
@@ -395,7 +434,7 @@ class ThumbnailGenerator {
 	 * @param  integer $y          Original image portion top position
 	 * @return integer A new GD image id
 	 */
-	public function fill($img,$width,$height,$destWidth,$destHeight,$x=null,$y=null){
+	public function fill($img,$width,$height,$destWidth,$destHeight,$x=0,$y=0){
 		if(is_null($destWidth)||is_null($destHeight)){
 			throw new \Smally\Exception('Neither destWidth or destHeight can be null.');
 		}
@@ -417,8 +456,8 @@ class ThumbnailGenerator {
 			$multi = $width / $destWidth ; // initial image is homothetic with the destination
 		}
 
-		$xcenter = ($x + $width) / 2;
-		$ycenter = ($y + $height) / 2;
+		$xcenter = $x + ($width / 2);
+		$ycenter = $y + ($height / 2);
 
 
 		imagecopyresampled($thb, $img, 0, 0, $xcenter-(($destWidth/2)*$multi), $ycenter-(($destHeight/2)*$multi), $destWidth, $destHeight, $destWidth*$multi, $destHeight*$multi);
@@ -508,5 +547,16 @@ class ThumbnailGenerator {
 		}
 		return array($r, $g, $b);
 	}
+
+	/**
+	 * Delete all thumbnails of a particular file
+	 * @return boolean
+	 */
+	public function resetAllThumbnails(){
+		$basePath =  dirname($this->_filePath).DIRECTORY_SEPARATOR.'thumbnail';
+		return \Smally\Util::rrmdir($basePath);
+	}
+
+
 
 }
