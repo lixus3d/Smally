@@ -14,6 +14,8 @@ class View {
 	protected $_cacheActive = null;
 	protected $_pragma = null;
 
+	protected $_indenter = null;
+
 	public $content = ''; // eventually a sub content in the view. Usually for a Global layout
 	protected $_render = '';
 
@@ -443,6 +445,8 @@ class View {
 		$this->beginCache($cacheKey);
 		if( !$this->getFromCache() ){
 			$this->x($params);
+			// We do some beautifull indent because it is cached
+			$this->setRender($this->indentify($this->getRender()));
 		}
 		return $this->endCache();
 	}
@@ -462,6 +466,32 @@ class View {
 			throw new Exception('Template not found : '.$template);
 		}
 		return ob_get_clean();
+	}
+
+	/**
+	 * Get the beautiful indenter, will set it to false if not present on the current project
+	 * @return mixed
+	 */
+	public function getIndenter(){
+		if( is_null($this->_indenter)){
+			$this->_indenter = false;
+			if( class_exists('Gajus\\Dindent\\Indenter') ){
+				$this->_indenter = new \Gajus\Dindent\Indenter(array('indentation_character'=>"\t"));
+			}
+		}
+		return $this->_indenter;
+	}
+
+	/**
+	 * Indentify beautifully a html input text
+	 * @param  string $html The html to indent
+	 * @return string
+	 */
+	public function indentify($html){
+		if( $indenter = $this->getIndenter() ){
+			$html = $indenter->indent($html);
+		}
+		return $html;
 	}
 
 }
