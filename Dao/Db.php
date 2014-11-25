@@ -369,6 +369,35 @@ class Db implements InterfaceDao {
 	}
 
 	/**
+	 * Return the sum of field in a request with criteria
+	 * @param  \Smally\Criteria $criteria The criteria to test
+	 * @param  string $fieldName The field to sum
+	 * @return int|float
+	 */
+	public function fetchSum(\Smally\Criteria $criteria=null,$fieldName){
+		$return = 0;
+
+		if(is_null($criteria)) $criteria = $this->getCriteria();
+		if( $this->hasUtsDelete() && !$criteria->hasFilter('utsDelete') ) $criteria->setFilter(array('utsDelete'=>array('value'=>0)));
+
+		$params = $this->criteriaToSql($criteria);
+		$params['fields'] = array('SUM(`'.$fieldName.'`) as fieldSum');
+		extract($params);
+		$sql = $this->makeSelect($where,$order,$limit,$fields,$join,$groupby);
+
+		$this->log($sql);
+
+		if($result = $this->getConnector()->query($sql)){
+			if($result->num_rows>=1){
+				$return = $result->fetch_object()->fieldSum;
+				$result->free();
+			}
+		}else throw new \Smally\Exception('Db fetch error : '.$this->getConnector()->error . NN . 'Query : '.$sql);
+
+		return $return;
+	}
+
+	/**
 	 * Store a value object. Use INSERT or UPDATE in case of $primaryKey not null
 	 * @param  \stdClass $vo The value object you want to store
 	 * @param  const $statement Force a particular statement (use Dao constant)
@@ -517,13 +546,13 @@ class Db implements InterfaceDao {
 
 		if(!is_array($fields)||count($fields)==0) $fields = array($fields?:'*');
 		foreach($fields as &$field){
-			if(strpos($field, '*')!==false){
+			if( (preg_match('#^(COUNT|SUM)#',$field)) || (strpos($field, '.')!==false) ){
+				continue;
+			}elseif(strpos($field, '*')!==false){
 				if($field === '*') $field = '`'.$this->getTable().'`.*';
 				continue;
 			}elseif(strpos($field, '.')===false){
 				$field = '`'.$this->getTable().'`.`'.$field.'`';
-				continue;
-			}elseif( (preg_match('#^(COUNT|SUM)#',$field)) || (strpos($field, '.')!==false) ){
 				continue;
 			}
 			$field = '`'.$field.'`';
