@@ -16,6 +16,8 @@ class View {
 
 	protected $_indenter = null;
 
+	protected $_beautify = true;
+
 	public $content = ''; // eventually a sub content in the view. Usually for a Global layout
 	protected $_render = '';
 
@@ -275,6 +277,17 @@ class View {
 	}
 
 	/**
+	 * Call this function to avoid caching of the block, for example because of a sub view can't be cached
+	 * @return null
+	 */
+	public function avoidIndentify(){
+		$this->_beautify = false;
+		if(!is_null($this->_parentView)){
+			$this->_parentView->avoidIndentify();
+		}
+	}
+
+	/**
 	 * Return the state of the smallyCache system
 	 * @return boolean Return true if the cache is active
 	 */
@@ -446,7 +459,9 @@ class View {
 		if( !$this->getFromCache() ){
 			$this->x($params);
 			// We do some beautifull indent because it is cached
-			$this->setRender($this->indentify($this->getRender()));
+			if($this->_beautify){
+				$this->setRender($this->indentify($this->getRender()));
+			}
 		}
 		return $this->endCache();
 	}
@@ -490,6 +505,7 @@ class View {
 	public function indentify($html){
 		if( $indenter = $this->getIndenter() ){
 			$html = $indenter->indent($html);
+			$html = preg_replace('#\s*<!--NOINDENT-->\s*#s','<!--NOINDENT-->',$html); // This is a tricks for inline-block spacing
 		}
 		return $html;
 	}
