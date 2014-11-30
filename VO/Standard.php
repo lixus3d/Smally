@@ -489,7 +489,8 @@ class Standard extends \stdClass {
 				// If it already exists we retrieve its position
 				$alreadyExist = true;
 				$actualOrd = array_search($modelId, $inBaseIdList);
-				unset($inBaseIdList[$actualOrd]); // if it is present, we can delete from the inBase for next foreach( delete missing )
+				$inBaseIdList[$actualOrd] = null;
+				// unset($inBaseIdList[$actualOrd]); // if it is present, we can delete from the inBase for next foreach( delete missing )
 			}
 
 			// if have order field
@@ -497,7 +498,7 @@ class Standard extends \stdClass {
 				// we verify if we have to update the vo
 				if( $alreadyExist){
 					if( $ord != $actualOrd){
-						$sql = 'UPDATE `'.$jDao->getTable().'` SET ord='.(int)$ord.' WHERE `'.$jDao->getPrimaryKey().'`='.(int)$modelId;
+						$sql = 'UPDATE `'.$jDao->getTable().'` SET ord='.(int)$ord.' WHERE `'.$destinationFieldName.'`='.(int)$modelId;
 						$jDao->query($sql);
 					}
 				}else{
@@ -512,7 +513,7 @@ class Standard extends \stdClass {
 
 		// We delete joints that we didn't found in the field
 		foreach($inBaseIdList as $modelId){
-
+			if( is_null($modelId) ) continue;
 			$vars = array_merge($jointVars,array($destinationFieldName => $modelId));
 
 			if($jObject = $jDao->exists($vars)) {
