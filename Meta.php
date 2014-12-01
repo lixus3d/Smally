@@ -106,7 +106,15 @@ class Meta{
 		elseif(isset($this->_default[$type]) && $this->_default[$type]) $m = $this->_default;
 
 		if(isset($m)){
-			return implode(' - ',$m[$type]);
+			switch($type){
+				case 'keywords':
+					$sep = ',';
+					break;
+				default :
+					$sep = ' - ';
+					break;
+			}
+			return implode($sep,$m[$type]);
 		}
 		return null;
 	}
