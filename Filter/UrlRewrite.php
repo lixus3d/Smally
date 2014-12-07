@@ -24,6 +24,11 @@ class UrlRewrite extends AbstractRule {
 			$value = preg_replace('#[^a-z0-9/\#-]#','',$value);
 			// trim trailing -, #, /
 			$value = trim($value,'#-/');
+
+			// can't begin with 2 letters string, reserved to multilingual
+			if(preg_match('#^[a-z]{2}(/|$)#',$value)){
+				$value = preg_replace('#^([a-z]{2}(/|$))#','p-$1',$value);
+			}
 		}
 
 		return $value;
