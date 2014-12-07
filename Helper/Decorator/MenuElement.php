@@ -99,19 +99,17 @@ class MenuElement extends AbstractDecorator {
 		if( ($this->getElement()->getType()!='separator') && $application = \Smally\Application::getInstance() ){
 			$active = false;
 
-			if(!$active){
-				// try the url approach
-				$actualUrl = $application->getRouter()->getActualUrl();
-				$elementUrl = $this->getElement()->getUrl();
-				$elementUrl = preg_replace('#(~([^/]+)/)#','',$elementUrl); // Avoid problem with multisite URI style url mode
-				// if($this->getElement()->getUrl() == $actualUrl && !$this->getElement()->isShortcut() ){
-				if( !$this->getElement()->isShortcut() && strpos(strrev($actualUrl), strrev($elementUrl))===0 ){
-					$active = true;
-					$attributes['class'][] = $this->_classActive;
-					// Add the active class to the parent of the current menu
-					if($parent = $this->getMenu()->getParent()){
-						$parent->setAttribute('class',$this->_classActive,'_attributes',true); // propagation
-					}
+			// try the url approach
+			$actualUrl = $application->getRouter()->getActualUrl();
+			$elementUrl = $this->getElement()->getUrl();
+			$elementUrl = preg_replace('#((^/[a-z]{2})|(~([^/]+)/))#','',$elementUrl); // Avoid problem with multisite URI style url mode and multilingual site ( two letters prefix )
+			// if($this->getElement()->getUrl() == $actualUrl && !$this->getElement()->isShortcut() ){
+			if( !$this->getElement()->isShortcut() && strpos(strrev($actualUrl), strrev($elementUrl))===0 ){
+				$active = true;
+				$attributes['class'][] = $this->_classActive;
+				// Add the active class to the parent of the current menu
+				if($parent = $this->getMenu()->getParent()){
+					$parent->setAttribute('class',$this->_classActive,'_attributes',true); // propagation
 				}
 			}
 
