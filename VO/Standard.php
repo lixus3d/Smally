@@ -467,8 +467,6 @@ class Standard extends \stdClass {
 			else $modelIdList = array($modelIdList);
 		}
 
-		$modelIdList = array_filter($modelIdList);
-
 		$inBaseIdList = $this->_genericGetJointModelId($fieldName,$jVoName,$jointVars,null,$destinationFieldName,$typing);
 
 		// We check if the joint has ord field
@@ -476,8 +474,8 @@ class Standard extends \stdClass {
 		$hasOrd = property_exists($testObject, 'ord');
 
 		// We update/insert joints
-		foreach($modelIdList as $ord => $modelId){
-
+		$ord = 0; // sometimes there is an empty modelId at the beginning ... biaising the ord , so manual ord increment
+		foreach($modelIdList as $modelId){
 			$alreadyExist = false;
 
 			$vars = array_merge($jointVars,array($destinationFieldName => $modelId));
@@ -508,7 +506,7 @@ class Standard extends \stdClass {
 			}else if( !$alreadyExist ){
 				$jObject->store();
 			}
-
+			$ord++;
 		}
 
 		// We delete joints that we didn't found in the field
