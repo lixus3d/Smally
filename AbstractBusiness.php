@@ -141,8 +141,8 @@ class AbstractBusiness {
 	 * @param  int $id               The id of the value object you want
 	 * @return \stdClass
 	 */
-	public function getById($id){
-		return $this->getDao()->getById($id);
+	public function getById($id,$force=false){
+		return $this->getDao()->getById($id,$force);
 	}
 
 }
