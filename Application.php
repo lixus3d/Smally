@@ -46,7 +46,7 @@ class Application {
 		if(!self::$_singleton instanceof self){
 			$this->setInstance();
 		}
-		defined('SMALLY_PLATFORM') || define('SMALLY_PLATFORM','windows');
+		defined('SMALLY_PLATFORM') || define('SMALLY_PLATFORM',DIRECTORY_SEPARATOR=='\\'?'windows':'linux');
 	}
 
 	/**
@@ -83,7 +83,7 @@ class Application {
 	public function setLanguage($language){
 		$this->_language = $language;
 		if(!is_null($this->_translate)){
-			$this->getTranslate(true); // If the translate is already loaded , we reload it, else it will load correct 
+			$this->getTranslate(true); // If the translate is already loaded , we reload it, else it will load correct
 		}
 		return $this;
 	}
