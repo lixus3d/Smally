@@ -607,8 +607,9 @@ class Standard extends \stdClass {
 	 * @param  string $voName    voName of the subvo
 	 * @return array()
 	 */
-	protected function _genericGetJointModel($fieldName,$voName=null){
+	protected function _genericGetJointModel($fieldName,$voName=null,$destinationFieldName=null){
 
+		if(is_null($destinationFieldName)) $destinationFieldName = $fieldName;
 		if(is_null($voName)) $voName = '\\'.$this->getModule().'\\VO\\'.(ucfirst(str_replace('Id','',$fieldName)));
 
 		$getterName = 'get'.ucfirst($fieldName);
@@ -629,7 +630,7 @@ class Standard extends \stdClass {
 			}
 			if($idToLoad){
 				$criteria = $voDao->getCriteria();
-				$criteria->setFilter(array($fieldName => array('value' => $idToLoad)));
+				$criteria->setFilter(array($destinationFieldName => array('value' => $idToLoad)));
 				if($voLoad = $voDao->fetchAll($criteria)){
 					foreach($voLoad as $vo){
 						$voList[] = $vo;
