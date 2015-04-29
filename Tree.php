@@ -40,16 +40,18 @@ class Tree {
 	 */
 	public function init($options){
 		foreach($options as $key => $opt){
-			if(method_exists($this, 'set'.ucfirst($key))){
-				$method = 'set'.ucfirst($key);
+			$method = 'set'.ucfirst($key);
+			if(method_exists($this, $method)){
 				$this->$method($opt);
 			}else{
 				$this->{$key} = $opt;
 			}
-			if(method_exists($this, 'onSet'.ucfirst($key))){
-				$method = 'onSet'.ucfirst($key);
+		}
+		foreach($options as $key => $opt){		
+			$method = 'onSet'.ucfirst($key);
+			if(method_exists($this, $method)){				
 				$this->$method();
-			}
+			}	
 		}
 		return $this;
 	}
